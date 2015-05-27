@@ -1,0 +1,9 @@
+{
+  "name": "mhe-models-grade-3-mod-5",
+  "dependencies": {
+    "populations.js": "0.0.17-genetics"
+  },
+  "resolutions": {
+    "jquery": "1.11.0"
+  }
+}
