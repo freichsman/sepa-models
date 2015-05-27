@@ -16,10 +16,10 @@ require.register "species/sandrats", (exports, require, module) ->
       @wander()
       @_incrementAge()
 
-      if (@get('age') > @species.defs.MATURITY_AGE)
+      if @get('age') > @species.defs.MATURITY_AGE
         @set 'current behavior', BasicAnimal.BEHAVIOR.MATING
 
-      if (@get('age') > 100 and @get('sex') is 'female') and @_timeLastMated < 0
+      if @get('age') > 100 and @get('sex') is 'female' and @_timeLastMated < 0
         @mate()
 
       if @get('age') is 120 and @_timeLastMated > 0
@@ -28,6 +28,21 @@ require.register "species/sandrats", (exports, require, module) ->
     makeNewborn: ->
       super()
       @set('age', Math.floor Math.random() * 80)
+
+    #copy mate so we set timeLastMated on males as well...
+    mate: ->
+      nearest = @_nearestMate()
+      if nearest?
+        @chase(nearest)
+        if nearest.distanceSq < Math.pow(@get('mating distance'), 2) and (not @species.defs.CHANCE_OF_MATING? or Math.random() < @species.defs.CHANCE_OF_MATING)
+          max = @get('max offspring')
+          @set 'max offspring', Math.max(max/2, 1)
+          @reproduce(nearest)
+          @set 'max offspring', max
+          @_timeLastMated = @environment.date
+          nearest.agent._timeLastMated = @environment.date          # ADDED THIS LINE
+      else
+        @wander(@get('speed') * Math.random() * 0.75)
 
 
   module.exports = new Species

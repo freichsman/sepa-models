@@ -28,7 +28,7 @@
         if (this.get('age') > this.species.defs.MATURITY_AGE) {
           this.set('current behavior', BasicAnimal.BEHAVIOR.MATING);
         }
-        if ((this.get('age') > 100 && this.get('sex') === 'female') && this._timeLastMated < 0) {
+        if (this.get('age') > 100 && this.get('sex') === 'female' && this._timeLastMated < 0) {
           this.mate();
         }
         if (this.get('age') === 120 && this._timeLastMated > 0) {
@@ -39,6 +39,24 @@
       SandRat.prototype.makeNewborn = function() {
         SandRat.__super__.makeNewborn.call(this);
         return this.set('age', Math.floor(Math.random() * 80));
+      };
+
+      SandRat.prototype.mate = function() {
+        var max, nearest;
+        nearest = this._nearestMate();
+        if (nearest != null) {
+          this.chase(nearest);
+          if (nearest.distanceSq < Math.pow(this.get('mating distance'), 2) && ((this.species.defs.CHANCE_OF_MATING == null) || Math.random() < this.species.defs.CHANCE_OF_MATING)) {
+            max = this.get('max offspring');
+            this.set('max offspring', Math.max(max / 2, 1));
+            this.reproduce(nearest);
+            this.set('max offspring', max);
+            this._timeLastMated = this.environment.date;
+            return nearest.agent._timeLastMated = this.environment.date;
+          }
+        } else {
+          return this.wander(this.get('speed') * Math.random() * 0.75);
+        }
       };
 
       return SandRat;
