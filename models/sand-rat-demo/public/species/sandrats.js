@@ -31,7 +31,7 @@
         if (this.get('age') > 100 && this.get('sex') === 'female' && this._timeLastMated < 0) {
           this.mate();
         }
-        if (this.get('age') === 120 && this._timeLastMated > 0) {
+        if (this.get('age') > 120 && this._timeLastMated > 0) {
           return this.die();
         }
       };

@@ -22,8 +22,10 @@ require.register "species/sandrats", (exports, require, module) ->
       if @get('age') > 100 and @get('sex') is 'female' and @_timeLastMated < 0
         @mate()
 
-      if @get('age') is 120 and @_timeLastMated > 0
+      if @get('age') > 120 and @_timeLastMated > 0
         @die()
+
+
 
     makeNewborn: ->
       super()
