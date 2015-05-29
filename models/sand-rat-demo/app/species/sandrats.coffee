@@ -28,6 +28,7 @@ require.register "species/sandrats", (exports, require, module) ->
     makeNewborn: ->
       super()
       @set('age', Math.floor Math.random() * 80)
+      @set('has diabetes', false)
 
     #copy mate so we set timeLastMated on males as well...
     mate: ->

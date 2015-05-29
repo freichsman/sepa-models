@@ -38,7 +38,8 @@
 
       SandRat.prototype.makeNewborn = function() {
         SandRat.__super__.makeNewborn.call(this);
-        return this.set('age', Math.floor(Math.random() * 80));
+        this.set('age', Math.floor(Math.random() * 80));
+        return this.set('has diabetes', false);
       };
 
       SandRat.prototype.mate = function() {
