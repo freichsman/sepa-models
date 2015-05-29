@@ -22,5 +22,14 @@ env.addRule new Rule
   action: (agent) ->
     agent.set 'has diabetes', true
 
+env.addRule new Rule
+  test: (agent)->
+    return agent.get('has diabetes') and
+            agent.get('prone to diabetes') is 'prone' and
+            agent.get('chow') isnt true and
+            Math.random() < 0.01
+  action: (agent) ->
+    agent.set 'has diabetes', false
+
 require.register "environments/field", (exports, require, module) ->
   module.exports = env

@@ -24,6 +24,15 @@
     }
   }));
 
+  env.addRule(new Rule({
+    test: function(agent) {
+      return agent.get('has diabetes') && agent.get('prone to diabetes') === 'prone' && agent.get('chow') !== true && Math.random() < 0.01;
+    },
+    action: function(agent) {
+      return agent.set('has diabetes', false);
+    }
+  }));
+
   require.register("environments/field", function(exports, require, module) {
     return module.exports = env;
   });
