@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Grade 3 Module 5 Lesson 2: Animal survival in their environment</title>
+    <link rel="stylesheet" href="css/vendor.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/widgets.css">
+    <link rel="stylesheet" href="css/popups.css">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="js/vendor2.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.2/d3.min.js"></script>
+    <!-- model files here-->
+    <script src="species/biologica/sandrats.js"></script>
+    <script src="species/sandrats.js"></script>
+    <script src="model/environment-pens.js"></script>
+    <script src="model/model.js"></script>
+  </head>
+  <body>
+    <div id="environment" style="float: left"></div>
+    <div id="controls">
+      Feed sugary chow:
+      <table>
+        <tr>
+          <td><input type="checkbox" id="chow-nw" value="prone"></td>
+          <td><input type="checkbox" id="chow-n" value="prone"></td>
+          <td><input type="checkbox" id="chow-ne" value="prone"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><input type="checkbox" id="chow-s" value="prone"></td>
+        </tr>
+      </table>
+
+      <input type="checkbox" id="view-prone-check" value="prone"> View diabetes propensity<br>
+    </div>
+  </body>
+</html>

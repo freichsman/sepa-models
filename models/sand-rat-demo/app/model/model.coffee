@@ -12,7 +12,7 @@ BasicAnimal = require 'models/agents/basic-animal'
 sandratSpecies   = require 'species/sandrats'
 env                = require 'environments/field'
 
-startingRats     = 20
+startingRats     = 16
 
 window.model =
   run: ->
@@ -73,6 +73,11 @@ $ ->
   $('#view-prone-check').change ->
     model.showPropensity = $(this).is(':checked')
 
+  $('#chow').change ->
+    model.setNWChow $(this).is(':checked')
+    model.setNChow $(this).is(':checked')
+    model.setNEChow $(this).is(':checked')
+    model.setSChow $(this).is(':checked')
   $('#chow-nw').change ->
     model.setNWChow $(this).is(':checked')
   $('#chow-n').change ->

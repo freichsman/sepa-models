@@ -49,7 +49,7 @@
           if (nearest.distanceSq < Math.pow(this.get('mating distance'), 2) && ((this.species.defs.CHANCE_OF_MATING == null) || Math.random() < this.species.defs.CHANCE_OF_MATING)) {
             max = this.get('max offspring');
             this.set('max offspring', Math.max(max / 2, 1));
-            this.reproduce(nearest);
+            this.reproduce(nearest.agent);
             this.set('max offspring', max);
             this._timeLastMated = this.environment.date;
             return nearest.agent._timeLastMated = this.environment.date;
@@ -90,7 +90,7 @@
           "default": 10000
         }), new Trait({
           name: 'max offspring',
-          "default": 2
+          "default": 3
         }), new Trait({
           name: 'min offspring',
           "default": 2

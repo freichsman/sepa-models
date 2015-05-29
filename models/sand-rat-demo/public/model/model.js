@@ -24,7 +24,7 @@
 
   env = require('environments/field');
 
-  startingRats = 20;
+  startingRats = 16;
 
   window.model = {
     run: function() {
@@ -134,6 +134,12 @@
     });
     $('#view-prone-check').change(function() {
       return model.showPropensity = $(this).is(':checked');
+    });
+    $('#chow').change(function() {
+      model.setNWChow($(this).is(':checked'));
+      model.setNChow($(this).is(':checked'));
+      model.setNEChow($(this).is(':checked'));
+      return model.setSChow($(this).is(':checked'));
     });
     $('#chow-nw').change(function() {
       return model.setNWChow($(this).is(':checked'));

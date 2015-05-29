@@ -47432,7 +47432,7 @@ module.exports = BasicAnimal = (function(_super) {
       if (nearest.distanceSq < Math.pow(this.get('mating distance'), 2) && ((this.species.defs.CHANCE_OF_MATING == null) || Math.random() < this.species.defs.CHANCE_OF_MATING)) {
         max = this.get('max offspring');
         this.set('max offspring', Math.max(max / 2, 1));
-        this.reproduce(nearest);
+        this.reproduce(nearest.agent);
         this.set('max offspring', max);
         return this._timeLastMated = this.environment.date;
       }

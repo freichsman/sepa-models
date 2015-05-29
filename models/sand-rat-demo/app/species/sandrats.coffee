@@ -25,8 +25,6 @@ require.register "species/sandrats", (exports, require, module) ->
       if @get('age') > 120 and @_timeLastMated > 0
         @die()
 
-
-
     makeNewborn: ->
       super()
       @set('age', Math.floor Math.random() * 80)
@@ -39,13 +37,12 @@ require.register "species/sandrats", (exports, require, module) ->
         if nearest.distanceSq < Math.pow(@get('mating distance'), 2) and (not @species.defs.CHANCE_OF_MATING? or Math.random() < @species.defs.CHANCE_OF_MATING)
           max = @get('max offspring')
           @set 'max offspring', Math.max(max/2, 1)
-          @reproduce(nearest)
+          @reproduce(nearest.agent)
           @set 'max offspring', max
           @_timeLastMated = @environment.date
           nearest.agent._timeLastMated = @environment.date          # ADDED THIS LINE
       else
         @wander(@get('speed') * Math.random() * 0.75)
-
 
   module.exports = new Species
     speciesName: "sandrats"
@@ -63,7 +60,7 @@ require.register "species/sandrats", (exports, require, module) ->
       new Trait {name: 'vision distance', default: 10000 }
       new Trait {name: 'eating distance', default:  50 }
       new Trait {name: 'mating distance', default:  10000 }
-      new Trait {name: 'max offspring',   default:  2 }
+      new Trait {name: 'max offspring',   default:  3 }
       new Trait {name: 'min offspring',   default:  2 }
       new Trait {name: 'resource consumption rate', default:  35 }
       new Trait {name: 'metabolism', default:  0.5 }

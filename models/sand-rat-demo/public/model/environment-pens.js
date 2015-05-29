@@ -9,9 +9,10 @@
   env = new Environment({
     columns: 100,
     rows: 70,
-    imgPath: "images/environments/field.png",
+    imgPath: "images/environments/field-pens.png",
     wrapEastWest: false,
-    wrapNorthSouth: false
+    wrapNorthSouth: false,
+    barriers: [[0, 330, 1000, 30], [320, 0, 30, 340], [650, 0, 30, 340]]
   });
 
   env.addRule(new Rule({
