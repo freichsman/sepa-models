@@ -131,7 +131,7 @@
                 }
               },
               useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity;
+                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'female';
               }
             }, {
               image: {
@@ -142,7 +142,7 @@
                 }
               },
               useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity;
+                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'female';
               }
             }, {
               image: {
@@ -153,7 +153,7 @@
                 }
               },
               useIf: function(agent) {
-                return agent.get('has diabetes') === false;
+                return agent.get('has diabetes') === false && agent.get('sex') === 'female';
               }
             }, {
               image: {
@@ -164,22 +164,51 @@
                 }
               },
               useIf: function(agent) {
-                return agent.get('has diabetes') === true;
+                return agent.get('has diabetes') === true && agent.get('sex') === 'female';
               }
-            }
-          ]
-        }, {
-          name: 'sex',
-          rules: [
-            {
+            }, {
               image: {
                 render: function(g) {
-                  g.lineStyle(1, 0xFF0000);
-                  return g.drawCircle(0, 0, 10);
+                  g.lineStyle(1, 0x000000);
+                  g.beginFill(0xd2bda9);
+                  return g.drawRect(-9, -9, 18, 18);
                 }
               },
               useIf: function(agent) {
-                return agent.get('sex') === 'female';
+                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'male';
+              }
+            }, {
+              image: {
+                render: function(g) {
+                  g.lineStyle(1, 0x000000);
+                  g.beginFill(0xd2bda9);
+                  return g.drawRect(-9, -9, 18, 18);
+                }
+              },
+              useIf: function(agent) {
+                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'male';
+              }
+            }, {
+              image: {
+                render: function(g) {
+                  g.lineStyle(1, 0x000000);
+                  g.beginFill(0xFFFFFF);
+                  return g.drawRect(-9, -9, 18, 18);
+                }
+              },
+              useIf: function(agent) {
+                return agent.get('has diabetes') === false && agent.get('sex') === 'male';
+              }
+            }, {
+              image: {
+                render: function(g) {
+                  g.lineStyle(1, 0x000000);
+                  g.beginFill(0x904f10);
+                  return g.drawRect(-9, -9, 18, 18);
+                }
+              },
+              useIf: function(agent) {
+                return agent.get('has diabetes') === true && agent.get('sex') === 'male';
               }
             }
           ]

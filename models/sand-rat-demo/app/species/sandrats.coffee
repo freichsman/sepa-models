@@ -80,7 +80,7 @@ require.register "species/sandrats", (exports, require, module) ->
                 g.lineStyle(1, 0x000000)
                 g.beginFill(0xd2bda9)
                 g.drawCircle(0,0,10)
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity
+            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'female'
           }
           {
             image:
@@ -88,7 +88,7 @@ require.register "species/sandrats", (exports, require, module) ->
                 g.lineStyle(1, 0x000000)
                 g.beginFill(0xd2bda9)
                 g.drawCircle(0,0,10)
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity
+            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'female'
           }
           {
             image:
@@ -96,7 +96,7 @@ require.register "species/sandrats", (exports, require, module) ->
                 g.lineStyle(1, 0x000000)
                 g.beginFill(0xFFFFFF)
                 g.drawCircle(0,0,10)
-            useIf: (agent)-> agent.get('has diabetes') is false
+            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'female'
           }
           {
             image:
@@ -104,19 +104,40 @@ require.register "species/sandrats", (exports, require, module) ->
                 g.lineStyle(1, 0x000000)
                 g.beginFill(0x904f10)
                 g.drawCircle(0,0,10)
-            useIf: (agent)-> agent.get('has diabetes') is true
+            useIf: (agent)-> agent.get('has diabetes') is true and agent.get('sex') is 'female'
           }
-        ]
-      }
-      {
-        name: 'sex'
-        rules: [
+
           {
             image:
               render: (g) ->
-                g.lineStyle(1, 0xFF0000)
-                g.drawCircle(0,0,10)
-            useIf: (agent)-> agent.get('sex') is 'female'
+                g.lineStyle(1, 0x000000)
+                g.beginFill(0xd2bda9)
+                g.drawRect(-9,-9,18,18)
+            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'male'
+          }
+          {
+            image:
+              render: (g) ->
+                g.lineStyle(1, 0x000000)
+                g.beginFill(0xd2bda9)
+                g.drawRect(-9,-9,18,18)
+            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'male'
+          }
+          {
+            image:
+              render: (g) ->
+                g.lineStyle(1, 0x000000)
+                g.beginFill(0xFFFFFF)
+                g.drawRect(-9,-9,18,18)
+            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'male'
+          }
+          {
+            image:
+              render: (g) ->
+                g.lineStyle(1, 0x000000)
+                g.beginFill(0x904f10)
+                g.drawRect(-9,-9,18,18)
+            useIf: (agent)-> agent.get('has diabetes') is true and agent.get('sex') is 'male'
           }
         ]
       }
