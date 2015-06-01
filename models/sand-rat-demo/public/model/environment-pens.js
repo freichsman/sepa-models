@@ -17,7 +17,7 @@
 
   env.addRule(new Rule({
     test: function(agent) {
-      return agent.get('has diabetes') !== true && agent.get('prone to diabetes') === 'prone' && agent.get('chow') && Math.random() < 0.01;
+      return agent.species.speciesName === "sandrats" && agent.get('has diabetes') !== true && agent.get('prone to diabetes') === 'prone' && agent.get('chow') && Math.random() < 0.015;
     },
     action: function(agent) {
       return agent.set('has diabetes', true);
@@ -26,7 +26,7 @@
 
   env.addRule(new Rule({
     test: function(agent) {
-      return agent.get('has diabetes') && agent.get('prone to diabetes') === 'prone' && agent.get('chow') !== true && Math.random() < 0.01;
+      return agent.species.speciesName === "sandrats" && agent.get('has diabetes') && agent.get('prone to diabetes') === 'prone' && agent.get('chow') !== true && Math.random() < 0.015;
     },
     action: function(agent) {
       return agent.set('has diabetes', false);

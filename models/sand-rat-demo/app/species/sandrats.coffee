@@ -56,6 +56,7 @@ require.register "species/sandrats", (exports, require, module) ->
       INFO_VIEW_PROPERTIES:
         "Prone to diabetes: ": 'prone to diabetes'
         "Has diabetes: ": 'has diabetes'
+        "Genome": 'genome'
     traits: [
       new Trait {name: 'speed', default: 6 }
       new Trait {name: 'vision distance', default: 10000 }
@@ -87,14 +88,6 @@ require.register "species/sandrats", (exports, require, module) ->
             image:
               render: (g) ->
                 g.lineStyle(1, 0x000000)
-                g.beginFill(0xd2bda9)
-                g.drawCircle(0,0,10)
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'female'
-          }
-          {
-            image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
                 g.beginFill(0xFFFFFF)
                 g.drawCircle(0,0,10)
             useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'female'
@@ -113,15 +106,7 @@ require.register "species/sandrats", (exports, require, module) ->
               render: (g) ->
                 g.lineStyle(1, 0x000000)
                 g.beginFill(0xd2bda9)
-                g.drawRect(-9,-9,18,18)
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'male'
-          }
-          {
-            image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
-                g.beginFill(0xd2bda9)
-                g.drawRect(-9,-9,18,18)
+                g.drawRect(0,10,18,18)
             useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'male'
           }
           {
@@ -129,7 +114,7 @@ require.register "species/sandrats", (exports, require, module) ->
               render: (g) ->
                 g.lineStyle(1, 0x000000)
                 g.beginFill(0xFFFFFF)
-                g.drawRect(-9,-9,18,18)
+                g.drawRect(0,0,18,18)
             useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'male'
           }
           {
@@ -137,7 +122,7 @@ require.register "species/sandrats", (exports, require, module) ->
               render: (g) ->
                 g.lineStyle(1, 0x000000)
                 g.beginFill(0x904f10)
-                g.drawRect(-9,-9,18,18)
+                g.drawRect(0,0,18,18)
             useIf: (agent)-> agent.get('has diabetes') is true and agent.get('sex') is 'male'
           }
         ]

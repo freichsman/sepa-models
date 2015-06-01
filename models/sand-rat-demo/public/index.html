@@ -11,9 +11,11 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
     <script src="js/vendor2.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.2/d3.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <!-- model files here-->
     <script src="species/biologica/sandrats.js"></script>
     <script src="species/sandrats.js"></script>
+    <script src="species/chow.js"></script>
     <script src="model/environment.js"></script>
     <script src="model/model.js"></script>
   </head>
@@ -34,6 +36,9 @@
       </table>
 
       <input type="checkbox" id="view-prone-check" value="prone"> View diabetes propensity<br>
+    </div>
+    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 100px">
+      <div id="field-chart"></div>
     </div>
   </body>
 </html>

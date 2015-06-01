@@ -73,7 +73,8 @@
         MATURITY_AGE: 20,
         INFO_VIEW_PROPERTIES: {
           "Prone to diabetes: ": 'prone to diabetes',
-          "Has diabetes: ": 'has diabetes'
+          "Has diabetes: ": 'has diabetes',
+          "Genome": 'genome'
         }
       },
       traits: [
@@ -138,17 +139,6 @@
               image: {
                 render: function(g) {
                   g.lineStyle(1, 0x000000);
-                  g.beginFill(0xd2bda9);
-                  return g.drawCircle(0, 0, 10);
-                }
-              },
-              useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'female';
-              }
-            }, {
-              image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
                   g.beginFill(0xFFFFFF);
                   return g.drawCircle(0, 0, 10);
                 }
@@ -172,18 +162,7 @@
                 render: function(g) {
                   g.lineStyle(1, 0x000000);
                   g.beginFill(0xd2bda9);
-                  return g.drawRect(-9, -9, 18, 18);
-                }
-              },
-              useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'male';
-              }
-            }, {
-              image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
-                  g.beginFill(0xd2bda9);
-                  return g.drawRect(-9, -9, 18, 18);
+                  return g.drawRect(0, 10, 18, 18);
                 }
               },
               useIf: function(agent) {
@@ -194,7 +173,7 @@
                 render: function(g) {
                   g.lineStyle(1, 0x000000);
                   g.beginFill(0xFFFFFF);
-                  return g.drawRect(-9, -9, 18, 18);
+                  return g.drawRect(0, 0, 18, 18);
                 }
               },
               useIf: function(agent) {
@@ -205,7 +184,7 @@
                 render: function(g) {
                   g.lineStyle(1, 0x000000);
                   g.beginFill(0x904f10);
-                  return g.drawRect(-9, -9, 18, 18);
+                  return g.drawRect(0, 0, 18, 18);
                 }
               },
               useIf: function(agent) {

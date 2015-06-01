@@ -9,10 +9,11 @@ Events      = require 'events'
 ToolButton  = require 'ui/tool-button'
 BasicAnimal = require 'models/agents/basic-animal'
 
-sandratSpecies   = require 'species/sandrats'
-env                = require 'environments/field'
+sandratSpecies  = require 'species/sandrats'
+chowSpecies     = require 'species/chow'
+env             = require 'environments/field'
 
-startingRats     = 16
+startingRats    = 16
 
 window.model =
   run: ->
@@ -32,8 +33,28 @@ window.model =
     @env = env
 
     @setupEnvironment()
+    @isSetUp = true
+
     Events.addEventListener Environment.EVENTS.RESET, =>
       @setupEnvironment()
+
+    Events.addEventListener Environment.EVENTS.STEP, =>
+      drawChart @countRats()
+
+  agentsOfSpecies: (species)->
+    set = []
+    for a in @env.agents
+      set.push a if a.species is species
+    return set
+
+  countRats: ->
+    healthyRats = 0
+    diabeticRats = 0
+    for a in @agentsOfSpecies(sandratSpecies)
+      healthyRats++ if not a.get('has diabetes')
+      diabeticRats++ if a.get('has diabetes')
+    console.log [healthyRats, diabeticRats]
+    return [healthyRats, diabeticRats]
 
   setupEnvironment: ->
     for col in [0..100]
@@ -44,29 +65,58 @@ window.model =
       @addRat()
 
   addRat: () ->
+    top = if @isFieldModel then 0 else 350
     rat = sandratSpecies.createAgent()
-    rat.setLocation env.randomLocationWithin 0, 350, 1000, 350, true
+    rat.setLocation env.randomLocationWithin 0, top, 1000, 700, true
     @env.addAgent rat
+
+  addChow: (n, x, y, w, h) ->
+    for i in [0...n]
+      chow = chowSpecies.createAgent()
+      chow.setLocation env.randomLocationWithin x, y, w, h, true
+      @env.addAgent chow
+
+  removeChow: (x, y, width, height) ->
+    agents = env.agentsWithin {x, y, width, height}
+    agent.die() for agent in agents when agent.species.speciesName is "chow"
 
   setNWChow: (chow) ->
     for col in [0..31]
       for row in [0..33]
         @env.set col, row, "chow", chow
+    if (chow)
+      @addChow(25, 0, 0, 330, 350)
+    else
+      @removeChow(0, 0, 330, 350)
   setNChow: (chow) ->
     for col in [33..64]
       for row in [0..33]
         @env.set col, row, "chow", chow
+    if (chow)
+      @addChow(25, 340, 0, 330, 350)
+    else
+      @removeChow(340, 0, 330, 350)
   setNEChow: (chow) ->
     for col in [66..100]
       for row in [0..33]
         @env.set col, row, "chow", chow
+    if (chow)
+      @addChow(25, 670, 0, 330, 350)
+    else
+      @removeChow(670, 0, 330, 350)
   setSChow: (chow) ->
     for col in [0..100]
       for row in [36..75]
         @env.set col, row, "chow", chow
+    if (chow)
+      @addChow(70, 0, 350, 1000, 350)
+    else
+      @removeChow(0, 350, 1000, 350)
 
 
 $ ->
+  model.isFieldModel = /([^\/]*)[\.]/.exec(document.location.href)[1] == "field"
+
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
 
@@ -86,3 +136,35 @@ $ ->
     model.setNEChow $(this).is(':checked')
   $('#chow-s').change ->
     model.setSChow $(this).is(':checked')
+
+drawChart = (_data)->
+    _data ?= [0,0]
+    if model.isSetUp then _data = model.countRats()
+    data = google.visualization.arrayToDataTable([
+      ["Type", "Number of organisms", { role: "style" } ]
+      ["Healthy", _data[0], "silver"]
+      ["Diabetic", _data[1], "brown"]
+    ])
+
+    view = new google.visualization.DataView(data)
+    view.setColumns([0, 1,
+                      {
+                        calc: "stringify",
+                        sourceColumn: 1,
+                        type: "string",
+                        role: "annotation"
+                      },
+                      2])
+
+    options = {
+      title: "Sandrats in population",
+      width: 300,
+      height: 300,
+      bar: {groupWidth: "95%"},
+      legend: { position: "none" },
+    }
+    chart = new google.visualization.ColumnChart(document.getElementById("field-chart"))
+    chart.draw(view, options)
+
+
+google.load('visualization', '1', {packages: ['corechart', 'bar'], callback: drawChart})

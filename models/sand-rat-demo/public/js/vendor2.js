@@ -46967,6 +46967,8 @@ module.exports = Agent = (function() {
     var val;
     if (this.hasProp(prop)) {
       val = this._props[prop];
+    } else if (prop == "genome" && this.organism.alleles) {
+      val = this.organism.alleles;
     } else {
       val = this.getEnvironmentProperty(prop);
     }
@@ -50209,7 +50211,7 @@ module.exports = AgentView = (function() {
         sprite = this._createOrUpdateSprite(layer.selectedImage);
         this._sprites[layer.name] = sprite;
         this._container.addChildAt(sprite, i);
-      } else if (layer.selectedImage.render !== null) {
+      } else if (layer.selectedImage.render !== null && layer.rules.length > 1) {
         this._createOrUpdateSprite(layer.selectedImage, this._sprites[layer.name]);
       } else if ((layer.selectedImage.path != null) && layer.selectedImage.path !== this._sprites[layer.name].texture.baseTexture.source.src) {
         this._createOrUpdateSprite(layer.selectedImage, this._sprites[layer.name]);
