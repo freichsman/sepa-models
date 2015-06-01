@@ -186,7 +186,7 @@
   };
 
   $(function() {
-    model.isFieldModel = /([^\/]*)[\.]/.exec(document.location.href)[1] === "field";
+    model.isFieldModel = /[^\/]*html/.exec(document.location.href)[0] === "field.html";
     helpers.preload([model, env, sandratSpecies], function() {
       return model.run();
     });
