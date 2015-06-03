@@ -38,6 +38,7 @@
 
       SandRat.prototype.makeNewborn = function() {
         SandRat.__super__.makeNewborn.call(this);
+        this.set('sex', (Math.random() < 0.55 ? 'female' : 'male'));
         this.set('age', Math.floor(Math.random() * 80));
         return this.set('has diabetes', false);
       };
@@ -49,7 +50,7 @@
           this.chase(nearest);
           if (nearest.distanceSq < Math.pow(this.get('mating distance'), 2) && ((this.species.defs.CHANCE_OF_MATING == null) || Math.random() < this.species.defs.CHANCE_OF_MATING)) {
             max = this.get('max offspring');
-            this.set('max offspring', Math.max(max / 2, 1));
+            this.set('max offspring', Math.max(max, 1));
             this.reproduce(nearest.agent);
             this.set('max offspring', max);
             this._timeLastMated = this.environment.date;
@@ -95,7 +96,7 @@
           "default": 3
         }), new Trait({
           name: 'min offspring',
-          "default": 2
+          "default": 1
         }), new Trait({
           name: 'resource consumption rate',
           "default": 35
@@ -126,10 +127,11 @@
           rules: [
             {
               image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
-                  g.beginFill(0xd2bda9);
-                  return g.drawCircle(0, 0, 10);
+                path: "images/agents/female-prone.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 1
                 }
               },
               useIf: function(agent) {
@@ -137,10 +139,11 @@
               }
             }, {
               image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
-                  g.beginFill(0xFFFFFF);
-                  return g.drawCircle(0, 0, 10);
+                path: "images/agents/female.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 1
                 }
               },
               useIf: function(agent) {
@@ -148,10 +151,11 @@
               }
             }, {
               image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
-                  g.beginFill(0x904f10);
-                  return g.drawCircle(0, 0, 10);
+                path: "images/agents/female-diabetic.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 1
                 }
               },
               useIf: function(agent) {
@@ -159,10 +163,11 @@
               }
             }, {
               image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
-                  g.beginFill(0xd2bda9);
-                  return g.drawRect(0, 10, 18, 18);
+                path: "images/agents/male-prone.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 1
                 }
               },
               useIf: function(agent) {
@@ -170,10 +175,11 @@
               }
             }, {
               image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
-                  g.beginFill(0xFFFFFF);
-                  return g.drawRect(0, 0, 18, 18);
+                path: "images/agents/male.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 1
                 }
               },
               useIf: function(agent) {
@@ -181,10 +187,11 @@
               }
             }, {
               image: {
-                render: function(g) {
-                  g.lineStyle(1, 0x000000);
-                  g.beginFill(0x904f10);
-                  return g.drawRect(0, 0, 18, 18);
+                path: "images/agents/male-diabetic.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 1
                 }
               },
               useIf: function(agent) {

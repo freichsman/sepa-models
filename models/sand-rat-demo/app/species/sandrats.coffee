@@ -27,6 +27,7 @@ require.register "species/sandrats", (exports, require, module) ->
 
     makeNewborn: ->
       super()
+      @set 'sex', (if Math.random() < 0.55 then 'female' else 'male')
       @set('age', Math.floor Math.random() * 80)
       @set('has diabetes', false)
 
@@ -37,7 +38,7 @@ require.register "species/sandrats", (exports, require, module) ->
         @chase(nearest)
         if nearest.distanceSq < Math.pow(@get('mating distance'), 2) and (not @species.defs.CHANCE_OF_MATING? or Math.random() < @species.defs.CHANCE_OF_MATING)
           max = @get('max offspring')
-          @set 'max offspring', Math.max(max/2, 1)
+          @set 'max offspring', Math.max(max, 1)
           @reproduce(nearest.agent)
           @set 'max offspring', max
           @_timeLastMated = @environment.date
@@ -63,7 +64,7 @@ require.register "species/sandrats", (exports, require, module) ->
       new Trait {name: 'eating distance', default:  50 }
       new Trait {name: 'mating distance', default:  10000 }
       new Trait {name: 'max offspring',   default:  3 }
-      new Trait {name: 'min offspring',   default:  2 }
+      new Trait {name: 'min offspring',   default:  1 }
       new Trait {name: 'resource consumption rate', default:  35 }
       new Trait {name: 'metabolism', default:  0.5 }
       new Trait {name: 'chance-hop', float: true, min: 0.05, max: 0.2 }
@@ -78,51 +79,57 @@ require.register "species/sandrats", (exports, require, module) ->
         rules: [
           {
             image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
-                g.beginFill(0xd2bda9)
-                g.drawCircle(0,0,10)
+              path: "images/agents/female-prone.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 1
             useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'female'
           }
           {
             image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
-                g.beginFill(0xFFFFFF)
-                g.drawCircle(0,0,10)
+              path: "images/agents/female.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 1
             useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'female'
           }
           {
             image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
-                g.beginFill(0x904f10)
-                g.drawCircle(0,0,10)
+              path: "images/agents/female-diabetic.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 1
             useIf: (agent)-> agent.get('has diabetes') is true and agent.get('sex') is 'female'
           }
 
           {
             image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
-                g.beginFill(0xd2bda9)
-                g.drawRect(0,10,18,18)
+              path: "images/agents/male-prone.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 1
             useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'male'
           }
           {
             image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
-                g.beginFill(0xFFFFFF)
-                g.drawRect(0,0,18,18)
+              path: "images/agents/male.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 1
             useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'male'
           }
           {
             image:
-              render: (g) ->
-                g.lineStyle(1, 0x000000)
-                g.beginFill(0x904f10)
-                g.drawRect(0,0,18,18)
+              path: "images/agents/male-diabetic.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 1
             useIf: (agent)-> agent.get('has diabetes') is true and agent.get('sex') is 'male'
           }
         ]

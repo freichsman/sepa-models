@@ -16,9 +16,11 @@
           rules: [
             {
               image: {
-                render: function(g) {
-                  g.beginFill(0xea1ab7);
-                  return g.drawCircle(0, 0, 5);
+                path: "images/agents/chow.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 1
                 }
               }
             }
