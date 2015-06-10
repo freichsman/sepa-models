@@ -333,7 +333,7 @@
           "Type", "Number of rats", {
             role: "style"
           }
-        ], ["Healthy", _data.healthy, "silver"], ["Diabetic", _data.diabetic, "brown"]
+        ], ["Non-diabetic", _data.healthy, "silver"], ["Diabetic", _data.diabetic, "brown"]
       ]);
       view = new google.visualization.DataView(data);
       view.setColumns([

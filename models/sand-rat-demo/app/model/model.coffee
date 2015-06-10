@@ -215,7 +215,7 @@ drawChart = (chartN)->
     if graphType is "diabetic"
       data = google.visualization.arrayToDataTable([
         ["Type", "Number of rats", { role: "style" } ]
-        ["Healthy", _data.healthy, "silver"]
+        ["Non-diabetic", _data.healthy, "silver"]
         ["Diabetic", _data.diabetic, "brown"]
       ])
 
