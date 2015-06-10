@@ -165,7 +165,7 @@ window.model =
 
 
 $ ->
-  model.isFieldModel = /[^\/]*html/.exec(document.location.href)[0] == "field.html"
+  model.isFieldModel = !/[^\/]*html/.exec(document.location.href) or /[^\/]*html/.exec(document.location.href)[0] == "field.html"
 
   if not model.isFieldModel
     window.graph1Location = "s"

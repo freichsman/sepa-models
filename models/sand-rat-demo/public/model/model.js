@@ -354,7 +354,7 @@
   };
 
   $(function() {
-    model.isFieldModel = /[^\/]*html/.exec(document.location.href)[0] === "field.html";
+    model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
     if (!model.isFieldModel) {
       window.graph1Location = "s";
     }

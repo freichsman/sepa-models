@@ -89,10 +89,10 @@ require.register "species/sandrats", (exports, require, module) ->
       INFO_VIEW_SCALE: 2
       MATURITY_AGE: 20
       INFO_VIEW_PROPERTIES:
-        "Prone to diabetes: ": 'prone to diabetes'
-        "Has diabetes: ": 'has diabetes'
-        "Weight (g): ": 'weight'
-        "Genome": 'genome'
+        "Diabetes-prone:&nbsp;&nbsp;&nbsp;": 'prone to diabetes'
+        "Has diabetes:   ": 'has diabetes'
+        "Weight (g):   ": 'weight'
+        "Genome:  ": 'genome'
     traits: [
       new Trait {name: 'speed', default: 6 }
       new Trait {name: 'vision distance', default: 10000 }
