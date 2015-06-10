@@ -131,10 +131,10 @@
         };
         for (j = 0, len = rats.length; j < len; j++) {
           a = rats[j];
-          if (a.get('sex') === "male") {
+          if (!a.get('has diabetes')) {
             data.healthy++;
           }
-          if (a.get('sex') === "female") {
+          if (a.get('has diabetes')) {
             data.diabetic++;
           }
         }

@@ -72,8 +72,8 @@ window.model =
     if graphType is "diabetic"
       data = {healthy: 0, diabetic: 0}
       for a in rats
-        data.healthy++ if a.get('sex') == "male"#not a.get('has diabetes')
-        data.diabetic++ if a.get('sex') == "female"#a.get('has diabetes')
+        data.healthy++ if not a.get('has diabetes')
+        data.diabetic++ if a.get('has diabetes')
     else if graphType is "weight"
       data = {140: 0}
       for a in rats
