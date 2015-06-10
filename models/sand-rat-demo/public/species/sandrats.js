@@ -11,6 +11,9 @@
     AnimatedAgent = require('models/agents/animated-agent');
     Trait = require('models/trait');
     biologicaSpecies = require('species/biologica/sandrats');
+    if (window.orgNumber == null) {
+      window.orgNumber = 1;
+    }
     SandRat = (function(superClass) {
       extend(SandRat, superClass);
 
@@ -28,18 +31,21 @@
         if (this.get('age') > this.species.defs.MATURITY_AGE) {
           this.set('current behavior', BasicAnimal.BEHAVIOR.MATING);
         }
-        if (this.get('age') > 100 && this.get('sex') === 'female' && this._timeLastMated < 0) {
+        if (this.get('age') > 170 && this.get('sex') === 'male' && this._timeLastMated < 0) {
           this.mate();
         }
-        if (this.get('age') > 120 && this._timeLastMated > 0) {
+        if (this.get('age') > 180 && this._timeLastMated > 0) {
           return this.die();
         }
       };
 
       SandRat.prototype.makeNewborn = function() {
+        var sex;
         SandRat.__super__.makeNewborn.call(this);
-        this.set('sex', (Math.random() < 0.55 ? 'female' : 'male'));
+        sex = model.env.agents.length && model.env.agents[model.env.agents.length - 1].get("sex") === "female" ? "male" : "female";
+        this.set('sex', sex);
         this.set('age', Math.floor(Math.random() * 80));
+        this.set('weight', 140 + Math.floor(Math.random() * 20));
         return this.set('has diabetes', false);
       };
 
@@ -75,6 +81,7 @@
         INFO_VIEW_PROPERTIES: {
           "Prone to diabetes: ": 'prone to diabetes',
           "Has diabetes: ": 'has diabetes',
+          "Weight (g): ": 'weight',
           "Genome": 'genome'
         }
       },
@@ -86,9 +93,6 @@
           name: 'vision distance',
           "default": 10000
         }), new Trait({
-          name: 'eating distance',
-          "default": 50
-        }), new Trait({
           name: 'mating distance',
           "default": 10000
         }), new Trait({
@@ -96,21 +100,14 @@
           "default": 3
         }), new Trait({
           name: 'min offspring',
-          "default": 1
+          "default": 2
         }), new Trait({
-          name: 'resource consumption rate',
-          "default": 35
-        }), new Trait({
-          name: 'metabolism',
-          "default": 0.5
-        }), new Trait({
-          name: 'chance-hop',
-          float: true,
-          min: 0.05,
-          max: 0.2
+          name: 'weight',
+          min: 140,
+          max: 160
         }), new Trait({
           name: 'prone to diabetes',
-          possibleValues: ['a:DR,b:DR', 'a:dp,b:DR', 'a:DR,b:dp', 'a:dp,b:dp'],
+          possibleValues: ['a:DR,b:DR', 'a:dp,b:DR', 'a:DR,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp'],
           isGenetic: true,
           isNumeric: false
         }), new Trait({
@@ -123,79 +120,94 @@
       },
       imageRules: [
         {
+          name: 'diabetic',
+          contexts: ['environment'],
+          rules: [
+            {
+              image: {
+                path: "images/agents/diabetic-stack.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 0.7
+                }
+              },
+              useIf: function(agent) {
+                return model.showDiabetic && agent.get('has diabetes');
+              }
+            }
+          ]
+        }, {
+          name: 'prone',
+          contexts: ['environment'],
+          rules: [
+            {
+              image: {
+                path: "images/agents/prone-stack.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 0.7
+                }
+              },
+              useIf: function(agent) {
+                return model.showPropensity && agent.get('prone to diabetes') === 'prone';
+              }
+            }
+          ]
+        }, {
+          name: 'sex',
+          contexts: ['environment'],
+          rules: [
+            {
+              image: {
+                path: "images/agents/female-stack.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 0.7
+                }
+              },
+              useIf: function(agent) {
+                return model.showSex && agent.get('sex') === 'male';
+              }
+            }, {
+              image: {
+                path: "images/agents/male-stack.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 0.7
+                }
+              },
+              useIf: function(agent) {
+                return model.showSex && agent.get('sex') === 'female';
+              }
+            }
+          ]
+        }, {
           name: 'rats',
           rules: [
             {
               image: {
-                path: "images/agents/female-prone.png",
-                scale: 0.5,
+                path: "images/agents/sandrat-stack.png",
+                scale: 0.7,
                 anchor: {
                   x: 0.5,
-                  y: 1
+                  y: 0.6
                 }
               },
               useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'female';
+                return agent.get('weight') > 180;
               }
             }, {
               image: {
-                path: "images/agents/female.png",
+                path: "images/agents/sandrat-stack.png",
                 scale: 0.5,
                 anchor: {
                   x: 0.5,
-                  y: 1
+                  y: 0.7
                 }
-              },
-              useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('sex') === 'female';
-              }
-            }, {
-              image: {
-                path: "images/agents/female-diabetic.png",
-                scale: 0.5,
-                anchor: {
-                  x: 0.5,
-                  y: 1
-                }
-              },
-              useIf: function(agent) {
-                return agent.get('has diabetes') === true && agent.get('sex') === 'female';
-              }
-            }, {
-              image: {
-                path: "images/agents/male-prone.png",
-                scale: 0.5,
-                anchor: {
-                  x: 0.5,
-                  y: 1
-                }
-              },
-              useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('prone to diabetes') === 'prone' && model.showPropensity && agent.get('sex') === 'male';
-              }
-            }, {
-              image: {
-                path: "images/agents/male.png",
-                scale: 0.5,
-                anchor: {
-                  x: 0.5,
-                  y: 1
-                }
-              },
-              useIf: function(agent) {
-                return agent.get('has diabetes') === false && agent.get('sex') === 'male';
-              }
-            }, {
-              image: {
-                path: "images/agents/male-diabetic.png",
-                scale: 0.5,
-                anchor: {
-                  x: 0.5,
-                  y: 1
-                }
-              },
-              useIf: function(agent) {
-                return agent.get('has diabetes') === true && agent.get('sex') === 'male';
               }
             }
           ]

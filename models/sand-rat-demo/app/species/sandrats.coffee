@@ -8,6 +8,8 @@ require.register "species/sandrats", (exports, require, module) ->
 
   biologicaSpecies = require 'species/biologica/sandrats'
 
+  window.orgNumber ?= 1
+
   class SandRat extends BasicAnimal
     moving: false
     moveCount: 0
@@ -19,16 +21,22 @@ require.register "species/sandrats", (exports, require, module) ->
       if @get('age') > @species.defs.MATURITY_AGE
         @set 'current behavior', BasicAnimal.BEHAVIOR.MATING
 
-      if @get('age') > 100 and @get('sex') is 'female' and @_timeLastMated < 0
+      if @get('age') > 170 and @get('sex') is 'male' and @_timeLastMated < 0
         @mate()
 
-      if @get('age') > 120 and @_timeLastMated > 0
+      if @get('age') > 180 and @_timeLastMated > 0
         @die()
 
     makeNewborn: ->
       super()
-      @set 'sex', (if Math.random() < 0.55 then 'female' else 'male')
+
+      #so ugly
+      sex = if model.env.agents.length and
+        model.env.agents[model.env.agents.length-1].get("sex") is "female" then "male" else "female"
+
+      @set 'sex', sex
       @set('age', Math.floor Math.random() * 80)
+      @set('weight', 140 +  Math.floor Math.random() * 20)
       @set('has diabetes', false)
 
     #copy mate so we set timeLastMated on males as well...
@@ -57,80 +65,94 @@ require.register "species/sandrats", (exports, require, module) ->
       INFO_VIEW_PROPERTIES:
         "Prone to diabetes: ": 'prone to diabetes'
         "Has diabetes: ": 'has diabetes'
+        "Weight (g): ": 'weight'
         "Genome": 'genome'
     traits: [
       new Trait {name: 'speed', default: 6 }
       new Trait {name: 'vision distance', default: 10000 }
-      new Trait {name: 'eating distance', default:  50 }
       new Trait {name: 'mating distance', default:  10000 }
       new Trait {name: 'max offspring',   default:  3 }
-      new Trait {name: 'min offspring',   default:  1 }
-      new Trait {name: 'resource consumption rate', default:  35 }
-      new Trait {name: 'metabolism', default:  0.5 }
-      new Trait {name: 'chance-hop', float: true, min: 0.05, max: 0.2 }
-      new Trait {name: 'prone to diabetes', possibleValues: ['a:DR,b:DR','a:dp,b:DR','a:DR,b:dp','a:dp,b:dp'], isGenetic: true, isNumeric: false }
+      new Trait {name: 'min offspring',   default:  2 }
+      new Trait {name: 'weight',   min:  140, max: 160 }
+      new Trait {name: 'prone to diabetes', possibleValues: ['a:DR,b:DR','a:dp,b:DR','a:DR,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp'], isGenetic: true, isNumeric: false }
       new Trait {name: 'has diabetes', default:  false }
     ]
     imageProperties:
       initialFlipDirection: "right"
     imageRules: [
       {
+        name: 'diabetic'
+        contexts: ['environment']
+        rules: [
+          {
+            image:
+              path: "images/agents/diabetic-stack.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 0.7
+            useIf: (agent)-> model.showDiabetic and agent.get('has diabetes')
+          }
+        ]
+      }
+      {
+        name: 'prone'
+        contexts: ['environment']
+        rules: [
+          {
+            image:
+              path: "images/agents/prone-stack.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 0.7
+            useIf: (agent)-> model.showPropensity and agent.get('prone to diabetes') is 'prone'
+          }
+        ]
+      }
+      {
+        name: 'sex'
+        contexts: ['environment']
+        rules: [
+          {
+            image:
+              path: "images/agents/female-stack.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 0.7
+            useIf: (agent)-> model.showSex and agent.get('sex') is 'male'
+          }
+          {
+            image:
+              path: "images/agents/male-stack.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 0.7
+            useIf: (agent)-> model.showSex and agent.get('sex') is 'female'
+          }
+        ]
+      }
+      {
         name: 'rats'
         rules: [
           {
             image:
-              path: "images/agents/female-prone.png"
-              scale: 0.5
+              path: "images/agents/sandrat-stack.png"
+              scale: 0.7
               anchor:
                 x: 0.5
-                y: 1
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'female'
+                y: 0.6
+            useIf: (agent)-> agent.get('weight') > 180
           }
           {
             image:
-              path: "images/agents/female.png"
+              path: "images/agents/sandrat-stack.png"
               scale: 0.5
               anchor:
                 x: 0.5
-                y: 1
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'female'
-          }
-          {
-            image:
-              path: "images/agents/female-diabetic.png"
-              scale: 0.5
-              anchor:
-                x: 0.5
-                y: 1
-            useIf: (agent)-> agent.get('has diabetes') is true and agent.get('sex') is 'female'
-          }
-
-          {
-            image:
-              path: "images/agents/male-prone.png"
-              scale: 0.5
-              anchor:
-                x: 0.5
-                y: 1
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('prone to diabetes') is 'prone' and model.showPropensity and agent.get('sex') is 'male'
-          }
-          {
-            image:
-              path: "images/agents/male.png"
-              scale: 0.5
-              anchor:
-                x: 0.5
-                y: 1
-            useIf: (agent)-> agent.get('has diabetes') is false and agent.get('sex') is 'male'
-          }
-          {
-            image:
-              path: "images/agents/male-diabetic.png"
-              scale: 0.5
-              anchor:
-                x: 0.5
-                y: 1
-            useIf: (agent)-> agent.get('has diabetes') is true and agent.get('sex') is 'male'
+                y: 0.7
           }
         ]
       }

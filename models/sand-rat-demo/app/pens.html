@@ -10,8 +10,12 @@
     <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
     <style>
+      .bubble .content .agent {
+        left: 53px;
+      }
       .bubble .content .details {
-        left: 49px;
+        left: 30px;
+        top: 91px;
       }
       .agent-property {
         clear: both;
@@ -43,10 +47,49 @@
         </tr>
       </table>
 
-      <input type="checkbox" id="view-prone-check" value="prone"> View diabetes propensity<br>
+      <div style="border: 1px solid #EEE; padding: 4px; margin: 6px;">
+        <input type="checkbox" id="view-sex-check" value="prone"> Show male and female<br>
+        <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes propensity<br>
+        <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes<br>
+      </div>
     </div>
-    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 100px">
+
+    <div style="position: absolute; left: 1100px; width: 300px; top: 163px">
+      Chart rats in the
+      <select id="graph-location-selection">
+        <option value="s">Bottom field</option>
+        <option value="nw">Left pen</option>
+        <option value="n">Middle pen</option>
+        <option value="ne">Right pen</option>
+      </select>
+    </div>
+    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 182px">
       <div id="field-chart"></div>
+    </div>
+    <div style="position: absolute; left: 1234px; width: 300px; top: 425px">
+      <select id="graph-selection">
+        <option value="diabetic">Show diabetic rats</option>
+        <option value="weight">Show weight of rats</option>
+      </select>
+    </div>
+
+    <div style="position: absolute; left: 1100px; width: 300px; top: 469px">
+      Chart rats in the
+      <select id="graph-location-selection-2">
+        <option value="s">Bottom field</option>
+        <option value="nw" selected="selected">Left pen</option>
+        <option value="n">Middle pen</option>
+        <option value="ne">Right pen</option>
+      </select>
+    </div>
+    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 488px">
+      <div id="field-chart-2"></div>
+    </div>
+    <div style="position: absolute; left: 1234px; width: 300px; top: 733px">
+      <select id="graph-selection-2">
+        <option value="diabetic">Show diabetic rats</option>
+        <option value="weight">Show weight of rats</option>
+      </select>
     </div>
   </body>
 </html>

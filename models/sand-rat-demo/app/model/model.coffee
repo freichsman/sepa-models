@@ -13,7 +13,7 @@ sandratSpecies  = require 'species/sandrats'
 chowSpecies     = require 'species/chow'
 env             = require 'environments/field'
 
-startingRats    = 16
+startingRats    = 20
 
 window.model =
   run: ->
@@ -39,7 +39,10 @@ window.model =
       @setupEnvironment()
 
     Events.addEventListener Environment.EVENTS.STEP, =>
-      drawChart @countRats()
+      drawCharts()
+
+    Events.addEventListener Environment.EVENTS.AGENT_ADDED, =>
+      drawCharts()
 
   agentsOfSpecies: (species)->
     set = []
@@ -47,14 +50,38 @@ window.model =
       set.push a if a.species is species
     return set
 
-  countRats: ->
-    healthyRats = 0
-    diabeticRats = 0
-    for a in @agentsOfSpecies(sandratSpecies)
-      healthyRats++ if not a.get('has diabetes')
-      diabeticRats++ if a.get('has diabetes')
-    console.log [healthyRats, diabeticRats]
-    return [healthyRats, diabeticRats]
+  countRats: (chartN) ->
+    data = {}
+    loc = {x: 0, y: 0, width: 1000, height: 700}
+
+    graphLoc = if chartN is 1 then window.graph1Location else window.graph2Location
+
+    if graphLoc is "s"
+      loc = {x: 0, y: 350, width: 1000, height: 350}
+    else if graphLoc is "nw"
+      loc = {x: 0, y: 0, width: 330, height: 350}
+    else if graphLoc is "n"
+      loc = {x: 330, y: 0, width: 330, height: 350}
+    else if graphLoc is "ne"
+      loc = {x: 660, y: 0, width: 330, height: 350}
+
+    rats = (a for a in @env.agentsWithin(loc) when a.species is sandratSpecies)
+
+    graphType = if chartN is 1 then window.graphType else window.graph2Type
+
+    if graphType is "diabetic"
+      data = {healthy: 0, diabetic: 0}
+      for a in rats
+        data.healthy++ if a.get('sex') == "male"#not a.get('has diabetes')
+        data.diabetic++ if a.get('sex') == "female"#a.get('has diabetes')
+    else if graphType is "weight"
+      data = {140: 0}
+      for a in rats
+        weight = Math.floor(a.get('weight') / 10) * 10
+        data[weight] ?= 0
+        data[weight]++
+
+    return data
 
   setupEnvironment: ->
     for col in [0..100]
@@ -63,6 +90,9 @@ window.model =
 
     for i in [0...startingRats]
       @addRat()
+
+
+    drawCharts()
 
   addRat: () ->
     top = if @isFieldModel then 0 else 350
@@ -79,6 +109,7 @@ window.model =
   removeChow: (x, y, width, height) ->
     agents = env.agentsWithin {x, y, width, height}
     agent.die() for agent in agents when agent.species.speciesName is "chow"
+    @env.removeDeadAgents()
 
   setNWChow: (chow) ->
     for col in [0..31]
@@ -117,11 +148,19 @@ window.model =
 $ ->
   model.isFieldModel = /[^\/]*html/.exec(document.location.href)[0] == "field.html"
 
+  if not model.isFieldModel
+    window.graph1Location = "s"
+
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
 
+
+  $('#view-sex-check').change ->
+    model.showSex = $(this).is(':checked')
   $('#view-prone-check').change ->
     model.showPropensity = $(this).is(':checked')
+  $('#view-diabetic-check').change ->
+    model.showDiabetic = $(this).is(':checked')
 
   $('#chow').change ->
     model.setNWChow $(this).is(':checked')
@@ -137,34 +176,106 @@ $ ->
   $('#chow-s').change ->
     model.setSChow $(this).is(':checked')
 
-drawChart = (_data)->
-    _data ?= [0,0]
-    if model.isSetUp then _data = model.countRats()
-    data = google.visualization.arrayToDataTable([
-      ["Type", "Number of organisms", { role: "style" } ]
-      ["Healthy", _data[0], "silver"]
-      ["Diabetic", _data[1], "brown"]
-    ])
 
-    view = new google.visualization.DataView(data)
-    view.setColumns([0, 1,
-                      {
-                        calc: "stringify",
-                        sourceColumn: 1,
-                        type: "string",
-                        role: "annotation"
-                      },
-                      2])
+  $('#graph-selection').change ->
+    window.graphType = $(this).val()
+    drawCharts()
 
-    options = {
-      title: "Sandrats in population",
-      width: 300,
-      height: 300,
-      bar: {groupWidth: "95%"},
-      legend: { position: "none" },
-    }
-    chart = new google.visualization.ColumnChart(document.getElementById("field-chart"))
+  $('#graph-selection-2').change ->
+    window.graph2Type = $(this).val()
+    drawCharts()
+
+
+  $('#graph-location-selection').change ->
+    window.graph1Location = $(this).val()
+    drawCharts()
+
+  $('#graph-location-selection-2').change ->
+    window.graph2Location = $(this).val()
+    drawCharts()
+
+window.graphType = "diabetic"
+window.graph1Location = "all"
+
+window.graph2Type = "diabetic"
+window.graph2Location = "nw"
+
+drawCharts = ->
+  drawChart(1)
+  if not model.isFieldModel
+    drawChart(2)
+
+drawChart = (chartN)->
+    if not model.isSetUp then return
+
+    _data = model.countRats(chartN)
+
+    graphType = if chartN is 1 then window.graphType else window.graph2Type
+
+    if graphType is "diabetic"
+      data = google.visualization.arrayToDataTable([
+        ["Type", "Number of rats", { role: "style" } ]
+        ["Healthy", _data.healthy, "silver"]
+        ["Diabetic", _data.diabetic, "brown"]
+      ])
+
+      view = new google.visualization.DataView(data)
+      view.setColumns([0, 1,
+                        {
+                          calc: "stringify",
+                          sourceColumn: 1,
+                          type: "string",
+                          role: "annotation"
+                        },
+                        2])
+
+      options = {
+        title: "Sandrats in population",
+        width: 300,
+        height: 260,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      }
+    else if graphType is "weight"
+      transformedData = {
+        "< 150":   {count: (_data[130] or 0) + (_data[140] or 0), color: "blue"}
+        "150-159": {count: (_data[150]) or 0, color: "blue"}
+        "160-169": {count: (_data[160]) or 0, color: "blue"}
+        "170-179": {count: (_data[170]) or 0, color: "#df7c00"}
+        "180-189": {count: (_data[180]) or 0, color: "#df7c00"}
+        "> 190":   {count: (_data[190] or 0) + (_data[200] or 0) + (_data[210] or 0) + (_data[220] or 0) + (_data[230] or 0), color: "#df7c00"}
+      }
+
+      chartData = [
+        ["Type", "Number of rats", { role: "style" } ]
+      ]
+      for key of transformedData
+        chartData.push [key, transformedData[key].count, transformedData[key].color]
+
+      data = google.visualization.arrayToDataTable(chartData)
+
+      view = new google.visualization.DataView(data)
+      view.setColumns([0, 1,
+                        {
+                          calc: "stringify",
+                          sourceColumn: 1,
+                          type: "string",
+                          role: "annotation"
+                        },
+                        2])
+
+      options = {
+        title: "Weight of sandrats (g)",
+        width: 350,
+        height: 260,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      }
+
+
+    id = if chartN is 1 then "field-chart" else "field-chart-2"
+    chart = new google.visualization.ColumnChart(document.getElementById(id))
     chart.draw(view, options)
 
 
-google.load('visualization', '1', {packages: ['corechart', 'bar'], callback: drawChart})
+google.load('visualization', '1', {packages: ['corechart', 'bar'], callback: drawCharts})
