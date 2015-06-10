@@ -51,11 +51,15 @@
       })(this));
       Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
         return function() {
+          _this.countRatsInAreas();
           return drawCharts();
         };
       })(this));
       return Events.addEventListener(Environment.EVENTS.AGENT_ADDED, (function(_this) {
-        return function() {
+        return function(evt) {
+          if (evt.detail.agent.species === chowSpecies) {
+            return;
+          }
           return drawCharts();
         };
       })(this));
@@ -71,6 +75,97 @@
         }
       }
       return set;
+    },
+    countRatsInAreas: function() {
+      var a;
+      if (this.isFieldModel) {
+        return this.count_all = ((function() {
+          var j, len, ref, results;
+          ref = this.env.agentsWithin({
+            x: 0,
+            y: 0,
+            width: 1000,
+            height: 700
+          });
+          results = [];
+          for (j = 0, len = ref.length; j < len; j++) {
+            a = ref[j];
+            if (a.species === sandratSpecies) {
+              results.push(a);
+            }
+          }
+          return results;
+        }).call(this)).length;
+      } else {
+        this.count_s = ((function() {
+          var j, len, ref, results;
+          ref = this.env.agentsWithin({
+            x: 0,
+            y: 350,
+            width: 1000,
+            height: 350
+          });
+          results = [];
+          for (j = 0, len = ref.length; j < len; j++) {
+            a = ref[j];
+            if (a.species === sandratSpecies) {
+              results.push(a);
+            }
+          }
+          return results;
+        }).call(this)).length;
+        this.count_nw = ((function() {
+          var j, len, ref, results;
+          ref = this.env.agentsWithin({
+            x: 0,
+            y: 0,
+            width: 330,
+            height: 350
+          });
+          results = [];
+          for (j = 0, len = ref.length; j < len; j++) {
+            a = ref[j];
+            if (a.species === sandratSpecies) {
+              results.push(a);
+            }
+          }
+          return results;
+        }).call(this)).length;
+        this.count_n = ((function() {
+          var j, len, ref, results;
+          ref = this.env.agentsWithin({
+            x: 330,
+            y: 0,
+            width: 330,
+            height: 350
+          });
+          results = [];
+          for (j = 0, len = ref.length; j < len; j++) {
+            a = ref[j];
+            if (a.species === sandratSpecies) {
+              results.push(a);
+            }
+          }
+          return results;
+        }).call(this)).length;
+        return this.count_ne = ((function() {
+          var j, len, ref, results;
+          ref = this.env.agentsWithin({
+            x: 660,
+            y: 0,
+            width: 330,
+            height: 350
+          });
+          results = [];
+          for (j = 0, len = ref.length; j < len; j++) {
+            a = ref[j];
+            if (a.species === sandratSpecies) {
+              results.push(a);
+            }
+          }
+          return results;
+        }).call(this)).length;
+      }
     },
     countRats: function(chartN) {
       var a, data, graphLoc, graphType, j, k, len, len1, loc, rats, weight;
@@ -163,6 +258,12 @@
       for (i = l = 0, ref = startingRats; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
         this.addRat();
       }
+      $('#chow, #chow-s, #chow-nw, #chow-n, #chow-ne').attr('checked', false);
+      this.count_all = 0;
+      this.count_s = 0;
+      this.count_nw = 0;
+      this.count_n = 0;
+      this.count_ne = 0;
       return drawCharts();
     },
     addRat: function() {
@@ -321,12 +422,32 @@
   };
 
   drawChart = function(chartN) {
-    var _data, chart, chartData, data, graphType, id, key, options, transformedData, view;
+    var _data, chart, chartData, data, graphLoc, graphType, id, key, max, options, transformedData, view;
     if (!model.isSetUp) {
       return;
     }
     _data = model.countRats(chartN);
     graphType = chartN === 1 ? window.graphType : window.graph2Type;
+    graphLoc = chartN === 1 ? window.graph1Location : window.graph2Location;
+    max = graphLoc === "all" ? 60 : graphLoc === "s" ? 40 : 20;
+    options = {
+      title: "Sandrats in population",
+      width: 300,
+      height: 260,
+      bar: {
+        groupWidth: "95%"
+      },
+      legend: {
+        position: "none"
+      },
+      vAxis: {
+        viewWindowMode: 'explicit',
+        viewWindow: {
+          max: max,
+          min: 0
+        }
+      }
+    };
     if (graphType === "diabetic") {
       data = google.visualization.arrayToDataTable([
         [
@@ -344,17 +465,6 @@
           role: "annotation"
         }, 2
       ]);
-      options = {
-        title: "Sandrats in population",
-        width: 300,
-        height: 260,
-        bar: {
-          groupWidth: "95%"
-        },
-        legend: {
-          position: "none"
-        }
-      };
     } else if (graphType === "weight") {
       transformedData = {
         "< 150": {
@@ -402,17 +512,7 @@
           role: "annotation"
         }, 2
       ]);
-      options = {
-        title: "Weight of sandrats (g)",
-        width: 350,
-        height: 260,
-        bar: {
-          groupWidth: "95%"
-        },
-        legend: {
-          position: "none"
-        }
-      };
+      options.title = "Weight of sandrats (g)";
     }
     id = chartN === 1 ? "field-chart" : "field-chart-2";
     chart = new google.visualization.ColumnChart(document.getElementById(id));

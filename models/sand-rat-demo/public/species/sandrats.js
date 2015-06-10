@@ -26,15 +26,36 @@
       SandRat.prototype.moveCount = 0;
 
       SandRat.prototype.step = function() {
+        var overcrowded;
         this.wander();
         this._incrementAge();
         if (this.get('age') > this.species.defs.MATURITY_AGE) {
           this.set('current behavior', BasicAnimal.BEHAVIOR.MATING);
         }
-        if (this.get('age') > 170 && this.get('sex') === 'male' && this._timeLastMated < 0) {
+        overcrowded = false;
+        if (!this._isInPensModel) {
+          overcrowded = model.count_all > 46;
+        } else {
+          if (this._y > 350) {
+            overcrowded = model.count_s > 36;
+          } else if (this._x < 330) {
+            overcrowded = model.count_nw > 17;
+          } else if (this._x < 660) {
+            overcrowded = model.count_n > 17;
+          } else {
+            overcrowded = model.count_ne > 17;
+          }
+        }
+        if (!overcrowded && this.get('age') > 170 && this.get('sex') === 'male' && this._timeLastMated < 0 && Math.random() < 0.3) {
           this.mate();
         }
         if (this.get('age') > 180 && this._timeLastMated > 0) {
+          this.die();
+        }
+        if (overcrowded && this.get('age') > 250 && Math.random() < 0.2) {
+          this.die();
+        }
+        if (this.get('age') > 400 && Math.random() < 0.2) {
           return this.die();
         }
       };
@@ -42,11 +63,12 @@
       SandRat.prototype.makeNewborn = function() {
         var sex;
         SandRat.__super__.makeNewborn.call(this);
-        sex = model.env.agents.length && model.env.agents[model.env.agents.length - 1].get("sex") === "female" ? "male" : "female";
+        sex = model.env.agents.length && model.env.agents[model.env.agents.length - 1].species.speciesName === "sandrats" && model.env.agents[model.env.agents.length - 1].get("sex") === "female" ? "male" : "female";
         this.set('sex', sex);
         this.set('age', Math.floor(Math.random() * 80));
         this.set('weight', 140 + Math.floor(Math.random() * 20));
-        return this.set('has diabetes', false);
+        this.set('has diabetes', false);
+        return this._isInPensModel = model.env.barriers.length > 0;
       };
 
       SandRat.prototype.mate = function() {

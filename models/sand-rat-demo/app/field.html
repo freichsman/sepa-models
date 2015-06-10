@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Grade 3 Module 5 Lesson 2: Animal survival in their environment</title>
+    <title>Sand Rats Field Model</title>
     <link rel="stylesheet" href="css/vendor.css">
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/widgets.css">
@@ -20,7 +20,12 @@
       .agent-property {
         clear: both;
       }
-
+      #environment .toolbar .button div.carry-tool {
+        background-image: url("data:image/gif;base64,R0lGODlhHQAgAPcAAAAAAP///wMDAgICAAQCAAMCAAIBAAMCARMMBAYDAgwJBQUDAgUEAxQLAxEKAxYOBhYMAxYOBxYNBxIMBxoRCxEMCBYRDBcSDgUCAAcDAQwGAhEJAxcOBxwSCxwTDBoSDCYbEwwJBxAMCQ4GABcQCQwIBQcEAxALBxkRDCQaEiIYES4iGaVxVJ5tUZpsTyIZEqRxVJxsUZtsUJZpTpdrTygdFi8jGjoqIDQnHSkfFzwtIjcpHyIaFBcTEBoSDaBuUpZpTiwfF6VxVKRwVJ1sUY9lS5ZpT5FmTY9lTI5lS41kS4xjSoNeRoNeRo5lTItjSoliSohhSYdgSYZfSH1ZRHxZQ3dVQYReR4RfR4FdRn1aRX1ZRHxZRHhXQXVUQXlXQnZVQXFSPm9QPW1PPGdKOTcoHy8iGmxOPGRJN2NHN19GNUEvJDsrITgpH2dLOl5ENFlBMllBMj0tIllBMlQ9L086LUg1KUUyJzcpH19GNl1ENFQ+MD8uJEIxJjUoHykfGEExJzcpICogGikdFmFGNlQ9L0c0KFpBM0o1KVY/MUIwJllBNDAkHC4iHAsDAAQCAAIBAAQDAgUDAwUCAAgCAAMBAAcEAwkCAAMBAAQBAAcBAAkAAAcAAAQAAAMAAAMAAAIAAAIAAAEAAAIBAQICAv///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAKUALAAAAAAdACAAAAj/AEsJHEiwoMFSAAAcXLgwIQBRFj4xnOgQQIlGeYoMqaNw4kCHkz4w2sOEBQwWLIa0mNCR4SgAPPRsATIEZUoYMIYMEeKl5cFQProMyXkSp0mcOk+yMbAQUpAlQ1EOrYn0JNUZDnwKlESBTYcYNocSTZqTahqtCDtwmlNUp1iqSN2y+LOgYEJCLGSY3JtTqsmpOM9I/AhA0ZA2OPzq/Htz7JAxgwUCoESkEIA3SBvjPCmVapwMBE3cgOLpzt6Ui29SjcpCUCSCmNyU4fDDRRsue2uKRcl5iAwMBUEd2hSHRZ9QWlD/3VwzJYtFWjUMauAiiSdDu62WPcqihQKtIgCY5NnYaQnSH1W+/ODtfAggtAh1wIjgh7cVFAlt2PwLBj7CQEsAcEZNTmjQEQBkGDXEFCMw0NAFaHiiREp8DDAQAYjchIQHCUz0yQoP7ASDBC1d9lcOTE1kCQAp5HREZD1AoNcQc/hnlwo5YSHKR3DgFAUmNhIEAAk1NdFRBSDU9MMLQRbkCBEwRBGKQJ5oUZMcO3ok5BUsGFFAQj0OkUiTBomiBk4nALBDSmEAIICWBYWwAk41XELDEFRoQuZBAGTBgh0ASPHEBm/CadAja7AgBgAIdJKloWXSgccBpEDKkACVZGJpQAA7");
+        background-size: 39px;
+        background-position-x: 5px;
+        background-position-y: 5px;
+      }
     </style>
     <script src="js/vendor2.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.2/d3.min.js"></script>
@@ -36,16 +41,16 @@
     <div id="environment" style="float: left"></div>
     <div id="controls">
       <input type="checkbox" id="chow" value="prone"> Feed sugary chow<br>
-      <div style="border: 1px solid #EEE; padding: 4px; margin: 6px;">
-        <input type="checkbox" id="view-sex-check" value="prone"> Show male and female<br>
-        <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes propensity<br>
-        <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes<br>
+      <div style="border: 1px solid #EEE; padding: 4px; margin: 6px; background-color: #DDD; margin-left: 20px;">
+        <input type="checkbox" id="view-sex-check" value="prone"> Show females and males <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/female-stack.png"> <img style="position: absolute; width: 19px;" src="images/agents/male-stack.png"><br>
+        <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes propensity <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/prone-stack.png"><br>
+        <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/diabetic-stack.png"><br>
       </div>
     </div>
     <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 110px">
       <div id="field-chart"></div>
     </div>
-    <div style="position: absolute; left: 1234px; width: 300px; top: 410px">
+    <div style="position: absolute; left: 1234px; width: 300px; top: 363px">
       <select id="graph-selection">
         <option value="diabetic">Show diabetic rats</option>
         <option value="weight">Show weight of rats</option>

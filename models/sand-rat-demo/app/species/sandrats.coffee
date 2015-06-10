@@ -21,10 +21,33 @@ require.register "species/sandrats", (exports, require, module) ->
       if @get('age') > @species.defs.MATURITY_AGE
         @set 'current behavior', BasicAnimal.BEHAVIOR.MATING
 
-      if @get('age') > 170 and @get('sex') is 'male' and @_timeLastMated < 0
+      overcrowded = false
+      if not @_isInPensModel
+        overcrowded = model.count_all > 46
+      else
+        if @_y > 350
+          overcrowded = model.count_s > 36
+        else if @_x < 330
+          overcrowded = model.count_nw > 17
+        else if @_x < 660
+          overcrowded = model.count_n > 17
+        else
+          overcrowded = model.count_ne > 17
+
+      # mate if it's not overcrowded
+      if not overcrowded and @get('age') > 170 and @get('sex') is 'male' and @_timeLastMated < 0 and Math.random() < 0.3
         @mate()
 
+      # die soon after if you've mated
       if @get('age') > 180 and @_timeLastMated > 0
+        @die()
+
+      # die when you're fairly old if it's overcrowded
+      if overcrowded and @get('age') > 250 and Math.random() < 0.2
+        @die()
+
+      # die if you're very old
+      if @get('age') > 400 and Math.random() < 0.2
         @die()
 
     makeNewborn: ->
@@ -32,12 +55,15 @@ require.register "species/sandrats", (exports, require, module) ->
 
       #so ugly
       sex = if model.env.agents.length and
+        model.env.agents[model.env.agents.length-1].species.speciesName is "sandrats" and
         model.env.agents[model.env.agents.length-1].get("sex") is "female" then "male" else "female"
 
       @set 'sex', sex
       @set('age', Math.floor Math.random() * 80)
       @set('weight', 140 +  Math.floor Math.random() * 20)
       @set('has diabetes', false)
+
+      @_isInPensModel = model.env.barriers.length > 0
 
     #copy mate so we set timeLastMated on males as well...
     mate: ->

@@ -39,9 +39,11 @@ window.model =
       @setupEnvironment()
 
     Events.addEventListener Environment.EVENTS.STEP, =>
+      @countRatsInAreas()
       drawCharts()
 
-    Events.addEventListener Environment.EVENTS.AGENT_ADDED, =>
+    Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) =>
+      return if evt.detail.agent.species is chowSpecies
       drawCharts()
 
   agentsOfSpecies: (species)->
@@ -49,6 +51,15 @@ window.model =
     for a in @env.agents
       set.push a if a.species is species
     return set
+
+  countRatsInAreas: ->
+    if @isFieldModel
+      @count_all = (a for a in @env.agentsWithin({x: 0, y: 0, width: 1000, height: 700})   when a.species is sandratSpecies).length
+    else
+      @count_s   = (a for a in @env.agentsWithin({x: 0, y: 350, width: 1000, height: 350}) when a.species is sandratSpecies).length
+      @count_nw  = (a for a in @env.agentsWithin({x: 0, y: 0, width: 330, height: 350})    when a.species is sandratSpecies).length
+      @count_n   = (a for a in @env.agentsWithin({x: 330, y: 0, width: 330, height: 350})  when a.species is sandratSpecies).length
+      @count_ne  = (a for a in @env.agentsWithin({x: 660, y: 0, width: 330, height: 350})  when a.species is sandratSpecies).length
 
   countRats: (chartN) ->
     data = {}
@@ -90,6 +101,14 @@ window.model =
 
     for i in [0...startingRats]
       @addRat()
+
+    $('#chow, #chow-s, #chow-nw, #chow-n, #chow-ne').attr('checked', false);
+
+    @count_all = 0
+    @count_s   = 0
+    @count_nw  = 0
+    @count_n   = 0
+    @count_ne  = 0
 
 
     drawCharts()
@@ -211,6 +230,24 @@ drawChart = (chartN)->
     _data = model.countRats(chartN)
 
     graphType = if chartN is 1 then window.graphType else window.graph2Type
+    graphLoc = if chartN is 1 then window.graph1Location else window.graph2Location
+
+    max = if graphLoc is "all" then 60 else if graphLoc is "s" then 40 else 20
+
+    options = {
+      title: "Sandrats in population",
+      width: 300,
+      height: 260,
+      bar: {groupWidth: "95%"},
+      legend: { position: "none" },
+      vAxis: {
+        viewWindowMode:'explicit',
+        viewWindow:{
+          max:max,
+          min:0
+        }
+      }
+    }
 
     if graphType is "diabetic"
       data = google.visualization.arrayToDataTable([
@@ -229,13 +266,6 @@ drawChart = (chartN)->
                         },
                         2])
 
-      options = {
-        title: "Sandrats in population",
-        width: 300,
-        height: 260,
-        bar: {groupWidth: "95%"},
-        legend: { position: "none" },
-      }
     else if graphType is "weight"
       transformedData = {
         "< 150":   {count: (_data[130] or 0) + (_data[140] or 0), color: "blue"}
@@ -264,13 +294,7 @@ drawChart = (chartN)->
                         },
                         2])
 
-      options = {
-        title: "Weight of sandrats (g)",
-        width: 350,
-        height: 260,
-        bar: {groupWidth: "95%"},
-        legend: { position: "none" },
-      }
+      options.title = "Weight of sandrats (g)"
 
 
     id = if chartN is 1 then "field-chart" else "field-chart-2"
