@@ -100,7 +100,7 @@ require.register "species/sandrats", (exports, require, module) ->
       new Trait {name: 'max offspring',   default:  3 }
       new Trait {name: 'min offspring',   default:  2 }
       new Trait {name: 'weight',   min:  140, max: 160 }
-      new Trait {name: 'prone to diabetes', possibleValues: ['a:DR,b:DR','a:dp,b:DR','a:DR,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp'], isGenetic: true, isNumeric: false }
+      new Trait {name: 'prone to diabetes', possibleValues: ['a:DR,b:DR','a:dp,b:DR','a:DR,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp'], isGenetic: true, isNumeric: false }
       new Trait {name: 'has diabetes', default:  false }
     ]
     imageProperties:

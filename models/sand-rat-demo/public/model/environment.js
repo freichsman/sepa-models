@@ -16,7 +16,7 @@
 
   env.addRule(new Rule({
     test: function(agent) {
-      return agent.species.speciesName === "sandrats" && agent.get('chow') && agent.get('weight') < 220 && Math.random() < 0.15;
+      return agent.species.speciesName === "sandrats" && agent.get('chow') && agent.get('weight') < 220 && Math.random() < 0.16;
     },
     action: function(agent) {
       return agent.set('weight', agent.get('weight') + Math.floor(Math.random() * 5));
@@ -25,7 +25,7 @@
 
   env.addRule(new Rule({
     test: function(agent) {
-      return agent.species.speciesName === "sandrats" && agent.get('chow') !== true && agent.get('weight') > 155 && Math.random() < 0.15;
+      return agent.species.speciesName === "sandrats" && agent.get('chow') !== true && agent.get('weight') > 155 && Math.random() < 0.16;
     },
     action: function(agent) {
       return agent.set('weight', agent.get('weight') - Math.floor(Math.random() * 5));

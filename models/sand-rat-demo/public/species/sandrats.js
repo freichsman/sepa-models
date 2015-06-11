@@ -129,7 +129,7 @@
           max: 160
         }), new Trait({
           name: 'prone to diabetes',
-          possibleValues: ['a:DR,b:DR', 'a:dp,b:DR', 'a:DR,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp'],
+          possibleValues: ['a:DR,b:DR', 'a:dp,b:DR', 'a:DR,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp', 'a:dp,b:dp'],
           isGenetic: true,
           isNumeric: false
         }), new Trait({

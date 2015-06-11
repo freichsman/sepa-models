@@ -14,7 +14,7 @@ env.addRule new Rule
     return agent.species.speciesName is "sandrats" and
             agent.get('chow') and
             agent.get('weight') < 220 and
-            Math.random() < 0.15
+            Math.random() < 0.16
   action: (agent) ->
     agent.set 'weight', agent.get('weight') + Math.floor(Math.random() * 5)
 
@@ -24,7 +24,7 @@ env.addRule new Rule
     return agent.species.speciesName is "sandrats" and
             agent.get('chow') isnt true and
             agent.get('weight') > 155 and
-            Math.random() < 0.15
+            Math.random() < 0.16
   action: (agent) ->
     agent.set 'weight', agent.get('weight') - Math.floor(Math.random() * 5)
 
