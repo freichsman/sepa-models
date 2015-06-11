@@ -270,6 +270,7 @@
       var rat, top;
       top = this.isFieldModel ? 0 : 350;
       rat = sandratSpecies.createAgent();
+      rat.set('age', 20 + (Math.floor(Math.random() * 40)));
       rat.setLocation(env.randomLocationWithin(0, top, 1000, 700, true));
       return this.env.addAgent(rat);
     },
@@ -355,8 +356,12 @@
 
   $(function() {
     model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
+    model.isLifespanModel = /[^\/]*html/.exec(document.location.href) && /[^\/]*html/.exec(document.location.href)[0] === "lifespan.html";
     if (!model.isFieldModel) {
       window.graph1Location = "s";
+    }
+    if (model.isLifespanModel) {
+      startingRats = 10;
     }
     helpers.preload([model, env, sandratSpecies], function() {
       return model.run();
