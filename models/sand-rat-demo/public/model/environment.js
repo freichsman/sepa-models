@@ -7,7 +7,7 @@
   Rule = require('models/rule');
 
   env = new Environment({
-    columns: 100,
+    columns: 60,
     rows: 70,
     imgPath: "images/environments/field.png",
     wrapEastWest: false,
