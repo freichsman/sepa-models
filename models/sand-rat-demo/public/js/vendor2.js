@@ -111,7 +111,7 @@
 })();
 !function() {
   var d3 = {
-    version: "3.5.5"
+    version: "3.5.6"
   };
   var d3_arraySlice = [].slice, d3_array = function(list) {
     return d3_arraySlice.call(list);
@@ -1574,8 +1574,7 @@
     function zoomended(dispatch) {
       if (!--zooming) dispatch({
         type: "zoomend"
-      });
-      center0 = null;
+      }), center0 = null;
     }
     function mousedowned() {
       var that = this, target = d3.event.target, dispatch = event.of(that, arguments), dragged = 0, subject = d3.select(d3_window(that)).on(mousemove, moved).on(mouseup, ended), location0 = location(d3.mouse(that)), dragRestore = d3_event_dragSuppress(that);
@@ -1664,8 +1663,8 @@
     }
     function mousewheeled() {
       var dispatch = event.of(this, arguments);
-      if (mousewheelTimer) clearTimeout(mousewheelTimer); else translate0 = location(center0 = center || d3.mouse(this)), 
-      d3_selection_interrupt.call(this), zoomstarted(dispatch);
+      if (mousewheelTimer) clearTimeout(mousewheelTimer); else d3_selection_interrupt.call(this), 
+      translate0 = location(center0 = center || d3.mouse(this)), zoomstarted(dispatch);
       mousewheelTimer = setTimeout(function() {
         mousewheelTimer = null;
         zoomended(dispatch);
@@ -1810,8 +1809,9 @@
     return v < 16 ? "0" + Math.max(0, v).toString(16) : Math.min(255, v).toString(16);
   }
   function d3_rgb_parse(format, rgb, hsl) {
+    format = format.toLowerCase();
     var r = 0, g = 0, b = 0, m1, m2, color;
-    m1 = /([a-z]+)\((.*)\)/i.exec(format);
+    m1 = /([a-z]+)\((.*)\)/.exec(format);
     if (m1) {
       m2 = m1[2].split(",");
       switch (m1[1]) {
@@ -1826,7 +1826,7 @@
         }
       }
     }
-    if (color = d3_rgb_names.get(format.toLowerCase())) {
+    if (color = d3_rgb_names.get(format)) {
       return rgb(color.r, color.g, color.b);
     }
     if (format != null && format.charAt(0) === "#" && !isNaN(color = parseInt(format.slice(1), 16))) {
@@ -5896,7 +5896,7 @@
   }
   d3.interpolators = [ function(a, b) {
     var t = typeof b;
-    return (t === "string" ? d3_rgb_names.has(b) || /^(#|rgb\(|hsl\()/.test(b) ? d3_interpolateRgb : d3_interpolateString : b instanceof d3_color ? d3_interpolateRgb : Array.isArray(b) ? d3_interpolateArray : t === "object" && isNaN(b) ? d3_interpolateObject : d3_interpolateNumber)(a, b);
+    return (t === "string" ? d3_rgb_names.has(b.toLowerCase()) || /^(#|rgb\(|hsl\()/i.test(b) ? d3_interpolateRgb : d3_interpolateString : b instanceof d3_color ? d3_interpolateRgb : Array.isArray(b) ? d3_interpolateArray : t === "object" && isNaN(b) ? d3_interpolateObject : d3_interpolateNumber)(a, b);
   } ];
   d3.interpolateArray = d3_interpolateArray;
   function d3_interpolateArray(a, b) {
@@ -46729,7 +46729,7 @@ module.exports = {
         e: "e"
       }
     }
-
+  
     and an object of options
     options = {
       a: "A",
@@ -46738,10 +46738,10 @@ module.exports = {
         f: "F"
       }
     }
-
+  
     this will set defaults for any undefined values, included those
     in nested objects:
-
+  
     setDefaults(options, defaultOptions) = {
       a: "A",
       b: "b",
@@ -46967,8 +46967,6 @@ module.exports = Agent = (function() {
     var val;
     if (this.hasProp(prop)) {
       val = this._props[prop];
-    } else if (prop == "genome" && this.organism.alleles) {
-      val = this.organism.alleles;
     } else {
       val = this.getEnvironmentProperty(prop);
     }
@@ -47035,9 +47033,9 @@ module.exports = Agent = (function() {
   /*
     Creates one or more offspring, depending on the min- and max- offspring
     properties, and places them in the environment.
-
+  
     Returns the array of offspring.
-
+  
     Only asexual for now
   */
 
@@ -47434,7 +47432,7 @@ module.exports = BasicAnimal = (function(_super) {
       if (nearest.distanceSq < Math.pow(this.get('mating distance'), 2) && ((this.species.defs.CHANCE_OF_MATING == null) || Math.random() < this.species.defs.CHANCE_OF_MATING)) {
         max = this.get('max offspring');
         this.set('max offspring', Math.max(max / 2, 1));
-        this.reproduce(nearest.agent);
+        this.reproduce(nearest);
         this.set('max offspring', max);
         return this._timeLastMated = this.environment.date;
       }
@@ -49086,7 +49084,7 @@ module.exports = StateMachine = (function() {
 
   /*
     Add a named state with a set of event handlers.
-
+  
     e.g.
       addState "addingAgents",
         enter: ->
@@ -50211,8 +50209,6 @@ module.exports = AgentView = (function() {
         sprite = this._createOrUpdateSprite(layer.selectedImage);
         this._sprites[layer.name] = sprite;
         this._container.addChildAt(sprite, i);
-      } else if (layer.selectedImage.render !== null && layer.rules.length > 1) {
-        this._createOrUpdateSprite(layer.selectedImage, this._sprites[layer.name]);
       } else if ((layer.selectedImage.path != null) && layer.selectedImage.path !== this._sprites[layer.name].texture.baseTexture.source.src) {
         this._createOrUpdateSprite(layer.selectedImage, this._sprites[layer.name]);
       } else if (this._sprites[layer.name] instanceof PIXI.AnimatedSprite) {
@@ -50712,7 +50708,6 @@ module.exports = EnvironmentView = (function() {
 
 ;
 //# sourceMappingURL=app.js.map
-
 ;(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jade = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
@@ -50895,12 +50890,21 @@ exports.attrs = function attrs(obj, terse){
  * @api private
  */
 
-exports.escape = function escape(html){
-  var result = String(html)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+var jade_encode_html_rules = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;'
+};
+var jade_match_html = /[&<>"]/g;
+
+function jade_encode_char(c) {
+  return jade_encode_html_rules[c] || c;
+}
+
+exports.escape = jade_escape;
+function jade_escape(html){
+  var result = String(html).replace(jade_match_html, jade_encode_char);
   if (result === '' + html) return html;
   else return result;
 };
