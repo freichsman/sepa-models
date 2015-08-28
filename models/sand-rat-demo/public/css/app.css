@@ -1,0 +1,17 @@
+.time-limit-dialog {
+  display: none;
+  position: absolute;
+  top: 120px;
+  left: 368px;  /* 18px padding + half the env width (600/2) - half the dialog width (300/2)  */
+  width: 300px;
+  background-color: rgb(200,200,255);
+  box-shadow: 10px 10px 15px #222222;
+  text-align: center;
+  padding-bottom: 2em;
+  border-radius: 10px;
+  border: 2px solid rgb(100,100,155);
+}
+
+.time-limit-dialog.narrow {
+  left: 168px;  /* 18px padding + half the env width (600/2) - half the dialog width (300/2)  */
+}

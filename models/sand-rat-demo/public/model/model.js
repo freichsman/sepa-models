@@ -47,7 +47,8 @@
       this.stopDate = 0;
       Events.addEventListener(Environment.EVENTS.RESET, (function(_this) {
         return function() {
-          return _this.setupEnvironment();
+          _this.setupEnvironment();
+          return $('.time-limit-dialog').fadeOut(300);
         };
       })(this));
       Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
@@ -55,7 +56,8 @@
           _this.countRatsInAreas();
           drawCharts();
           if (_this.stopDate > 0 && _this.env.date > _this.stopDate) {
-            return _this.env.stop();
+            _this.env.stop();
+            return _this._timesUp();
           }
         };
       })(this));
@@ -318,6 +320,9 @@
     },
     setStopDate: function(date) {
       return this.stopDate = date;
+    },
+    _timesUp: function() {
+      return $('.time-limit-dialog').fadeIn(300);
     }
   };
 

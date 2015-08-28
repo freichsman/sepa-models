@@ -38,12 +38,14 @@ window.model =
 
     Events.addEventListener Environment.EVENTS.RESET, =>
       @setupEnvironment()
+      $('.time-limit-dialog').fadeOut(300)
 
     Events.addEventListener Environment.EVENTS.STEP, =>
       @countRatsInAreas()
       drawCharts()
       if @stopDate > 0 and @env.date > @stopDate
         @env.stop()
+        @_timesUp()
 
     Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) ->
       return if evt.detail.agent.species is chowSpecies
@@ -157,6 +159,9 @@ window.model =
 
   setStopDate: (date)->
     @stopDate = date
+
+  _timesUp: ->
+    $('.time-limit-dialog').fadeIn(300)
 
 
 $ ->
