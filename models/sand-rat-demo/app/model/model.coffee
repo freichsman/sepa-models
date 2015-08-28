@@ -34,6 +34,7 @@ window.model =
 
     @setupEnvironment()
     @isSetUp = true
+    @stopDate = 0
 
     Events.addEventListener Environment.EVENTS.RESET, =>
       @setupEnvironment()
@@ -41,6 +42,8 @@ window.model =
     Events.addEventListener Environment.EVENTS.STEP, =>
       @countRatsInAreas()
       drawCharts()
+      if @stopDate > 0 and @env.date > @stopDate
+        @env.stop()
 
     Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) ->
       return if evt.detail.agent.species is chowSpecies
@@ -152,6 +155,9 @@ window.model =
     else
       @removeChow(0, 350, 1000, 350)
 
+  setStopDate: (date)->
+    @stopDate = date
+
 
 $ ->
   model.isFieldModel = !/[^\/]*html/.exec(document.location.href) or /[^\/]*html/.exec(document.location.href)[0] == "field.html"
@@ -184,6 +190,9 @@ $ ->
     model.setNEChow $(this).is(':checked')
   $('#chow-s').change ->
     model.setSChow $(this).is(':checked')
+
+  $('#time-limit').change ->
+    model.setStopDate $(this).val()*(1000/model.env._runLoopDelay)
 
 
   $('#graph-selection').change ->

@@ -54,9 +54,21 @@
         <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes propensity <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/prone-stack.png"><br>
         <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/diabetic-stack.png"><br>
       </div>
+
+      <div>
+        Stop after:
+        <select id="time-limit">
+          <option value="0" selected>Never</option>
+          <option value="10">10 seconds</option>
+          <option value="30">30 seconds</option>
+          <option value="60">1 minute</option>
+          <option value="300">5 minutes</option>
+          <option value="600">10 minutes</option>
+        </select>
+      </div>
     </div>
 
-    <div style="position: absolute; left: 1100px; width: 300px; top: 163px">
+    <div style="position: absolute; left: 1100px; width: 300px; top: 183px">
       Chart rats in the
       <select id="graph-location-selection">
         <option value="s">Bottom field</option>
@@ -64,17 +76,17 @@
         <option value="ne">Right pen</option>
       </select>
     </div>
-    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 182px">
+    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 202px">
       <div id="field-chart"></div>
     </div>
-    <div style="position: absolute; left: 1234px; width: 300px; top: 425px">
+    <div style="position: absolute; left: 1234px; width: 300px; top: 445px">
       <select id="graph-selection">
         <option value="diabetic">Show diabetic rats</option>
         <option value="weight">Show weight of rats</option>
       </select>
     </div>
 
-    <div style="position: absolute; left: 1100px; width: 300px; top: 469px">
+    <div style="position: absolute; left: 1100px; width: 300px; top: 489px">
       Chart rats in the
       <select id="graph-location-selection-2">
         <option value="s">Bottom field</option>
@@ -82,10 +94,10 @@
         <option value="ne">Right pen</option>
       </select>
     </div>
-    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 488px">
+    <div id="charts" style="position: absolute; left: 1087px; width: 300px; top: 508px">
       <div id="field-chart-2"></div>
     </div>
-    <div style="position: absolute; left: 1234px; width: 300px; top: 733px">
+    <div style="position: absolute; left: 1234px; width: 300px; top: 753px">
       <select id="graph-selection-2">
         <option value="diabetic">Show diabetic rats</option>
         <option value="weight">Show weight of rats</option>

@@ -44,6 +44,7 @@
       this.env = env;
       this.setupEnvironment();
       this.isSetUp = true;
+      this.stopDate = 0;
       Events.addEventListener(Environment.EVENTS.RESET, (function(_this) {
         return function() {
           return _this.setupEnvironment();
@@ -52,7 +53,10 @@
       Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
         return function() {
           _this.countRatsInAreas();
-          return drawCharts();
+          drawCharts();
+          if (_this.stopDate > 0 && _this.env.date > _this.stopDate) {
+            return _this.env.stop();
+          }
         };
       })(this));
       return Events.addEventListener(Environment.EVENTS.AGENT_ADDED, function(evt) {
@@ -311,6 +315,9 @@
       } else {
         return this.removeChow(0, 350, 1000, 350);
       }
+    },
+    setStopDate: function(date) {
+      return this.stopDate = date;
     }
   };
 
@@ -348,6 +355,9 @@
     });
     $('#chow-s').change(function() {
       return model.setSChow($(this).is(':checked'));
+    });
+    $('#time-limit').change(function() {
+      return model.setStopDate($(this).val() * (1000 / model.env._runLoopDelay));
     });
     $('#graph-selection').change(function() {
       window.graphType = $(this).val();
