@@ -42,7 +42,7 @@ window.model =
       @countRatsInAreas()
       drawCharts()
 
-    Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) =>
+    Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) ->
       return if evt.detail.agent.species is chowSpecies
       drawCharts()
 
@@ -230,81 +230,81 @@ drawCharts = ->
     drawChart(2)
 
 drawChart = (chartN)->
-    if not model.isSetUp then return
+  if not model.isSetUp then return
 
-    _data = model.countRats(chartN)
+  _data = model.countRats(chartN)
 
-    graphType = if chartN is 1 then window.graphType else window.graph2Type
-    graphLoc = if chartN is 1 then window.graph1Location else window.graph2Location
+  graphType = if chartN is 1 then window.graphType else window.graph2Type
+  graphLoc = if chartN is 1 then window.graph1Location else window.graph2Location
 
-    max = if graphLoc is "all" then 60 else if graphLoc is "s" then 40 else 20
+  max = if graphLoc is "all" then 60 else if graphLoc is "s" then 40 else 20
 
-    options = {
-      title: "Sandrats in population",
-      width: 300,
-      height: 260,
-      bar: {groupWidth: "95%"},
-      legend: { position: "none" },
-      vAxis: {
-        viewWindowMode:'explicit',
-        viewWindow:{
-          max:max,
-          min:0
-        }
+  options = {
+    title: "Sandrats in population",
+    width: 300,
+    height: 260,
+    bar: {groupWidth: "95%"},
+    legend: { position: "none" },
+    vAxis: {
+      viewWindowMode:'explicit',
+      viewWindow:{
+        max:max,
+        min:0
       }
     }
+  }
 
-    if graphType is "diabetic"
-      data = google.visualization.arrayToDataTable([
-        ["Type", "Number of rats", { role: "style" } ]
-        ["Non-diabetic", _data.healthy, "silver"]
-        ["Diabetic", _data.diabetic, "brown"]
-      ])
+  if graphType is "diabetic"
+    data = google.visualization.arrayToDataTable([
+      ["Type", "Number of rats", { role: "style" } ]
+      ["Non-diabetic", _data.healthy, "silver"]
+      ["Diabetic", _data.diabetic, "brown"]
+    ])
 
-      view = new google.visualization.DataView(data)
-      view.setColumns([0, 1,
-                        {
-                          calc: "stringify",
-                          sourceColumn: 1,
-                          type: "string",
-                          role: "annotation"
-                        },
-                        2])
+    view = new google.visualization.DataView(data)
+    view.setColumns([0, 1,
+                      {
+                        calc: "stringify",
+                        sourceColumn: 1,
+                        type: "string",
+                        role: "annotation"
+                      },
+                      2])
 
-    else if graphType is "weight"
-      transformedData = {
-        "< 150":   {count: (_data[130] or 0) + (_data[140] or 0), color: "blue"}
-        "150-159": {count: (_data[150]) or 0, color: "blue"}
-        "160-169": {count: (_data[160]) or 0, color: "blue"}
-        "170-179": {count: (_data[170]) or 0, color: "#df7c00"}
-        "180-189": {count: (_data[180]) or 0, color: "#df7c00"}
-        "> 190":   {count: (_data[190] or 0) + (_data[200] or 0) + (_data[210] or 0) + (_data[220] or 0) + (_data[230] or 0), color: "#df7c00"}
-      }
+  else if graphType is "weight"
+    transformedData = {
+      "< 150":   {count: (_data[130] or 0) + (_data[140] or 0), color: "blue"}
+      "150-159": {count: (_data[150]) or 0, color: "blue"}
+      "160-169": {count: (_data[160]) or 0, color: "blue"}
+      "170-179": {count: (_data[170]) or 0, color: "#df7c00"}
+      "180-189": {count: (_data[180]) or 0, color: "#df7c00"}
+      "> 190":   {count: (_data[190] or 0) + (_data[200] or 0) + (_data[210] or 0) + (_data[220] or 0) + (_data[230] or 0), color: "#df7c00"}
+    }
 
-      chartData = [
-        ["Type", "Number of rats", { role: "style" } ]
-      ]
-      for key of transformedData
-        chartData.push [key, transformedData[key].count, transformedData[key].color]
+    chartData = [
+      ["Type", "Number of rats", { role: "style" } ]
+    ]
+    for key of transformedData
+      chartData.push [key, transformedData[key].count, transformedData[key].color]
 
-      data = google.visualization.arrayToDataTable(chartData)
+    data = google.visualization.arrayToDataTable(chartData)
 
-      view = new google.visualization.DataView(data)
-      view.setColumns([0, 1,
-                        {
-                          calc: "stringify",
-                          sourceColumn: 1,
-                          type: "string",
-                          role: "annotation"
-                        },
-                        2])
+    view = new google.visualization.DataView(data)
+    view.setColumns([0, 1,
+                      {
+                        calc: "stringify",
+                        sourceColumn: 1,
+                        type: "string",
+                        role: "annotation"
+                      },
+                      2])
 
-      options.title = "Weight of sandrats (g)"
+    options.title = "Weight of sandrats (g)"
 
 
-    id = if chartN is 1 then "field-chart" else "field-chart-2"
-    chart = new google.visualization.ColumnChart(document.getElementById(id))
-    chart.draw(view, options)
+  id = if chartN is 1 then "field-chart" else "field-chart-2"
+  chart = new google.visualization.ColumnChart(document.getElementById(id))
+  chart.draw(view, options)
 
 
 google.load('visualization', '1', {packages: ['corechart', 'bar'], callback: drawCharts})

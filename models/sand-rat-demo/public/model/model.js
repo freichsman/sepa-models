@@ -55,14 +55,12 @@
           return drawCharts();
         };
       })(this));
-      return Events.addEventListener(Environment.EVENTS.AGENT_ADDED, (function(_this) {
-        return function(evt) {
-          if (evt.detail.agent.species === chowSpecies) {
-            return;
-          }
-          return drawCharts();
-        };
-      })(this));
+      return Events.addEventListener(Environment.EVENTS.AGENT_ADDED, function(evt) {
+        if (evt.detail.agent.species === chowSpecies) {
+          return;
+        }
+        return drawCharts();
+      });
     },
     agentsOfSpecies: function(species) {
       var a, j, len, ref, set;
