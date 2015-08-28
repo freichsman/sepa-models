@@ -12,7 +12,7 @@
     imgPath: "images/environments/field-pens.png",
     wrapEastWest: false,
     wrapNorthSouth: false,
-    barriers: [[0, 330, 1000, 30], [320, 0, 30, 340], [650, 0, 30, 340]]
+    barriers: [[0, 330, 1000, 30], [485, 0, 30, 340]]
   });
 
   env.addRule(new Rule({

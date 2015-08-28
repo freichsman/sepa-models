@@ -8,9 +8,8 @@ env = new Environment
   wrapEastWest: false
   wrapNorthSouth: false
   barriers: [
-    [0, 330, 1000, 30]       # Center
-    [320, 0, 30, 340]        # Left
-    [650, 0, 30, 340]        # Right
+    [0, 330, 1000, 30]       # Center - horizontal
+    [485, 0, 30, 340]        # Center - vertical-top
   ]
 
 # Add weight when eating chow

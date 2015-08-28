@@ -117,24 +117,7 @@
           ref = this.env.agentsWithin({
             x: 0,
             y: 0,
-            width: 330,
-            height: 350
-          });
-          results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            a = ref[j];
-            if (a.species === sandratSpecies) {
-              results.push(a);
-            }
-          }
-          return results;
-        }).call(this)).length;
-        this.count_n = ((function() {
-          var j, len, ref, results;
-          ref = this.env.agentsWithin({
-            x: 330,
-            y: 0,
-            width: 330,
+            width: 500,
             height: 350
           });
           results = [];
@@ -149,9 +132,9 @@
         return this.count_ne = ((function() {
           var j, len, ref, results;
           ref = this.env.agentsWithin({
-            x: 660,
+            x: 500,
             y: 0,
-            width: 330,
+            width: 500,
             height: 350
           });
           results = [];
@@ -186,21 +169,14 @@
         loc = {
           x: 0,
           y: 0,
-          width: 330,
-          height: 350
-        };
-      } else if (graphLoc === "n") {
-        loc = {
-          x: 330,
-          y: 0,
-          width: 330,
+          width: 485,
           height: 350
         };
       } else if (graphLoc === "ne") {
         loc = {
-          x: 660,
+          x: 515,
           y: 0,
-          width: 330,
+          width: 485,
           height: 350
         };
       }
@@ -256,11 +232,10 @@
       for (i = l = 0, ref = startingRats; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
         this.addRat();
       }
-      $('#chow, #chow-s, #chow-nw, #chow-n, #chow-ne').attr('checked', false);
+      $('#chow, #chow-s, #chow-nw, #chow-ne').attr('checked', false);
       this.count_all = 0;
       this.count_s = 0;
       this.count_nw = 0;
-      this.count_n = 0;
       this.count_ne = 0;
       return drawCharts();
     },
@@ -300,41 +275,28 @@
     },
     setNWChow: function(chow) {
       var col, j, k, row;
-      for (col = j = 0; j <= 31; col = ++j) {
+      for (col = j = 0; j <= 50; col = ++j) {
         for (row = k = 0; k <= 33; row = ++k) {
           this.env.set(col, row, "chow", chow);
         }
       }
       if (chow) {
-        return this.addChow(25, 0, 0, 330, 350);
+        return this.addChow(25, 0, 0, 500, 350);
       } else {
-        return this.removeChow(0, 0, 330, 350);
-      }
-    },
-    setNChow: function(chow) {
-      var col, j, k, row;
-      for (col = j = 33; j <= 64; col = ++j) {
-        for (row = k = 0; k <= 33; row = ++k) {
-          this.env.set(col, row, "chow", chow);
-        }
-      }
-      if (chow) {
-        return this.addChow(25, 340, 0, 330, 350);
-      } else {
-        return this.removeChow(340, 0, 330, 350);
+        return this.removeChow(0, 0, 500, 350);
       }
     },
     setNEChow: function(chow) {
       var col, j, k, row;
-      for (col = j = 66; j <= 100; col = ++j) {
+      for (col = j = 50; j <= 100; col = ++j) {
         for (row = k = 0; k <= 33; row = ++k) {
           this.env.set(col, row, "chow", chow);
         }
       }
       if (chow) {
-        return this.addChow(25, 670, 0, 330, 350);
+        return this.addChow(25, 500, 0, 500, 350);
       } else {
-        return this.removeChow(670, 0, 330, 350);
+        return this.removeChow(500, 0, 500, 350);
       }
     },
     setSChow: function(chow) {
@@ -375,15 +337,11 @@
     });
     $('#chow').change(function() {
       model.setNWChow($(this).is(':checked'));
-      model.setNChow($(this).is(':checked'));
       model.setNEChow($(this).is(':checked'));
       return model.setSChow($(this).is(':checked'));
     });
     $('#chow-nw').change(function() {
       return model.setNWChow($(this).is(':checked'));
-    });
-    $('#chow-n').change(function() {
-      return model.setNChow($(this).is(':checked'));
     });
     $('#chow-ne').change(function() {
       return model.setNEChow($(this).is(':checked'));

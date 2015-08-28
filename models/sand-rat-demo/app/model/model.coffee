@@ -57,9 +57,8 @@ window.model =
       @count_all = (a for a in @env.agentsWithin({x: 0, y: 0, width: 1000, height: 700})   when a.species is sandratSpecies).length
     else
       @count_s   = (a for a in @env.agentsWithin({x: 0, y: 350, width: 1000, height: 350}) when a.species is sandratSpecies).length
-      @count_nw  = (a for a in @env.agentsWithin({x: 0, y: 0, width: 330, height: 350})    when a.species is sandratSpecies).length
-      @count_n   = (a for a in @env.agentsWithin({x: 330, y: 0, width: 330, height: 350})  when a.species is sandratSpecies).length
-      @count_ne  = (a for a in @env.agentsWithin({x: 660, y: 0, width: 330, height: 350})  when a.species is sandratSpecies).length
+      @count_nw  = (a for a in @env.agentsWithin({x: 0, y: 0, width: 500, height: 350})    when a.species is sandratSpecies).length
+      @count_ne  = (a for a in @env.agentsWithin({x: 500, y: 0, width: 500, height: 350})  when a.species is sandratSpecies).length
 
   countRats: (chartN) ->
     data = {}
@@ -70,11 +69,9 @@ window.model =
     if graphLoc is "s"
       loc = {x: 0, y: 350, width: 1000, height: 350}
     else if graphLoc is "nw"
-      loc = {x: 0, y: 0, width: 330, height: 350}
-    else if graphLoc is "n"
-      loc = {x: 330, y: 0, width: 330, height: 350}
+      loc = {x: 0, y: 0, width: 485, height: 350}
     else if graphLoc is "ne"
-      loc = {x: 660, y: 0, width: 330, height: 350}
+      loc = {x: 515, y: 0, width: 485, height: 350}
 
     rats = (a for a in @env.agentsWithin(loc) when a.species is sandratSpecies)
 
@@ -102,12 +99,11 @@ window.model =
     for i in [0...startingRats]
       @addRat()
 
-    $('#chow, #chow-s, #chow-nw, #chow-n, #chow-ne').attr('checked', false);
+    $('#chow, #chow-s, #chow-nw, #chow-ne').attr('checked', false)
 
     @count_all = 0
     @count_s   = 0
     @count_nw  = 0
-    @count_n   = 0
     @count_ne  = 0
 
 
@@ -132,29 +128,21 @@ window.model =
     @env.removeDeadAgents()
 
   setNWChow: (chow) ->
-    for col in [0..31]
+    for col in [0..50]
       for row in [0..33]
         @env.set col, row, "chow", chow
     if (chow)
-      @addChow(25, 0, 0, 330, 350)
+      @addChow(25, 0, 0, 500, 350)
     else
-      @removeChow(0, 0, 330, 350)
-  setNChow: (chow) ->
-    for col in [33..64]
-      for row in [0..33]
-        @env.set col, row, "chow", chow
-    if (chow)
-      @addChow(25, 340, 0, 330, 350)
-    else
-      @removeChow(340, 0, 330, 350)
+      @removeChow(0, 0, 500, 350)
   setNEChow: (chow) ->
-    for col in [66..100]
+    for col in [50..100]
       for row in [0..33]
         @env.set col, row, "chow", chow
     if (chow)
-      @addChow(25, 670, 0, 330, 350)
+      @addChow(25, 500, 0, 500, 350)
     else
-      @removeChow(670, 0, 330, 350)
+      @removeChow(500, 0, 500, 350)
   setSChow: (chow) ->
     for col in [0..100]
       for row in [36..75]
@@ -188,13 +176,10 @@ $ ->
 
   $('#chow').change ->
     model.setNWChow $(this).is(':checked')
-    model.setNChow $(this).is(':checked')
     model.setNEChow $(this).is(':checked')
     model.setSChow $(this).is(':checked')
   $('#chow-nw').change ->
     model.setNWChow $(this).is(':checked')
-  $('#chow-n').change ->
-    model.setNChow $(this).is(':checked')
   $('#chow-ne').change ->
     model.setNEChow $(this).is(':checked')
   $('#chow-s').change ->
