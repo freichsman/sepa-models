@@ -15,3 +15,7 @@
 .time-limit-dialog.narrow {
   left: 168px;  /* 18px padding + half the env width (600/2) - half the dialog width (300/2)  */
 }
+
+#environment .bubble .content .details {
+  left: 15px;
+}

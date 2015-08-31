@@ -78,6 +78,20 @@ require.register "species/sandrats", (exports, require, module) ->
       else
         @wander(@get('speed') * Math.random() * 0.75)
 
+    resetGeneticTraits: ()->
+      super()
+      @set('genome', @organism.getAlleleString().replace('a:','').replace('b:',''))
+
+  geneValues = [
+    'a:DR,b:drb,a:dyb,b:dyb,a:dbb,b:dbb'
+    'a:drb,b:drb,a:DY,b:dyb,a:DB,b:dbb'
+    'a:DR,b:drb,a:DY,b:dyb,a:DB,b:dbb'
+    'a:DR,b:drb,a:DY,b:DY,a:DB,b:dbb'
+    'a:DR,b:drb,a:DY,b:DY,a:DB,b:DB'
+    'a:DR,b:DR,a:DY,b:DY,a:DB,b:DB'
+  ]
+  geneValues.push('a:drb,b:drb,a:dyb,b:dyb,a:dbb,b:dbb') for i in [0...12] # 1 in 4 will be prone to diabetes
+
   module.exports = new Species
     speciesName: "sandrats"
     agentClass: SandRat
@@ -94,11 +108,11 @@ require.register "species/sandrats", (exports, require, module) ->
     traits: [
       new Trait {name: 'speed', default: 6 }
       new Trait {name: 'vision distance', default: 10000 }
-      new Trait {name: 'mating distance', default:  10000 }
+      new Trait {name: 'mating distance', default: 10000 }
       new Trait {name: 'max offspring',   default:  3 }
       new Trait {name: 'min offspring',   default:  2 }
       new Trait {name: 'weight',   min:  140, max: 160 }
-      new Trait {name: 'prone to diabetes', possibleValues: ['a:DR,b:DR','a:dp,b:DR','a:DR,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp','a:dp,b:dp'], isGenetic: true, isNumeric: false }
+      new Trait {name: 'prone to diabetes', possibleValues: geneValues, isGenetic: true, isNumeric: false }
       new Trait {name: 'has diabetes', default:  false }
     ]
     imageProperties:
@@ -130,7 +144,7 @@ require.register "species/sandrats", (exports, require, module) ->
               anchor:
                 x: 0.5
                 y: 0.7
-            useIf: (agent)-> model.showPropensity and agent.get('prone to diabetes') is 'prone'
+            useIf: (agent)-> model.showPropensity and agent.get('prone to diabetes') isnt 'not prone'
           }
         ]
       }
