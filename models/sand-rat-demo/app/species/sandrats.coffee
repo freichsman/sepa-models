@@ -27,12 +27,10 @@ require.register "species/sandrats", (exports, require, module) ->
       else
         if @_y > 350
           overcrowded = model.count_s > 36
-        else if @_x < 330
-          overcrowded = model.count_nw > 17
-        else if @_x < 660
-          overcrowded = model.count_n > 17
+        else if @_x < 500
+          overcrowded = model.count_nw > 25
         else
-          overcrowded = model.count_ne > 17
+          overcrowded = model.count_ne > 25
 
       # mate if it's not overcrowded
       if not overcrowded and @get('age') > 170 and @get('sex') is 'male' and @_timeLastMated < 0 and Math.random() < 0.3

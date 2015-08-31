@@ -38,12 +38,10 @@
         } else {
           if (this._y > 350) {
             overcrowded = model.count_s > 36;
-          } else if (this._x < 330) {
-            overcrowded = model.count_nw > 17;
-          } else if (this._x < 660) {
-            overcrowded = model.count_n > 17;
+          } else if (this._x < 500) {
+            overcrowded = model.count_nw > 25;
           } else {
-            overcrowded = model.count_ne > 17;
+            overcrowded = model.count_ne > 25;
           }
         }
         if (!overcrowded && this.get('age') > 170 && this.get('sex') === 'male' && this._timeLastMated < 0 && Math.random() < 0.3) {
