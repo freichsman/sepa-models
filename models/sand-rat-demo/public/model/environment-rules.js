@@ -8,20 +8,20 @@
     var diabetesChance, worstChance;
     worstChance = 0.2;
     diabetesChance = function(agent) {
-      if (agent.get('prone to diabetes') === 'not prone') {
-        return 0;
-      } else if (agent.get('prone to diabetes') === 'level1') {
+      if (agent.get('prone to diabetes') === 'level1') {
         return worstChance * (1 / 6);
-      } else if (agent.get('prone to diabetes') === 'level1') {
+      } else if (agent.get('prone to diabetes') === 'level2') {
         return worstChance * (2 / 6);
-      } else if (agent.get('prone to diabetes') === 'level1') {
+      } else if (agent.get('prone to diabetes') === 'level3') {
         return worstChance * (3 / 6);
-      } else if (agent.get('prone to diabetes') === 'level1') {
+      } else if (agent.get('prone to diabetes') === 'level4') {
         return worstChance * (4 / 6);
-      } else if (agent.get('prone to diabetes') === 'level1') {
+      } else if (agent.get('prone to diabetes') === 'level5') {
         return worstChance * (5 / 6);
-      } else if (agent.get('prone to diabetes') === 'level1') {
+      } else if (agent.get('prone to diabetes') === 'level6') {
         return worstChance;
+      } else {
+        return 0;
       }
     };
     return module.exports = {

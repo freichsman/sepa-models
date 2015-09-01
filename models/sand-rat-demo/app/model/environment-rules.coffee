@@ -3,20 +3,20 @@ Rule          = require 'models/rule'
 require.register "environments/rules", (exports, require, module) ->
   worstChance = 0.2
   diabetesChance = (agent) ->
-    if agent.get('prone to diabetes') is 'not prone'
-      return 0
-    else if agent.get('prone to diabetes') is 'level1'
+    if agent.get('prone to diabetes') is 'level1'
       return worstChance * (1/6)
-    else if agent.get('prone to diabetes') is 'level1'
+    else if agent.get('prone to diabetes') is 'level2'
       return worstChance * (2/6)
-    else if agent.get('prone to diabetes') is 'level1'
+    else if agent.get('prone to diabetes') is 'level3'
       return worstChance * (3/6)
-    else if agent.get('prone to diabetes') is 'level1'
+    else if agent.get('prone to diabetes') is 'level4'
       return worstChance * (4/6)
-    else if agent.get('prone to diabetes') is 'level1'
+    else if agent.get('prone to diabetes') is 'level5'
       return worstChance * (5/6)
-    else if agent.get('prone to diabetes') is 'level1'
+    else if agent.get('prone to diabetes') is 'level6'
       return worstChance
+    else
+      return 0
 
   module.exports =
     init: (env)->
