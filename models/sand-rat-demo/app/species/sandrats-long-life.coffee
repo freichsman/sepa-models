@@ -90,7 +90,7 @@ require.register "species/sandrats", (exports, require, module) ->
     'a:DR,b:drb,a:DY,b:DY,a:DB,b:DB'
     'a:DR,b:DR,a:DY,b:DY,a:DB,b:DB'
   ]
-  geneValues.push('a:drb,b:drb,a:dyb,b:dyb,a:dbb,b:dbb') for i in [0...12] # 1 in 4 will be prone to diabetes
+  geneValues.push('a:drb,b:drb,a:dyb,b:dyb,a:dbb,b:dbb') for i in [0...6] # 1 in 2 will be prone to diabetes
 
   module.exports = new Species
     speciesName: "sandrats"

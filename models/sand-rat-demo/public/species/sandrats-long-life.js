@@ -96,7 +96,7 @@
 
     })(BasicAnimal);
     geneValues = ['a:DR,b:drb,a:dyb,b:dyb,a:dbb,b:dbb', 'a:drb,b:drb,a:DY,b:dyb,a:DB,b:dbb', 'a:DR,b:drb,a:DY,b:dyb,a:DB,b:dbb', 'a:DR,b:drb,a:DY,b:DY,a:DB,b:dbb', 'a:DR,b:drb,a:DY,b:DY,a:DB,b:DB', 'a:DR,b:DR,a:DY,b:DY,a:DB,b:DB'];
-    for (i = j = 0; j < 12; i = ++j) {
+    for (i = j = 0; j < 6; i = ++j) {
       geneValues.push('a:drb,b:drb,a:dyb,b:dyb,a:dbb,b:dbb');
     }
     return module.exports = new Species({
