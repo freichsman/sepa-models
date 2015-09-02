@@ -9,6 +9,8 @@ Events      = require 'events'
 ToolButton  = require 'ui/tool-button'
 BasicAnimal = require 'models/agents/basic-animal'
 
+Chart       = require 'model/chart'
+
 sandratSpecies  = require 'species/sandrats'
 chowSpecies     = require 'species/chow'
 env             = require 'environments/field'
@@ -42,14 +44,15 @@ window.model =
 
     Events.addEventListener Environment.EVENTS.STEP, =>
       @countRatsInAreas()
-      drawCharts()
+      drawCharts() if @env.date % 37 is 1
       if @stopDate > 0 and @env.date > @stopDate
         @env.stop()
+        drawCharts()
         @_timesUp()
 
-    Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) ->
-      return if evt.detail.agent.species is chowSpecies
-      drawCharts()
+    # Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) ->
+    #   return if evt.detail.agent.species is chowSpecies
+    #   drawCharts()
 
   agentsOfSpecies: (species)->
     set = []
@@ -65,34 +68,18 @@ window.model =
       @count_nw  = (a for a in @env.agentsWithin({x: 0, y: 0, width: 500, height: 350})    when a.species is sandratSpecies).length
       @count_ne  = (a for a in @env.agentsWithin({x: 500, y: 0, width: 500, height: 350})  when a.species is sandratSpecies).length
 
-  countRats: (chartN) ->
+  countRats: (rectangle) ->
     data = {}
-    loc = {x: 0, y: 0, width: 1000, height: 700}
 
-    graphLoc = if chartN is 1 then window.graph1Location else window.graph2Location
+    rats = (a for a in @env.agentsWithin(rectangle) when a.species is sandratSpecies)
 
-    if graphLoc is "s"
-      loc = {x: 0, y: 350, width: 1000, height: 350}
-    else if graphLoc is "nw"
-      loc = {x: 0, y: 0, width: 485, height: 350}
-    else if graphLoc is "ne"
-      loc = {x: 515, y: 0, width: 485, height: 350}
-
-    rats = (a for a in @env.agentsWithin(loc) when a.species is sandratSpecies)
-
-    graphType = if chartN is 1 then window.graphType else window.graph2Type
-
-    if graphType is "diabetic"
-      data = {healthy: 0, diabetic: 0}
-      for a in rats
-        data.healthy++ if not a.get('has diabetes')
-        data.diabetic++ if a.get('has diabetes')
-    else if graphType is "weight"
-      data = {140: 0}
-      for a in rats
-        weight = Math.floor(a.get('weight') / 10) * 10
-        data[weight] ?= 0
-        data[weight]++
+    data = {date: @env.date, total: rats.length, healthy: 0, diabetic: 0, 140: 0}
+    for a in rats
+      data.healthy++ if not a.get('has diabetes')
+      data.diabetic++ if a.get('has diabetes')
+      weight = Math.floor(a.get('weight') / 10) * 10
+      data[weight] ?= 0
+      data[weight]++
 
     return data
 
@@ -112,7 +99,7 @@ window.model =
     @count_ne  = 0
 
 
-    drawCharts()
+    resetAndDrawCharts()
 
   addRat: () ->
     top = if @isFieldModel then 0 else 350
@@ -165,6 +152,9 @@ window.model =
 
 
 $ ->
+  chart1 = null
+  chart2 = null
+
   model.isFieldModel = !/[^\/]*html/.exec(document.location.href) or /[^\/]*html/.exec(document.location.href)[0] == "field.html"
   model.isLifespanModel = /[^\/]*html/.exec(document.location.href) and /[^\/]*html/.exec(document.location.href)[0] == "lifespan.html"
 
@@ -176,6 +166,10 @@ $ ->
 
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
+    if $('#field-chart').length > 0
+      chart1 = new Chart(model, 'field-chart',   'diabetic', 's')
+    if $('#field-chart-2').length > 0
+      chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'nw')
 
 
   $('#view-sex-check').change ->
@@ -201,109 +195,26 @@ $ ->
 
 
   $('#graph-selection').change ->
-    window.graphType = $(this).val()
-    drawCharts()
+    chart1.setType $(this).val()
+    chart1.draw()
 
   $('#graph-selection-2').change ->
-    window.graph2Type = $(this).val()
-    drawCharts()
-
+    chart2.setType $(this).val()
+    chart2.draw()
 
   $('#graph-location-selection').change ->
-    window.graph1Location = $(this).val()
-    drawCharts()
+    chart1.setLocation $(this).val()
+    chart1.draw()
 
   $('#graph-location-selection-2').change ->
-    window.graph2Location = $(this).val()
+    chart2.setLocation $(this).val()
+    chart2.draw()
+
+  window.resetAndDrawCharts = ->
+    chart1?.reset()
+    chart2?.reset()
     drawCharts()
 
-window.graphType = "diabetic"
-window.graph1Location = "all"
-
-window.graph2Type = "diabetic"
-window.graph2Location = "nw"
-
-drawCharts = ->
-  drawChart(1)
-  if not model.isFieldModel
-    drawChart(2)
-
-drawChart = (chartN)->
-  if not model.isSetUp then return
-
-  _data = model.countRats(chartN)
-
-  graphType = if chartN is 1 then window.graphType else window.graph2Type
-  graphLoc = if chartN is 1 then window.graph1Location else window.graph2Location
-
-  max = if graphLoc is "all" then 60 else if graphLoc is "s" then 40 else 20
-
-  options = {
-    title: "Sandrats in population",
-    width: 300,
-    height: 260,
-    bar: {groupWidth: "95%"},
-    legend: { position: "none" },
-    vAxis: {
-      viewWindowMode:'explicit',
-      viewWindow:{
-        max:max,
-        min:0
-      }
-    }
-  }
-
-  if graphType is "diabetic"
-    data = google.visualization.arrayToDataTable([
-      ["Type", "Number of rats", { role: "style" } ]
-      ["Non-diabetic", _data.healthy, "silver"]
-      ["Diabetic", _data.diabetic, "brown"]
-    ])
-
-    view = new google.visualization.DataView(data)
-    view.setColumns([0, 1,
-                      {
-                        calc: "stringify",
-                        sourceColumn: 1,
-                        type: "string",
-                        role: "annotation"
-                      },
-                      2])
-
-  else if graphType is "weight"
-    transformedData = {
-      "< 150":   {count: (_data[130] or 0) + (_data[140] or 0), color: "blue"}
-      "150-159": {count: (_data[150]) or 0, color: "blue"}
-      "160-169": {count: (_data[160]) or 0, color: "blue"}
-      "170-179": {count: (_data[170]) or 0, color: "#df7c00"}
-      "180-189": {count: (_data[180]) or 0, color: "#df7c00"}
-      "> 190":   {count: (_data[190] or 0) + (_data[200] or 0) + (_data[210] or 0) + (_data[220] or 0) + (_data[230] or 0), color: "#df7c00"}
-    }
-
-    chartData = [
-      ["Type", "Number of rats", { role: "style" } ]
-    ]
-    for key of transformedData
-      chartData.push [key, transformedData[key].count, transformedData[key].color]
-
-    data = google.visualization.arrayToDataTable(chartData)
-
-    view = new google.visualization.DataView(data)
-    view.setColumns([0, 1,
-                      {
-                        calc: "stringify",
-                        sourceColumn: 1,
-                        type: "string",
-                        role: "annotation"
-                      },
-                      2])
-
-    options.title = "Weight of sandrats (g)"
-
-
-  id = if chartN is 1 then "field-chart" else "field-chart-2"
-  chart = new google.visualization.ColumnChart(document.getElementById(id))
-  chart.draw(view, options)
-
-
-google.load('visualization', '1', {packages: ['corechart', 'bar'], callback: drawCharts})
+  window.drawCharts = ->
+    chart1?.draw()
+    chart2?.draw()
