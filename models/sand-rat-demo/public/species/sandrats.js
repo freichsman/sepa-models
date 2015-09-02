@@ -216,6 +216,7 @@
           ]
         }, {
           name: 'rats',
+          contexts: ['environment', 'carry-tool'],
           rules: [
             {
               image: {
@@ -230,6 +231,21 @@
                 return agent.get('weight') > 180;
               }
             }, {
+              image: {
+                path: "images/agents/sandrat-stack.png",
+                scale: 0.5,
+                anchor: {
+                  x: 0.5,
+                  y: 0.7
+                }
+              }
+            }
+          ]
+        }, {
+          name: 'rats info tool',
+          contexts: ['info-tool'],
+          rules: [
+            {
               image: {
                 path: "images/agents/sandrat-stack.png",
                 scale: 0.5,

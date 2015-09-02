@@ -174,6 +174,7 @@ require.register "species/sandrats", (exports, require, module) ->
       }
       {
         name: 'rats'
+        contexts: ['environment','carry-tool']
         rules: [
           {
             image:
@@ -184,6 +185,20 @@ require.register "species/sandrats", (exports, require, module) ->
                 y: 0.6
             useIf: (agent)-> agent.get('weight') > 180
           }
+          {
+            image:
+              path: "images/agents/sandrat-stack.png"
+              scale: 0.5
+              anchor:
+                x: 0.5
+                y: 0.7
+          }
+        ]
+      }
+      {
+        name: 'rats info tool'
+        contexts: ['info-tool']
+        rules: [
           {
             image:
               path: "images/agents/sandrat-stack.png"
