@@ -89,7 +89,7 @@
 
       SandRat.prototype.resetGeneticTraits = function() {
         SandRat.__super__.resetGeneticTraits.call(this);
-        return this.set('genome', this.organism.getAlleleString().replace('a:', '').replace('b:', ''));
+        return this.set('genome', this.organism.getAlleleString().replace(/a:/g, '').replace(/b:/g, ''));
       };
 
       return SandRat;

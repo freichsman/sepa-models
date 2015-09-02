@@ -80,7 +80,7 @@ require.register "species/sandrats", (exports, require, module) ->
 
     resetGeneticTraits: ()->
       super()
-      @set('genome', @organism.getAlleleString().replace('a:','').replace('b:',''))
+      @set('genome', @organism.getAlleleString().replace(/a:/g,'').replace(/b:/g,''))
 
   geneValues = [
     'a:DR,b:drb,a:dyb,b:dyb,a:dbb,b:dbb'
