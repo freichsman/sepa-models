@@ -64,39 +64,6 @@ require.register "model/chart", (exports, require, module) ->
           minorGridEnabled: true
         graphs: [
           {
-            id: 'diabetic-rats-line'
-            lineColor: '#ff0000'
-            lineThickness: 2
-            type: 'smoothedLine'
-            valueField: 'diabetic'
-            valueAxis: 'diabetic'
-            title: 'Line'
-          }
-          {
-            id: 'diabetic-rats-dots'
-            bullet: 'round'
-            bulletSize: 4
-            lineColor: '#ff0000'
-            lineThickness: 0
-            type: 'smoothedLine'
-            valueField: 'diabetic'
-            valueAxis: 'diabetic'
-            title: 'Points'
-          }
-          {
-            id: 'all-rats-bar'
-            type: 'column'
-            lineColor: '#6666ff'
-            lineAlpha: 0.6
-            fillColors: '#6666ff'
-            fillAlphas: 0.6
-            columnWidth: 1
-            clustered: false
-            valueField: 'total'
-            valueAxis: 'diabetic'
-            title: 'Total Rats'
-          }
-          {
             id: 'diabetic-rats-bar'
             type: 'column'
             lineColor: '#990000'
