@@ -16,6 +16,8 @@ require.register "model/chart", (exports, require, module) ->
       if (@_idx == @_data.length and @_data[@_idx-1]?.date < model.env.date) or
          (@_idx <  @_data.length and @_data[@_idx]?.date   < model.env.date)
         newData = @model.countRats(@model.locations[@location])
+        newData.color = 'hsl(0,100%,55%)'
+        @_data[@_idx-1].color = 'hsl(0,100%,92%)' if @_idx > 0
         if @_idx == @_data.length
           old = @_data.shift()
           @_data.push(newData)
@@ -66,10 +68,11 @@ require.register "model/chart", (exports, require, module) ->
           {
             id: 'diabetic-rats-bar'
             type: 'column'
-            lineColor: '#990000'
-            fillColors: '#990000'
+            lineColorField: 'color'
+            fillColorsField: 'color'
+            colorField: 'color'
             fillAlphas: 0.6
-            columnWidth: 0.6
+            columnWidth: 1
             clustered: false
             valueField: 'diabetic'
             valueAxis: 'diabetic'
