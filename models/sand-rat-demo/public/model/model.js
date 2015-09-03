@@ -73,6 +73,8 @@
       this.setupEnvironment();
       this.isSetUp = true;
       this.stopDate = 0;
+      this.secondsPerSample = 2;
+      this.graphInterval = Math.ceil(this.targetFPS() * this.secondsPerSample);
       Events.addEventListener(Environment.EVENTS.RESET, (function(_this) {
         return function() {
           _this.setupEnvironment();
@@ -81,7 +83,7 @@
       })(this));
       return Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
         return function() {
-          if (_this.env.date % 37 === 1) {
+          if (_this.env.date % _this.graphInterval === 1) {
             drawCharts();
           }
           if (_this.stopDate > 0 && _this.env.date > _this.stopDate) {
@@ -91,6 +93,9 @@
           }
         };
       })(this));
+    },
+    targetFPS: function() {
+      return 1000 / (this.env != null ? this.env._runLoopDelay : Environment.DEFAULT_RUN_LOOP_DELAY);
     },
     agentsOfSpecies: function(species) {
       var a, j, len, ref, set;
@@ -120,7 +125,7 @@
         return results;
       }).call(this);
       data = {
-        date: this.env.date,
+        date: Math.floor(this.env.date / this.graphInterval) * this.secondsPerSample,
         total: rats.length,
         healthy: 0,
         diabetic: 0
@@ -249,7 +254,11 @@
       return model.setChow('s', $(this).is(':checked'));
     });
     $('#time-limit').change(function() {
-      return model.setStopDate($(this).val() * (1000 / model.env._runLoopDelay));
+      model.setStopDate($(this).val() * model.targetFPS());
+      if (chart1 != null) {
+        chart1.recalculateLength();
+      }
+      return chart2 != null ? chart2.recalculateLength() : void 0;
     });
     window.resetAndDrawCharts = function() {
       if (chart1 != null) {

@@ -9,34 +9,64 @@
         this.type = type;
         this.location = location;
         this._data = [];
-        this.setupChart();
+        this.recalculateLength();
         this.reset();
+        this.setupChart();
+        this._idx = 0;
         return;
       }
 
       Chart.prototype.draw = function() {
-        var newData;
+        var newData, old, ref, ref1;
         if (!this.model.isSetUp) {
           return;
         }
-        if (this._data.length === 0 || this._data[this._data.length - 1].date < model.env.date) {
+        if ((this._idx === this._data.length && ((ref = this._data[this._idx - 1]) != null ? ref.date : void 0) < model.env.date) || (this._idx < this._data.length && ((ref1 = this._data[this._idx]) != null ? ref1.date : void 0) < model.env.date)) {
           newData = this.model.countRats(this.model.locations[this.location]);
-          this._data.push(newData);
+          if (this._idx === this._data.length) {
+            old = this._data.shift();
+            this._data.push(newData);
+          } else {
+            this._data[this._idx] = newData;
+            this._idx++;
+          }
           this.chart.validateData();
-          this.chart.zoomToIndexes(this._data.length - 11, this._data.length - 1);
         }
       };
 
       Chart.prototype.reset = function() {
-        var i, j;
-        this._data.length = 0;
-        for (i = j = -10; j <= 0; i = j += 1) {
+        var i, j, ref, ref1;
+        for (i = j = 0, ref = this._data.length; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
+          this._data[i] = {
+            date: 2 * i,
+            placeholder: true
+          };
+        }
+        return (ref1 = this.chart) != null ? ref1.validateData() : void 0;
+      };
+
+      Chart.prototype.recalculateLength = function() {
+        var newLength, nextDate, ref;
+        if (this.model.stopDate === 0) {
+          newLength = 30;
+        } else {
+          newLength = Math.ceil(this.model.stopDate / this.model.graphInterval) + 1;
+        }
+        while (this._data.length > newLength) {
+          if (this._data[this._data.length - 1].placeholder) {
+            this._data.pop();
+          } else {
+            this._data.shift();
+          }
+        }
+        while (this._data.length < newLength) {
+          nextDate = this._data.length === 0 ? 0 : this._data[this._data.length - 1].date + 2;
           this._data.push({
-            date: i
+            date: nextDate,
+            placeholder: true
           });
         }
-        this.chart.validateData();
-        return this.chart.zoomToIndexes(0, 9);
+        return (ref = this.chart) != null ? ref.validateData() : void 0;
       };
 
       Chart.prototype.setupChart = function() {
@@ -52,19 +82,6 @@
           categoryAxis: {
             dashLength: 1,
             minorGridEnabled: true
-          },
-          legend: {
-            useGraphSettings: true,
-            autoMargins: false,
-            marginLeft: 40,
-            marginRight: 0,
-            fontSize: 10,
-            markerSize: 12,
-            position: 'bottom',
-            verticalGap: 5,
-            markerLabelGap: 5,
-            maxColumns: 3,
-            switchType: 'v'
           },
           graphs: [
             {
@@ -110,16 +127,6 @@
               title: 'Diabetic Rats'
             }
           ],
-          chartScrollbar: {
-            graph: 'diabetic-rats-bar',
-            backgroundColor: '#444444',
-            color: '#000000',
-            resizeEnabled: false,
-            scrollbarHeight: 15
-          },
-          zoomOutButton: {
-            display: 'none'
-          },
           valueAxes: [
             {
               id: 'diabetic',

@@ -43,17 +43,22 @@ window.model =
     @setupEnvironment()
     @isSetUp = true
     @stopDate = 0
+    @secondsPerSample = 2
+    @graphInterval = Math.ceil(@targetFPS()*@secondsPerSample) # Sample every 2 seconds
 
     Events.addEventListener Environment.EVENTS.RESET, =>
       @setupEnvironment()
       $('.time-limit-dialog').fadeOut(300)
 
     Events.addEventListener Environment.EVENTS.STEP, =>
-      drawCharts() if @env.date % 37 is 1
+      drawCharts() if @env.date % @graphInterval is 1
       if @stopDate > 0 and @env.date > @stopDate
         @env.stop()
         drawCharts()
         @_timesUp()
+
+  targetFPS: ()->
+    return 1000/(if @env? then @env._runLoopDelay else Environment.DEFAULT_RUN_LOOP_DELAY)
 
   agentsOfSpecies: (species)->
     set = []
@@ -66,7 +71,7 @@ window.model =
 
     rats = (a for a in @env.agentsWithin(rectangle) when a.species is sandratSpecies)
 
-    data = {date: @env.date, total: rats.length, healthy: 0, diabetic: 0}
+    data = {date: Math.floor(@env.date/@graphInterval)*@secondsPerSample, total: rats.length, healthy: 0, diabetic: 0}
     for a in rats
       data.healthy++ if not a.get('has diabetes')
       data.diabetic++ if a.get('has diabetes')
@@ -90,7 +95,6 @@ window.model =
     @count_s   = 0
     @count_nw  = 0
     @count_ne  = 0
-
 
     resetAndDrawCharts()
 
@@ -151,7 +155,6 @@ $ ->
     if $('#field-chart-2').length > 0
       chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'nw')
 
-
   $('#view-sex-check').change ->
     model.showSex = $(this).is(':checked')
   $('#view-prone-check').change ->
@@ -169,7 +172,9 @@ $ ->
     model.setChow 's', $(this).is(':checked')
 
   $('#time-limit').change ->
-    model.setStopDate $(this).val()*(1000/model.env._runLoopDelay)
+    model.setStopDate $(this).val()*model.targetFPS()
+    chart1?.recalculateLength()
+    chart2?.recalculateLength()
 
   window.resetAndDrawCharts = ->
     chart1?.reset()

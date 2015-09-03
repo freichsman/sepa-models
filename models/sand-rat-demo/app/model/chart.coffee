@@ -3,27 +3,51 @@ require.register "model/chart", (exports, require, module) ->
 
     constructor: (@model, @parent, @type, @location)->
       @_data = []
-      @setupChart()
+      @recalculateLength()
       @reset()
+      @setupChart()
+      @_idx = 0
 
       return
 
     draw: ->
       if not @model.isSetUp then return
 
-      if @_data.length is 0 or @_data[@_data.length-1].date < model.env.date
+      if (@_idx == @_data.length and @_data[@_idx-1]?.date < model.env.date) or
+         (@_idx <  @_data.length and @_data[@_idx]?.date   < model.env.date)
         newData = @model.countRats(@model.locations[@location])
-        @_data.push(newData)
+        if @_idx == @_data.length
+          old = @_data.shift()
+          @_data.push(newData)
+        else
+          @_data[@_idx] = newData
+          @_idx++
         @chart.validateData()
-        @chart.zoomToIndexes(@_data.length - 11, @_data.length - 1)
 
       return
 
     reset: ->
-      @_data.length = 0
-      @_data.push({date: i}) for i in [-10..0] by 1
-      @chart.validateData()
-      @chart.zoomToIndexes(0, 9)
+      for i in [0..(@_data.length)]
+        @_data[i] = {date: 2*i, placeholder: true}
+      @chart?.validateData()
+
+    recalculateLength: ->
+      if @model.stopDate is 0
+        newLength = 30
+      else
+        newLength = Math.ceil(@model.stopDate / @model.graphInterval)+1
+
+      while @_data.length > newLength
+        if @_data[@_data.length-1].placeholder
+          @_data.pop()
+        else
+          @_data.shift()
+
+      while @_data.length < newLength
+        nextDate = if @_data.length is 0 then 0 else @_data[@_data.length-1].date + 2
+        @_data.push {date: nextDate, placeholder: true }
+
+      @chart?.validateData()
 
     setupChart: ->
       @chart = AmCharts.makeChart @parent,
@@ -38,20 +62,6 @@ require.register "model/chart", (exports, require, module) ->
         categoryAxis:
           dashLength: 1
           minorGridEnabled: true
-        legend:
-          useGraphSettings: true
-          autoMargins: false
-          marginLeft: 40
-          marginRight: 0
-          fontSize: 10
-          markerSize: 12
-          # equalWidths: false
-          # labelWidth: 70
-          position: 'bottom'
-          verticalGap: 5
-          markerLabelGap: 5
-          maxColumns: 3
-          switchType: 'v'
         graphs: [
           {
             id: 'diabetic-rats-line'
@@ -99,15 +109,6 @@ require.register "model/chart", (exports, require, module) ->
             title: 'Diabetic Rats'
           }
         ]
-        chartScrollbar:
-          graph: 'diabetic-rats-bar'
-          backgroundColor: '#444444'
-          color: '#000000'
-          # selectedBackgroundColor: '#FFFFFF'
-          resizeEnabled: false
-          scrollbarHeight: 15
-        zoomOutButton:
-          display: 'none'
         valueAxes: [
           {
             id: 'diabetic'
