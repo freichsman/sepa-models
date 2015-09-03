@@ -8,11 +8,7 @@ require.register "model/chart", (exports, require, module) ->
         nw:  {x: 0, y: 0, width: 500, height: 350}
         ne:  {x: 500, y: 0, width: 500, height: 350}
 
-      @_data =
-        all: []
-        s:   []
-        nw:  []
-        ne:  []
+      @_data = []
       @setupChart()
       @reset()
 
@@ -21,29 +17,19 @@ require.register "model/chart", (exports, require, module) ->
     draw: ->
       if not @model.isSetUp then return
 
-      if @_data.length is 0 or @_data[@location][@_data[@location].length-1].date < model.env.date
-        for loc in ['all','s','nw','ne']
-          newData = @model.countRats(@_rectangles[loc])
-          @_data[loc].push(newData)
+      if @_data.length is 0 or @_data[@_data.length-1].date < model.env.date
+        newData = @model.countRats(@_rectangles[@location])
+        @_data.push(newData)
         @chart.validateData()
-        @chart.zoomToIndexes(@_data[@location].length - 11, @_data[@location].length - 1)
+        @chart.zoomToIndexes(@_data.length - 11, @_data.length - 1)
 
       return
 
     reset: ->
-      for loc in ['all','s','nw','ne']
-        @_data[loc].length = 0
-        @_data[loc].push({date: i}) for i in [-10..0] by 1
+      @_data.length = 0
+      @_data.push({date: i}) for i in [-10..0] by 1
       @chart.validateData()
       @chart.zoomToIndexes(0, 9)
-
-    setType: (@type)->
-      # TODO redo labels, etc
-
-    setLocation: (@location)->
-      @chart.dataProvider = @_data[@location]
-      @chart.validateData()
-      @chart.zoomToIndexes(@_data[@location].length - 11, @_data[@location].length - 1)
 
     setupChart: ->
       @chart = AmCharts.makeChart @parent,
@@ -53,7 +39,7 @@ require.register "model/chart", (exports, require, module) ->
         marginRight: 0
         marginLeft: 0
         marginBottom: 0
-        dataProvider: @_data[@location]
+        dataProvider: @_data
         categoryField: 'date'
         categoryAxis:
           dashLength: 1

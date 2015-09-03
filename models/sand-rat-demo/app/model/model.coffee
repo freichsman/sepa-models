@@ -167,7 +167,7 @@ $ ->
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
     if $('#field-chart').length > 0
-      chart1 = new Chart(model, 'field-chart',   'diabetic', 's')
+      chart1 = new Chart(model, 'field-chart',   'diabetic', 'ne')
     if $('#field-chart-2').length > 0
       chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'nw')
 
@@ -192,23 +192,6 @@ $ ->
 
   $('#time-limit').change ->
     model.setStopDate $(this).val()*(1000/model.env._runLoopDelay)
-
-
-  $('#graph-selection').change ->
-    chart1.setType $(this).val()
-    chart1.draw()
-
-  $('#graph-selection-2').change ->
-    chart2.setType $(this).val()
-    chart2.draw()
-
-  $('#graph-location-selection').change ->
-    chart1.setLocation $(this).val()
-    chart1.draw()
-
-  $('#graph-location-selection-2').change ->
-    chart2.setLocation $(this).val()
-    chart2.draw()
 
   window.resetAndDrawCharts = ->
     chart1?.reset()

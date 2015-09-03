@@ -36,59 +36,35 @@
             height: 350
           }
         };
-        this._data = {
-          all: [],
-          s: [],
-          nw: [],
-          ne: []
-        };
+        this._data = [];
         this.setupChart();
         this.reset();
         return;
       }
 
       Chart.prototype.draw = function() {
-        var j, len, loc, newData, ref;
+        var newData;
         if (!this.model.isSetUp) {
           return;
         }
-        if (this._data.length === 0 || this._data[this.location][this._data[this.location].length - 1].date < model.env.date) {
-          ref = ['all', 's', 'nw', 'ne'];
-          for (j = 0, len = ref.length; j < len; j++) {
-            loc = ref[j];
-            newData = this.model.countRats(this._rectangles[loc]);
-            this._data[loc].push(newData);
-          }
+        if (this._data.length === 0 || this._data[this._data.length - 1].date < model.env.date) {
+          newData = this.model.countRats(this._rectangles[this.location]);
+          this._data.push(newData);
           this.chart.validateData();
-          this.chart.zoomToIndexes(this._data[this.location].length - 11, this._data[this.location].length - 1);
+          this.chart.zoomToIndexes(this._data.length - 11, this._data.length - 1);
         }
       };
 
       Chart.prototype.reset = function() {
-        var i, j, k, len, loc, ref;
-        ref = ['all', 's', 'nw', 'ne'];
-        for (j = 0, len = ref.length; j < len; j++) {
-          loc = ref[j];
-          this._data[loc].length = 0;
-          for (i = k = -10; k <= 0; i = k += 1) {
-            this._data[loc].push({
-              date: i
-            });
-          }
+        var i, j;
+        this._data.length = 0;
+        for (i = j = -10; j <= 0; i = j += 1) {
+          this._data.push({
+            date: i
+          });
         }
         this.chart.validateData();
         return this.chart.zoomToIndexes(0, 9);
-      };
-
-      Chart.prototype.setType = function(type) {
-        this.type = type;
-      };
-
-      Chart.prototype.setLocation = function(location) {
-        this.location = location;
-        this.chart.dataProvider = this._data[this.location];
-        this.chart.validateData();
-        return this.chart.zoomToIndexes(this._data[this.location].length - 11, this._data[this.location].length - 1);
       };
 
       Chart.prototype.setupChart = function() {
@@ -99,7 +75,7 @@
           marginRight: 0,
           marginLeft: 0,
           marginBottom: 0,
-          dataProvider: this._data[this.location],
+          dataProvider: this._data,
           categoryField: 'date',
           categoryAxis: {
             dashLength: 1,

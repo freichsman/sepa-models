@@ -336,22 +336,6 @@
     $('#time-limit').change(function() {
       return model.setStopDate($(this).val() * (1000 / model.env._runLoopDelay));
     });
-    $('#graph-selection').change(function() {
-      chart1.setType($(this).val());
-      return chart1.draw();
-    });
-    $('#graph-selection-2').change(function() {
-      chart2.setType($(this).val());
-      return chart2.draw();
-    });
-    $('#graph-location-selection').change(function() {
-      chart1.setLocation($(this).val());
-      return chart1.draw();
-    });
-    $('#graph-location-selection-2').change(function() {
-      chart2.setLocation($(this).val());
-      return chart2.draw();
-    });
     window.resetAndDrawCharts = function() {
       if (chart1 != null) {
         chart1.reset();
