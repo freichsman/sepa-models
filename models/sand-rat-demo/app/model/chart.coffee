@@ -31,8 +31,8 @@ require.register "model/chart", (exports, require, module) ->
       return
 
     reset: ->
-      @_data.length = 0
       for loc in ['all','s','nw','ne']
+        @_data[loc].length = 0
         @_data[loc].push({date: i}) for i in [-10..0] by 1
       @chart.validateData()
       @chart.zoomToIndexes(0, 9)

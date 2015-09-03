@@ -66,10 +66,10 @@
 
       Chart.prototype.reset = function() {
         var i, j, k, len, loc, ref;
-        this._data.length = 0;
         ref = ['all', 's', 'nw', 'ne'];
         for (j = 0, len = ref.length; j < len; j++) {
           loc = ref[j];
+          this._data[loc].length = 0;
           for (i = k = -10; k <= 0; i = k += 1) {
             this._data[loc].push({
               date: i
