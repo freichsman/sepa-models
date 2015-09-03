@@ -34,6 +34,12 @@ window.model =
 
     @env = env
 
+    @locations =
+      all: {x: 0,                        y: 0,                         width: @env.width,               height: @env.height}
+      s:   {x: 0,                        y: Math.round(@env.height/2), width: @env.width,               height: Math.round(@env.height/2)}
+      nw:  {x: 0,                        y: 0,                         width: Math.round(@env.width/2), height: Math.round(@env.height/2)}
+      ne:  {x: Math.round(@env.width/2), y: 0,                         width: Math.round(@env.width/2), height: Math.round(@env.height/2)}
+
     @setupEnvironment()
     @isSetUp = true
     @stopDate = 0
@@ -43,16 +49,11 @@ window.model =
       $('.time-limit-dialog').fadeOut(300)
 
     Events.addEventListener Environment.EVENTS.STEP, =>
-      @countRatsInAreas()
       drawCharts() if @env.date % 37 is 1
       if @stopDate > 0 and @env.date > @stopDate
         @env.stop()
         drawCharts()
         @_timesUp()
-
-    # Events.addEventListener Environment.EVENTS.AGENT_ADDED, (evt) ->
-    #   return if evt.detail.agent.species is chowSpecies
-    #   drawCharts()
 
   agentsOfSpecies: (species)->
     set = []
@@ -60,26 +61,18 @@ window.model =
       set.push a if a.species is species
     return set
 
-  countRatsInAreas: ->
-    if @isFieldModel
-      @count_all = (a for a in @env.agentsWithin({x: 0, y: 0, width: @env.width, height: @env.height})   when a.species is sandratSpecies).length
-    else
-      @count_s   = (a for a in @env.agentsWithin({x: 0, y: Math.round(@env.height/2), width: @env.width, height: Math.round(@env.height/2)}) when a.species is sandratSpecies).length
-      @count_nw  = (a for a in @env.agentsWithin({x: 0, y: 0, width: Math.round(@env.width/2), height: Math.round(@env.height/2)})    when a.species is sandratSpecies).length
-      @count_ne  = (a for a in @env.agentsWithin({x: Math.round(@env.width/2), y: 0, width: Math.round(@env.width/2), height: Math.round(@env.height/2)})  when a.species is sandratSpecies).length
-
   countRats: (rectangle) ->
     data = {}
 
     rats = (a for a in @env.agentsWithin(rectangle) when a.species is sandratSpecies)
 
-    data = {date: @env.date, total: rats.length, healthy: 0, diabetic: 0, 140: 0}
+    data = {date: @env.date, total: rats.length, healthy: 0, diabetic: 0}
     for a in rats
       data.healthy++ if not a.get('has diabetes')
       data.diabetic++ if a.get('has diabetes')
-      weight = Math.floor(a.get('weight') / 10) * 10
-      data[weight] ?= 0
-      data[weight]++
+      # weight = Math.floor(a.get('weight') / 10) * 10
+      # data[weight] ?= 0
+      # data[weight]++
 
     return data
 
@@ -102,47 +95,35 @@ window.model =
     resetAndDrawCharts()
 
   addRat: () ->
-    top = if @isFieldModel then 0 else 350
+    loc = if @isFieldModel then @locations.all else @locations.s
     rat = sandratSpecies.createAgent()
     rat.set('age', 20 + (Math.floor Math.random() * 40))
-    rat.setLocation env.randomLocationWithin 0, top, @env.width, @env.height-top, true
+    rat.setLocation env.randomLocationWithin loc.x, loc.y, loc.width, loc.height, true
     @env.addAgent rat
 
-  addChow: (n, x, y, w, h) ->
+  addChow: (n, loc) ->
     for i in [0...n]
       chow = chowSpecies.createAgent()
-      chow.setLocation env.randomLocationWithin x, y, w, h, true
+      chow.setLocation env.randomLocationWithin loc.x, loc.y, loc.width, loc.height, true
       @env.addAgent chow
 
-  removeChow: (x, y, width, height) ->
-    agents = env.agentsWithin {x, y, width, height}
+  removeChow: (loc) ->
+    agents = env.agentsWithin loc
     agent.die() for agent in agents when agent.species.speciesName is "chow"
     @env.removeDeadAgents()
 
-  setNWChow: (chow) ->
-    for col in [0..(Math.ceil(@env.columns/2))] by 1
-      for row in [0..33]
-        @env.set col, row, "chow", chow
-    if (chow)
-      @addChow(25, 0, 0, 500, 350)
+  setChow: (area, chow) ->
+    loc = @locations[area]
+    return unless loc?
+
+    for col in [(loc.x)..(loc.x+loc.width)] by @env._columnWidth
+      for row in [(loc.y)..(loc.y+loc.height)] by @env._rowHeight
+        @env.setAt col, row, "chow", chow
+    if chow
+      amount = Math.round(loc.width * loc.height / 7000)
+      @addChow(amount, loc)
     else
-      @removeChow(0, 0, 500, 350)
-  setNEChow: (chow) ->
-    for col in [(Math.ceil(@env.columns/2))..(@env.columns)] by 1
-      for row in [0..33]
-        @env.set col, row, "chow", chow
-    if (chow)
-      @addChow(25, 500, 0, 500, 350)
-    else
-      @removeChow(500, 0, 500, 350)
-  setSChow: (chow) ->
-    for col in [0..(@env.columns)] by 1
-      for row in [36..75]
-        @env.set col, row, "chow", chow
-    if (chow)
-      @addChow(70, 0, 350, 1000, 350)
-    else
-      @removeChow(0, 350, 1000, 350)
+      @removeChow(loc)
 
   setStopDate: (date)->
     @stopDate = date
@@ -179,15 +160,13 @@ $ ->
     model.showDiabetic = $(this).is(':checked')
 
   $('#chow').change ->
-    model.setNWChow $(this).is(':checked')
-    model.setNEChow $(this).is(':checked')
-    model.setSChow $(this).is(':checked')
+    model.setChow 'all', $(this).is(':checked')
   $('#chow-nw').change ->
-    model.setNWChow $(this).is(':checked')
+    model.setChow 'nw', $(this).is(':checked')
   $('#chow-ne').change ->
-    model.setNEChow $(this).is(':checked')
+    model.setChow 'ne', $(this).is(':checked')
   $('#chow-s').change ->
-    model.setSChow $(this).is(':checked')
+    model.setChow 's', $(this).is(':checked')
 
   $('#time-limit').change ->
     model.setStopDate $(this).val()*(1000/model.env._runLoopDelay)

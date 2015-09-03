@@ -44,6 +44,32 @@
       });
       document.getElementById('environment').appendChild(this.interactive.getEnvironmentPane());
       this.env = env;
+      this.locations = {
+        all: {
+          x: 0,
+          y: 0,
+          width: this.env.width,
+          height: this.env.height
+        },
+        s: {
+          x: 0,
+          y: Math.round(this.env.height / 2),
+          width: this.env.width,
+          height: Math.round(this.env.height / 2)
+        },
+        nw: {
+          x: 0,
+          y: 0,
+          width: Math.round(this.env.width / 2),
+          height: Math.round(this.env.height / 2)
+        },
+        ne: {
+          x: Math.round(this.env.width / 2),
+          y: 0,
+          width: Math.round(this.env.width / 2),
+          height: Math.round(this.env.height / 2)
+        }
+      };
       this.setupEnvironment();
       this.isSetUp = true;
       this.stopDate = 0;
@@ -55,7 +81,6 @@
       })(this));
       return Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
         return function() {
-          _this.countRatsInAreas();
           if (_this.env.date % 37 === 1) {
             drawCharts();
           }
@@ -79,82 +104,8 @@
       }
       return set;
     },
-    countRatsInAreas: function() {
-      var a;
-      if (this.isFieldModel) {
-        return this.count_all = ((function() {
-          var j, len, ref, results;
-          ref = this.env.agentsWithin({
-            x: 0,
-            y: 0,
-            width: this.env.width,
-            height: this.env.height
-          });
-          results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            a = ref[j];
-            if (a.species === sandratSpecies) {
-              results.push(a);
-            }
-          }
-          return results;
-        }).call(this)).length;
-      } else {
-        this.count_s = ((function() {
-          var j, len, ref, results;
-          ref = this.env.agentsWithin({
-            x: 0,
-            y: Math.round(this.env.height / 2),
-            width: this.env.width,
-            height: Math.round(this.env.height / 2)
-          });
-          results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            a = ref[j];
-            if (a.species === sandratSpecies) {
-              results.push(a);
-            }
-          }
-          return results;
-        }).call(this)).length;
-        this.count_nw = ((function() {
-          var j, len, ref, results;
-          ref = this.env.agentsWithin({
-            x: 0,
-            y: 0,
-            width: Math.round(this.env.width / 2),
-            height: Math.round(this.env.height / 2)
-          });
-          results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            a = ref[j];
-            if (a.species === sandratSpecies) {
-              results.push(a);
-            }
-          }
-          return results;
-        }).call(this)).length;
-        return this.count_ne = ((function() {
-          var j, len, ref, results;
-          ref = this.env.agentsWithin({
-            x: Math.round(this.env.width / 2),
-            y: 0,
-            width: Math.round(this.env.width / 2),
-            height: Math.round(this.env.height / 2)
-          });
-          results = [];
-          for (j = 0, len = ref.length; j < len; j++) {
-            a = ref[j];
-            if (a.species === sandratSpecies) {
-              results.push(a);
-            }
-          }
-          return results;
-        }).call(this)).length;
-      }
-    },
     countRats: function(rectangle) {
-      var a, data, j, len, rats, weight;
+      var a, data, j, len, rats;
       data = {};
       rats = (function() {
         var j, len, ref, results;
@@ -172,8 +123,7 @@
         date: this.env.date,
         total: rats.length,
         healthy: 0,
-        diabetic: 0,
-        140: 0
+        diabetic: 0
       };
       for (j = 0, len = rats.length; j < len; j++) {
         a = rats[j];
@@ -183,11 +133,6 @@
         if (a.get('has diabetes')) {
           data.diabetic++;
         }
-        weight = Math.floor(a.get('weight') / 10) * 10;
-        if (data[weight] == null) {
-          data[weight] = 0;
-        }
-        data[weight]++;
       }
       return data;
     },
@@ -209,31 +154,26 @@
       return resetAndDrawCharts();
     },
     addRat: function() {
-      var rat, top;
-      top = this.isFieldModel ? 0 : 350;
+      var loc, rat;
+      loc = this.isFieldModel ? this.locations.all : this.locations.s;
       rat = sandratSpecies.createAgent();
       rat.set('age', 20 + (Math.floor(Math.random() * 40)));
-      rat.setLocation(env.randomLocationWithin(0, top, this.env.width, this.env.height - top, true));
+      rat.setLocation(env.randomLocationWithin(loc.x, loc.y, loc.width, loc.height, true));
       return this.env.addAgent(rat);
     },
-    addChow: function(n, x, y, w, h) {
+    addChow: function(n, loc) {
       var chow, i, j, ref, results;
       results = [];
       for (i = j = 0, ref = n; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
         chow = chowSpecies.createAgent();
-        chow.setLocation(env.randomLocationWithin(x, y, w, h, true));
+        chow.setLocation(env.randomLocationWithin(loc.x, loc.y, loc.width, loc.height, true));
         results.push(this.env.addAgent(chow));
       }
       return results;
     },
-    removeChow: function(x, y, width, height) {
+    removeChow: function(loc) {
       var agent, agents, j, len;
-      agents = env.agentsWithin({
-        x: x,
-        y: y,
-        width: width,
-        height: height
-      });
+      agents = env.agentsWithin(loc);
       for (j = 0, len = agents.length; j < len; j++) {
         agent = agents[j];
         if (agent.species.speciesName === "chow") {
@@ -242,43 +182,22 @@
       }
       return this.env.removeDeadAgents();
     },
-    setNWChow: function(chow) {
-      var col, j, k, ref, row;
-      for (col = j = 0, ref = Math.ceil(this.env.columns / 2); j <= ref; col = j += 1) {
-        for (row = k = 0; k <= 33; row = ++k) {
-          this.env.set(col, row, "chow", chow);
+    setChow: function(area, chow) {
+      var amount, col, j, k, loc, ref, ref1, ref2, ref3, ref4, ref5, row;
+      loc = this.locations[area];
+      if (loc == null) {
+        return;
+      }
+      for (col = j = ref = loc.x, ref1 = loc.x + loc.width, ref2 = this.env._columnWidth; ref2 > 0 ? j <= ref1 : j >= ref1; col = j += ref2) {
+        for (row = k = ref3 = loc.y, ref4 = loc.y + loc.height, ref5 = this.env._rowHeight; ref5 > 0 ? k <= ref4 : k >= ref4; row = k += ref5) {
+          this.env.setAt(col, row, "chow", chow);
         }
       }
       if (chow) {
-        return this.addChow(25, 0, 0, 500, 350);
+        amount = Math.round(loc.width * loc.height / 7000);
+        return this.addChow(amount, loc);
       } else {
-        return this.removeChow(0, 0, 500, 350);
-      }
-    },
-    setNEChow: function(chow) {
-      var col, j, k, ref, ref1, row;
-      for (col = j = ref = Math.ceil(this.env.columns / 2), ref1 = this.env.columns; j <= ref1; col = j += 1) {
-        for (row = k = 0; k <= 33; row = ++k) {
-          this.env.set(col, row, "chow", chow);
-        }
-      }
-      if (chow) {
-        return this.addChow(25, 500, 0, 500, 350);
-      } else {
-        return this.removeChow(500, 0, 500, 350);
-      }
-    },
-    setSChow: function(chow) {
-      var col, j, k, ref, row;
-      for (col = j = 0, ref = this.env.columns; j <= ref; col = j += 1) {
-        for (row = k = 36; k <= 75; row = ++k) {
-          this.env.set(col, row, "chow", chow);
-        }
-      }
-      if (chow) {
-        return this.addChow(70, 0, 350, 1000, 350);
-      } else {
-        return this.removeChow(0, 350, 1000, 350);
+        return this.removeChow(loc);
       }
     },
     setStopDate: function(date) {
@@ -318,18 +237,16 @@
       return model.showDiabetic = $(this).is(':checked');
     });
     $('#chow').change(function() {
-      model.setNWChow($(this).is(':checked'));
-      model.setNEChow($(this).is(':checked'));
-      return model.setSChow($(this).is(':checked'));
+      return model.setChow('all', $(this).is(':checked'));
     });
     $('#chow-nw').change(function() {
-      return model.setNWChow($(this).is(':checked'));
+      return model.setChow('nw', $(this).is(':checked'));
     });
     $('#chow-ne').change(function() {
-      return model.setNEChow($(this).is(':checked'));
+      return model.setChow('ne', $(this).is(':checked'));
     });
     $('#chow-s').change(function() {
-      return model.setSChow($(this).is(':checked'));
+      return model.setChow('s', $(this).is(':checked'));
     });
     $('#time-limit').change(function() {
       return model.setStopDate($(this).val() * (1000 / model.env._runLoopDelay));

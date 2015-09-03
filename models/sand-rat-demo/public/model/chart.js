@@ -3,39 +3,11 @@
   require.register("model/chart", function(exports, require, module) {
     var Chart;
     Chart = Chart = (function() {
-      var drawChart;
-
       function Chart(model1, parent, type, location) {
         this.model = model1;
         this.parent = parent;
         this.type = type;
         this.location = location;
-        this._rectangles = {
-          all: {
-            x: 0,
-            y: 0,
-            width: 600,
-            height: 700
-          },
-          s: {
-            x: 0,
-            y: 350,
-            width: 1000,
-            height: 350
-          },
-          nw: {
-            x: 0,
-            y: 0,
-            width: 500,
-            height: 350
-          },
-          ne: {
-            x: 500,
-            y: 0,
-            width: 500,
-            height: 350
-          }
-        };
         this._data = [];
         this.setupChart();
         this.reset();
@@ -48,7 +20,7 @@
           return;
         }
         if (this._data.length === 0 || this._data[this._data.length - 1].date < model.env.date) {
-          newData = this.model.countRats(this._rectangles[this.location]);
+          newData = this.model.countRats(this.model.locations[this.location]);
           this._data.push(newData);
           this.chart.validateData();
           this.chart.zoomToIndexes(this._data.length - 11, this._data.length - 1);
@@ -160,98 +132,6 @@
             }
           ]
         });
-      };
-
-      drawChart = function(chartN) {
-        var chart, chartData, data, id, key, max, options, transformedData, view;
-        max = graphLoc === "all" ? 60 : graphLoc === "s" ? 40 : 30;
-        options = {
-          title: "Sandrats in population",
-          width: 300,
-          height: 260,
-          bar: {
-            groupWidth: "95%"
-          },
-          legend: {
-            position: "none"
-          },
-          vAxis: {
-            viewWindowMode: 'explicit',
-            viewWindow: {
-              max: max,
-              min: 0
-            }
-          }
-        };
-        if (graphType === "diabetic") {
-          data = google.visualization.arrayToDataTable([
-            [
-              "Type", "Number of rats", {
-                role: "style"
-              }
-            ], ["Non-diabetic", _data.healthy, "silver"], ["Diabetic", _data.diabetic, "brown"]
-          ]);
-          view = new google.visualization.DataView(data);
-          view.setColumns([
-            0, 1, {
-              calc: "stringify",
-              sourceColumn: 1,
-              type: "string",
-              role: "annotation"
-            }, 2
-          ]);
-        } else if (graphType === "weight") {
-          transformedData = {
-            "< 150": {
-              count: (_data[130] || 0) + (_data[140] || 0),
-              color: "blue"
-            },
-            "150-159": {
-              count: _data[150] || 0,
-              color: "blue"
-            },
-            "160-169": {
-              count: _data[160] || 0,
-              color: "blue"
-            },
-            "170-179": {
-              count: _data[170] || 0,
-              color: "#df7c00"
-            },
-            "180-189": {
-              count: _data[180] || 0,
-              color: "#df7c00"
-            },
-            "> 190": {
-              count: (_data[190] || 0) + (_data[200] || 0) + (_data[210] || 0) + (_data[220] || 0) + (_data[230] || 0),
-              color: "#df7c00"
-            }
-          };
-          chartData = [
-            [
-              "Type", "Number of rats", {
-                role: "style"
-              }
-            ]
-          ];
-          for (key in transformedData) {
-            chartData.push([key, transformedData[key].count, transformedData[key].color]);
-          }
-          data = google.visualization.arrayToDataTable(chartData);
-          view = new google.visualization.DataView(data);
-          view.setColumns([
-            0, 1, {
-              calc: "stringify",
-              sourceColumn: 1,
-              type: "string",
-              role: "annotation"
-            }, 2
-          ]);
-          options.title = "Weight of sandrats (g)";
-        }
-        id = chartN === 1 ? "field-chart" : "field-chart-2";
-        chart = new google.visualization.ColumnChart(document.getElementById(id));
-        return chart.draw(view, options);
       };
 
       return Chart;
