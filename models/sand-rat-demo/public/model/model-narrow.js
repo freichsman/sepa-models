@@ -87,8 +87,8 @@
           ref = this.env.agentsWithin({
             x: 0,
             y: 0,
-            width: 600,
-            height: 700
+            width: this.env.width,
+            height: this.env.height
           });
           results = [];
           for (j = 0, len = ref.length; j < len; j++) {
@@ -104,9 +104,9 @@
           var j, len, ref, results;
           ref = this.env.agentsWithin({
             x: 0,
-            y: 350,
-            width: 1000,
-            height: 350
+            y: Math.round(this.env.height / 2),
+            width: this.env.width,
+            height: Math.round(this.env.height / 2)
           });
           results = [];
           for (j = 0, len = ref.length; j < len; j++) {
@@ -122,8 +122,8 @@
           ref = this.env.agentsWithin({
             x: 0,
             y: 0,
-            width: 500,
-            height: 350
+            width: Math.round(this.env.width / 2),
+            height: Math.round(this.env.height / 2)
           });
           results = [];
           for (j = 0, len = ref.length; j < len; j++) {
@@ -137,10 +137,10 @@
         return this.count_ne = ((function() {
           var j, len, ref, results;
           ref = this.env.agentsWithin({
-            x: 500,
+            x: Math.round(this.env.width / 2),
             y: 0,
-            width: 500,
-            height: 350
+            width: Math.round(this.env.width / 2),
+            height: Math.round(this.env.height / 2)
           });
           results = [];
           for (j = 0, len = ref.length; j < len; j++) {
@@ -192,13 +192,13 @@
       return data;
     },
     setupEnvironment: function() {
-      var col, i, j, k, l, ref, row;
-      for (col = j = 0; j <= 60; col = ++j) {
-        for (row = k = 0; k <= 70; row = ++k) {
+      var col, i, j, k, l, ref, ref1, ref2, row;
+      for (col = j = 0, ref = this.env.columns; 0 <= ref ? j <= ref : j >= ref; col = 0 <= ref ? ++j : --j) {
+        for (row = k = 0, ref1 = this.env.rows; 0 <= ref1 ? k <= ref1 : k >= ref1; row = 0 <= ref1 ? ++k : --k) {
           this.env.set(col, row, "chow", false);
         }
       }
-      for (i = l = 0, ref = startingRats; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+      for (i = l = 0, ref2 = startingRats; 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
         this.addRat();
       }
       $('#chow, #chow-s, #chow-nw, #chow-ne').attr('checked', false);
@@ -213,7 +213,7 @@
       top = this.isFieldModel ? 0 : 350;
       rat = sandratSpecies.createAgent();
       rat.set('age', 20 + (Math.floor(Math.random() * 40)));
-      rat.setLocation(env.randomLocationWithin(0, top, 600, 700, true));
+      rat.setLocation(env.randomLocationWithin(0, top, this.env.width, this.env.height - top, true));
       return this.env.addAgent(rat);
     },
     addChow: function(n, x, y, w, h) {
@@ -243,8 +243,8 @@
       return this.env.removeDeadAgents();
     },
     setNWChow: function(chow) {
-      var col, j, k, row;
-      for (col = j = 0; j <= 30; col = ++j) {
+      var col, j, k, ref, row;
+      for (col = j = 0, ref = Math.ceil(this.env.columns / 2); j <= ref; col = j += 1) {
         for (row = k = 0; k <= 33; row = ++k) {
           this.env.set(col, row, "chow", chow);
         }
@@ -256,8 +256,8 @@
       }
     },
     setNEChow: function(chow) {
-      var col, j, k, row;
-      for (col = j = 30; j <= 60; col = ++j) {
+      var col, j, k, ref, ref1, row;
+      for (col = j = ref = Math.ceil(this.env.columns / 2), ref1 = this.env.columns; j <= ref1; col = j += 1) {
         for (row = k = 0; k <= 33; row = ++k) {
           this.env.set(col, row, "chow", chow);
         }
@@ -269,8 +269,8 @@
       }
     },
     setSChow: function(chow) {
-      var col, j, k, row;
-      for (col = j = 0; j <= 60; col = ++j) {
+      var col, j, k, ref, row;
+      for (col = j = 0, ref = this.env.columns; j <= ref; col = j += 1) {
         for (row = k = 36; k <= 75; row = ++k) {
           this.env.set(col, row, "chow", chow);
         }
@@ -290,21 +290,19 @@
   };
 
   $(function() {
-    var chart1, chart2;
+    var chart1, chart2, graph1Location;
     chart1 = null;
     chart2 = null;
     model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
     model.isLifespanModel = /[^\/]*html/.exec(document.location.href) && /[^\/]*html/.exec(document.location.href)[0] === "lifespan.html";
-    if (!model.isFieldModel) {
-      window.graph1Location = "s";
-    }
+    graph1Location = model.isFieldModel ? 'all' : 'ne';
     if (model.isLifespanModel) {
       startingRats = 10;
     }
     helpers.preload([model, env, sandratSpecies], function() {
       model.run();
       if ($('#field-chart').length > 0) {
-        chart1 = new Chart(model, 'field-chart', 'diabetic', 'all');
+        chart1 = new Chart(model, 'field-chart', 'diabetic', graph1Location);
       }
       if ($('#field-chart-2').length > 0) {
         return chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'nw');

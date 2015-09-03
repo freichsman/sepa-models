@@ -62,11 +62,11 @@ window.model =
 
   countRatsInAreas: ->
     if @isFieldModel
-      @count_all = (a for a in @env.agentsWithin({x: 0, y: 0, width: 1000, height: 700})   when a.species is sandratSpecies).length
+      @count_all = (a for a in @env.agentsWithin({x: 0, y: 0, width: @env.width, height: @env.height})   when a.species is sandratSpecies).length
     else
-      @count_s   = (a for a in @env.agentsWithin({x: 0, y: 350, width: 1000, height: 350}) when a.species is sandratSpecies).length
-      @count_nw  = (a for a in @env.agentsWithin({x: 0, y: 0, width: 500, height: 350})    when a.species is sandratSpecies).length
-      @count_ne  = (a for a in @env.agentsWithin({x: 500, y: 0, width: 500, height: 350})  when a.species is sandratSpecies).length
+      @count_s   = (a for a in @env.agentsWithin({x: 0, y: Math.round(@env.height/2), width: @env.width, height: Math.round(@env.height/2)}) when a.species is sandratSpecies).length
+      @count_nw  = (a for a in @env.agentsWithin({x: 0, y: 0, width: Math.round(@env.width/2), height: Math.round(@env.height/2)})    when a.species is sandratSpecies).length
+      @count_ne  = (a for a in @env.agentsWithin({x: Math.round(@env.width/2), y: 0, width: Math.round(@env.width/2), height: Math.round(@env.height/2)})  when a.species is sandratSpecies).length
 
   countRats: (rectangle) ->
     data = {}
@@ -84,8 +84,8 @@ window.model =
     return data
 
   setupEnvironment: ->
-    for col in [0..100]
-      for row in [0..70]
+    for col in [0..(@env.columns)]
+      for row in [0..(@env.rows)]
         @env.set col, row, "chow", false
 
     for i in [0...startingRats]
@@ -105,7 +105,7 @@ window.model =
     top = if @isFieldModel then 0 else 350
     rat = sandratSpecies.createAgent()
     rat.set('age', 20 + (Math.floor Math.random() * 40))
-    rat.setLocation env.randomLocationWithin 0, top, 1000, 700, true
+    rat.setLocation env.randomLocationWithin 0, top, @env.width, @env.height-top, true
     @env.addAgent rat
 
   addChow: (n, x, y, w, h) ->
@@ -120,7 +120,7 @@ window.model =
     @env.removeDeadAgents()
 
   setNWChow: (chow) ->
-    for col in [0..50]
+    for col in [0..(Math.ceil(@env.columns/2))] by 1
       for row in [0..33]
         @env.set col, row, "chow", chow
     if (chow)
@@ -128,7 +128,7 @@ window.model =
     else
       @removeChow(0, 0, 500, 350)
   setNEChow: (chow) ->
-    for col in [50..100]
+    for col in [(Math.ceil(@env.columns/2))..(@env.columns)] by 1
       for row in [0..33]
         @env.set col, row, "chow", chow
     if (chow)
@@ -136,7 +136,7 @@ window.model =
     else
       @removeChow(500, 0, 500, 350)
   setSChow: (chow) ->
-    for col in [0..100]
+    for col in [0..(@env.columns)] by 1
       for row in [36..75]
         @env.set col, row, "chow", chow
     if (chow)
@@ -158,8 +158,7 @@ $ ->
   model.isFieldModel = !/[^\/]*html/.exec(document.location.href) or /[^\/]*html/.exec(document.location.href)[0] == "field.html"
   model.isLifespanModel = /[^\/]*html/.exec(document.location.href) and /[^\/]*html/.exec(document.location.href)[0] == "lifespan.html"
 
-  if not model.isFieldModel
-    window.graph1Location = "s"
+  graph1Location = if model.isFieldModel then 'all' else 'ne'
 
   if model.isLifespanModel
     startingRats = 10
@@ -167,7 +166,7 @@ $ ->
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
     if $('#field-chart').length > 0
-      chart1 = new Chart(model, 'field-chart',   'diabetic', 'ne')
+      chart1 = new Chart(model, 'field-chart',   'diabetic', graph1Location)
     if $('#field-chart-2').length > 0
       chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'nw')
 
