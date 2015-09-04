@@ -1,3 +1,25 @@
+/* START rules to put the controls on the left */
+#environment {
+  position: relative;
+  overflow: visible;
+}
+
+#environment canvas {
+  position: relative;
+  left: 68px;
+}
+
+#environment .toolbar {
+  position: relative;
+  left: -1000px;
+}
+
+#environment.narrow .toolbar {
+  position: relative;
+  left: -600px;
+}
+/* END rules for putting the controls on the left */
+
 .time-limit-dialog {
   display: none;
   position: absolute;
