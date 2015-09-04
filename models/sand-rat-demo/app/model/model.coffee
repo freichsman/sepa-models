@@ -162,12 +162,29 @@ $ ->
   $('#view-diabetic-check').change ->
     model.showDiabetic = $(this).is(':checked')
 
+  chart1PeriodId = null
+  chart2PeriodId = null
   $('#chow').change ->
     model.setChow 'all', $(this).is(':checked')
+    if $(this).is(':checked')
+      chart1PeriodId = 'chow-'+Date.now()
+      chart1?.startPeriod(chart1PeriodId)
+    else
+      chart1?.endPeriod(chart1PeriodId)
   $('#chow-nw').change ->
     model.setChow 'nw', $(this).is(':checked')
+    if $(this).is(':checked')
+      chart2PeriodId = 'chow-'+Date.now()
+      chart2?.startPeriod(chart2PeriodId)
+    else
+      chart2?.endPeriod(chart2PeriodId)
   $('#chow-ne').change ->
     model.setChow 'ne', $(this).is(':checked')
+    if $(this).is(':checked')
+      chart1PeriodId = 'chow-'+Date.now()
+      chart1?.startPeriod(chart1PeriodId)
+    else
+      chart1?.endPeriod(chart1PeriodId)
   $('#chow-s').change ->
     model.setChow 's', $(this).is(':checked')
 

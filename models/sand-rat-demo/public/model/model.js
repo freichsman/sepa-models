@@ -214,7 +214,7 @@
   };
 
   $(function() {
-    var chart1, chart2, graph1Location;
+    var chart1, chart1PeriodId, chart2, chart2PeriodId, graph1Location;
     chart1 = null;
     chart2 = null;
     model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
@@ -241,14 +241,34 @@
     $('#view-diabetic-check').change(function() {
       return model.showDiabetic = $(this).is(':checked');
     });
+    chart1PeriodId = null;
+    chart2PeriodId = null;
     $('#chow').change(function() {
-      return model.setChow('all', $(this).is(':checked'));
+      model.setChow('all', $(this).is(':checked'));
+      if ($(this).is(':checked')) {
+        chart1PeriodId = 'chow-' + Date.now();
+        return chart1 != null ? chart1.startPeriod(chart1PeriodId) : void 0;
+      } else {
+        return chart1 != null ? chart1.endPeriod(chart1PeriodId) : void 0;
+      }
     });
     $('#chow-nw').change(function() {
-      return model.setChow('nw', $(this).is(':checked'));
+      model.setChow('nw', $(this).is(':checked'));
+      if ($(this).is(':checked')) {
+        chart2PeriodId = 'chow-' + Date.now();
+        return chart2 != null ? chart2.startPeriod(chart2PeriodId) : void 0;
+      } else {
+        return chart2 != null ? chart2.endPeriod(chart2PeriodId) : void 0;
+      }
     });
     $('#chow-ne').change(function() {
-      return model.setChow('ne', $(this).is(':checked'));
+      model.setChow('ne', $(this).is(':checked'));
+      if ($(this).is(':checked')) {
+        chart1PeriodId = 'chow-' + Date.now();
+        return chart1 != null ? chart1.startPeriod(chart1PeriodId) : void 0;
+      } else {
+        return chart1 != null ? chart1.endPeriod(chart1PeriodId) : void 0;
+      }
     });
     $('#chow-s').change(function() {
       return model.setChow('s', $(this).is(':checked'));
