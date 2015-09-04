@@ -160,7 +160,7 @@
               autoGridCount: false,
               gridCount: 5,
               minimum: 0,
-              maximum: 60,
+              maximum: this.location === 'all' ? 50 : 30,
               position: 'left'
             }
           ]

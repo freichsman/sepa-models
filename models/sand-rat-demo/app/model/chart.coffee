@@ -128,7 +128,7 @@ require.register "model/chart", (exports, require, module) ->
             autoGridCount: false
             gridCount: 5
             minimum: 0
-            maximum: 60
+            maximum: if @location is 'all' then 50 else 30
             position: 'left'
           }
         ]
