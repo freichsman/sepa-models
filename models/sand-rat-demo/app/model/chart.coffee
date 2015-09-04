@@ -15,7 +15,7 @@ require.register "model/chart", (exports, require, module) ->
 
       if (@_idx == @_data.length and @_data[@_idx-1]?.date < model.env.date) or
          (@_idx <  @_data.length and @_data[@_idx]?.date   < model.env.date)
-        newData = @model.countRats(@model.locations[@location])
+        newData = @model.current_counts[@location]
         currentDate = newData.date
         newData.color = 'hsl(0,100%,55%)'
         @_data[@_idx-1].color = 'hsl(0,100%,92%)' if @_idx > 0

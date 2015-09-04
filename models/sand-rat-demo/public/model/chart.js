@@ -24,7 +24,7 @@
           return;
         }
         if ((this._idx === this._data.length && ((ref = this._data[this._idx - 1]) != null ? ref.date : void 0) < model.env.date) || (this._idx < this._data.length && ((ref1 = this._data[this._idx]) != null ? ref1.date : void 0) < model.env.date)) {
-          newData = this.model.countRats(this.model.locations[this.location]);
+          newData = this.model.current_counts[this.location];
           currentDate = newData.date;
           newData.color = 'hsl(0,100%,55%)';
           if (this._idx > 0) {

@@ -34,14 +34,14 @@
         }
         overcrowded = false;
         if (!this._isInPensModel) {
-          overcrowded = model.count_all > 46;
+          overcrowded = model.current_counts.all.total > 46;
         } else {
-          if (this._y > 350) {
-            overcrowded = model.count_s > 36;
-          } else if (this._x < 500) {
-            overcrowded = model.count_nw > 25;
+          if (this._y > model.env.height / 2) {
+            overcrowded = model.current_counts.s.total > 36;
+          } else if (this._x < model.env.width / 2) {
+            overcrowded = model.current_counts.nw.total > 25;
           } else {
-            overcrowded = model.count_ne > 25;
+            overcrowded = model.current_counts.ne.total > 25;
           }
         }
         if (!overcrowded && this.get('age') > 650 && this.get('sex') === 'male' && this._timeLastMated < 0 && Math.random() < 0.3) {

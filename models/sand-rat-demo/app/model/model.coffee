@@ -51,6 +51,7 @@ window.model =
       $('.time-limit-dialog').fadeOut(300)
 
     Events.addEventListener Environment.EVENTS.STEP, =>
+      @countRatsInAreas()
       drawCharts() if @env.date % @graphInterval is 1
       if @stopDate > 0 and @env.date > @stopDate
         @env.stop()
@@ -66,7 +67,7 @@ window.model =
       set.push a if a.species is species
     return set
 
-  countRats: (rectangle) ->
+  _countRats: (rectangle) ->
     data = {}
 
     rats = (a for a in @env.agentsWithin(rectangle) when a.species is sandratSpecies)
@@ -81,6 +82,14 @@ window.model =
 
     return data
 
+  countRatsInAreas: ->
+    if @isFieldModel
+      @current_counts.all = @_countRats(@locations.all)
+    else
+      @current_counts.s  = @_countRats(@locations.s)
+      @current_counts.ne = @_countRats(@locations.ne)
+      @current_counts.nw = @_countRats(@locations.nw)
+
   setupEnvironment: ->
     for col in [0..(@env.columns)]
       for row in [0..(@env.rows)]
@@ -91,10 +100,11 @@ window.model =
 
     $('#chow, #chow-s, #chow-nw, #chow-ne').attr('checked', false)
 
-    @count_all = 0
-    @count_s   = 0
-    @count_nw  = 0
-    @count_ne  = 0
+    @current_counts =
+      all: {total: 0}
+      s:   {total: 0}
+      nw:  {total: 0}
+      ne:  {total: 0}
 
     resetAndDrawCharts()
 

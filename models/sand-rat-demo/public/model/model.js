@@ -83,6 +83,7 @@
       })(this));
       return Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
         return function() {
+          _this.countRatsInAreas();
           if (_this.env.date % _this.graphInterval === 1) {
             drawCharts();
           }
@@ -109,7 +110,7 @@
       }
       return set;
     },
-    countRats: function(rectangle) {
+    _countRats: function(rectangle) {
       var a, data, j, len, rats;
       data = {};
       rats = (function() {
@@ -141,6 +142,15 @@
       }
       return data;
     },
+    countRatsInAreas: function() {
+      if (this.isFieldModel) {
+        return this.current_counts.all = this._countRats(this.locations.all);
+      } else {
+        this.current_counts.s = this._countRats(this.locations.s);
+        this.current_counts.ne = this._countRats(this.locations.ne);
+        return this.current_counts.nw = this._countRats(this.locations.nw);
+      }
+    },
     setupEnvironment: function() {
       var col, i, j, k, l, ref, ref1, ref2, row;
       for (col = j = 0, ref = this.env.columns; 0 <= ref ? j <= ref : j >= ref; col = 0 <= ref ? ++j : --j) {
@@ -152,10 +162,20 @@
         this.addRat();
       }
       $('#chow, #chow-s, #chow-nw, #chow-ne').attr('checked', false);
-      this.count_all = 0;
-      this.count_s = 0;
-      this.count_nw = 0;
-      this.count_ne = 0;
+      this.current_counts = {
+        all: {
+          total: 0
+        },
+        s: {
+          total: 0
+        },
+        nw: {
+          total: 0
+        },
+        ne: {
+          total: 0
+        }
+      };
       return resetAndDrawCharts();
     },
     addRat: function() {
