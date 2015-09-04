@@ -27,6 +27,7 @@
           newData = this.model.current_counts[this.location];
           currentDate = newData.date;
           newData.color = 'hsl(0,100%,55%)';
+          newData.base = -2;
           if (this._idx > 0) {
             this._data[this._idx - 1].color = 'hsl(0,100%,92%)';
           }
@@ -150,6 +151,7 @@
               clustered: false,
               valueField: 'diabetic',
               valueAxis: 'diabetic',
+              openField: 'base',
               title: 'Diabetic Rats'
             }
           ],
@@ -158,8 +160,10 @@
               id: 'diabetic',
               title: 'Diabetic Rats',
               autoGridCount: false,
-              gridCount: 5,
-              minimum: 0,
+              gridCount: 6,
+              showFirstLabel: false,
+              strictMinMax: true,
+              minimum: -2,
               maximum: this.location === 'all' ? 50 : 30,
               position: 'left'
             }

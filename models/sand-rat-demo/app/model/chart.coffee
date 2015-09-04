@@ -18,6 +18,7 @@ require.register "model/chart", (exports, require, module) ->
         newData = @model.current_counts[@location]
         currentDate = newData.date
         newData.color = 'hsl(0,100%,55%)'
+        newData.base = -2  # Allows the bar to start at -2 and go up to <value>
         @_data[@_idx-1].color = 'hsl(0,100%,92%)' if @_idx > 0
         if @_idx == @_data.length
           old = @_data.shift()
@@ -118,6 +119,7 @@ require.register "model/chart", (exports, require, module) ->
             clustered: false
             valueField: 'diabetic'
             valueAxis: 'diabetic'
+            openField: 'base'
             title: 'Diabetic Rats'
           }
         ]
@@ -126,8 +128,10 @@ require.register "model/chart", (exports, require, module) ->
             id: 'diabetic'
             title: 'Diabetic Rats'
             autoGridCount: false
-            gridCount: 5
-            minimum: 0
+            gridCount: 6
+            showFirstLabel: false
+            strictMinMax: true
+            minimum: -2
             maximum: if @location is 'all' then 50 else 30
             position: 'left'
           }
