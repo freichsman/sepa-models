@@ -51,22 +51,22 @@
           width: this.env.width,
           height: this.env.height
         },
-        s: {
-          x: 0,
-          y: Math.round(this.env.height / 2),
-          width: this.env.width,
-          height: Math.round(this.env.height / 2)
-        },
-        nw: {
+        w: {
           x: 0,
           y: 0,
-          width: Math.round(this.env.width / 2),
-          height: Math.round(this.env.height / 2)
+          width: Math.round(this.env.width / 3),
+          height: this.env.height
         },
         ne: {
-          x: Math.round(this.env.width / 2),
+          x: Math.round(this.env.width / 3),
           y: 0,
-          width: Math.round(this.env.width / 2),
+          width: Math.round(this.env.width / 3) * 2,
+          height: Math.round(this.env.height / 2)
+        },
+        se: {
+          x: Math.round(this.env.width / 3),
+          y: Math.round(this.env.height / 2),
+          width: Math.round(this.env.width / 3) * 2,
           height: Math.round(this.env.height / 2)
         }
       };
@@ -146,9 +146,9 @@
       if (this.isFieldModel) {
         return this.current_counts.all = this._countRats(this.locations.all);
       } else {
-        this.current_counts.s = this._countRats(this.locations.s);
+        this.current_counts.w = this._countRats(this.locations.w);
         this.current_counts.ne = this._countRats(this.locations.ne);
-        return this.current_counts.nw = this._countRats(this.locations.nw);
+        return this.current_counts.se = this._countRats(this.locations.se);
       }
     },
     setupEnvironment: function() {
@@ -161,15 +161,15 @@
       for (i = l = 0, ref2 = startingRats; 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
         this.addRat();
       }
-      $('#chow, #chow-s, #chow-nw, #chow-ne').attr('checked', false);
+      $('#chow, #chow-w, #chow-se, #chow-ne').attr('checked', false);
       this.current_counts = {
         all: {
           total: 0
         },
-        s: {
+        w: {
           total: 0
         },
-        nw: {
+        se: {
           total: 0
         },
         ne: {
@@ -180,7 +180,7 @@
     },
     addRat: function() {
       var loc, rat;
-      loc = this.isFieldModel ? this.locations.all : this.locations.s;
+      loc = this.isFieldModel ? this.locations.all : this.locations.w;
       rat = sandratSpecies.createAgent();
       rat.set('age', 20 + (Math.floor(Math.random() * 40)));
       rat.setLocation(env.randomLocationWithin(loc.x, loc.y, loc.width, loc.height, true));
@@ -249,7 +249,7 @@
         chart1 = new Chart(model, 'field-chart', 'diabetic', graph1Location);
       }
       if ($('#field-chart-2').length > 0) {
-        return chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'nw');
+        return chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'se');
       }
     });
     $('#view-sex-check').change(function() {
@@ -272,8 +272,8 @@
         return chart1 != null ? chart1.endPeriod(chart1PeriodId) : void 0;
       }
     });
-    $('#chow-nw').change(function() {
-      model.setChow('nw', $(this).is(':checked'));
+    $('#chow-se').change(function() {
+      model.setChow('se', $(this).is(':checked'));
       if ($(this).is(':checked')) {
         chart2PeriodId = 'chow-' + Date.now();
         return chart2 != null ? chart2.startPeriod(chart2PeriodId) : void 0;
@@ -290,8 +290,8 @@
         return chart1 != null ? chart1.endPeriod(chart1PeriodId) : void 0;
       }
     });
-    $('#chow-s').change(function() {
-      return model.setChow('s', $(this).is(':checked'));
+    $('#chow-w').change(function() {
+      return model.setChow('w', $(this).is(':checked'));
     });
     $('#time-limit').change(function() {
       model.setStopDate($(this).val() * model.targetFPS());

@@ -37,25 +37,19 @@
     <script src="model/model.js"></script>
   </head>
   <body>
-    <div id="environment" style="float: left"></div>
-    <div id="controls">
-      Feed sugary chow:
-      <table>
-        <tr>
-          <td><input type="checkbox" id="chow-nw" value="prone"></td>
-          <td></td>
-          <td><input type="checkbox" id="chow-ne" value="prone"></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><input type="checkbox" id="chow-s" value="prone"></td>
-        </tr>
-      </table>
+    <div id="environment" style="vertical-align: top;"></div>
+    <div id="controls" style="display: inline-block;">
+      <div>Feed sugary chow:</div>
+      <div style="position: relative; width: 75px; height: 50px;">
+        <input type="checkbox" id="chow-w" value="prone"  style="position: absolute; left: 5px; top: 13px;"></td>
+        <input type="checkbox" id="chow-ne" value="prone" style="position: absolute; left: 35px; top: 0px;"></td>
+        <input type="checkbox" id="chow-se" value="prone" style="position: absolute; left: 35px; top: 26px;"></td>
+      </div>
 
-      <div style="border: 1px solid #EEE; padding: 4px; margin: 6px; background-color: #DDD; margin-left: 20px;">
-        <input type="checkbox" id="view-sex-check" value="prone"> Show females and males <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/female-stack.png"> <img style="position: absolute; width: 19px;" src="images/agents/male-stack.png"><br>
-        <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes propensity <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/prone-stack.png"><br>
-        <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes <img style="position: absolute; width: 19px; left: 1296px;" src="images/agents/diabetic-stack.png"><br>
+      <div style="border: 1px solid #EEE; padding: 4px; margin: 6px; background-color: #DDD; margin-left: 0px;">
+        <input type="checkbox" id="view-sex-check" value="prone"> Show females and males <img style="width: 19px;" src="images/agents/female-stack.png"> <img style="width: 19px;" src="images/agents/male-stack.png"><br>
+        <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes propensity <img style="width: 19px;" src="images/agents/prone-stack.png"><br>
+        <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes <img style="width: 19px;" src="images/agents/diabetic-stack.png"><br>
       </div>
 
       <div>

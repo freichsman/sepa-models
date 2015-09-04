@@ -35,10 +35,10 @@ window.model =
     @env = env
 
     @locations =
-      all: {x: 0,                        y: 0,                         width: @env.width,               height: @env.height}
-      s:   {x: 0,                        y: Math.round(@env.height/2), width: @env.width,               height: Math.round(@env.height/2)}
-      nw:  {x: 0,                        y: 0,                         width: Math.round(@env.width/2), height: Math.round(@env.height/2)}
-      ne:  {x: Math.round(@env.width/2), y: 0,                         width: Math.round(@env.width/2), height: Math.round(@env.height/2)}
+      all: {x: 0,                        y: 0,                         width: @env.width,                 height: @env.height }
+      w:   {x: 0,                        y: 0,                         width: Math.round(@env.width/3),   height: @env.height }
+      ne:  {x: Math.round(@env.width/3), y: 0,                         width: Math.round(@env.width/3)*2, height: Math.round(@env.height/2)}
+      se:  {x: Math.round(@env.width/3), y: Math.round(@env.height/2), width: Math.round(@env.width/3)*2, height: Math.round(@env.height/2)}
 
     @setupEnvironment()
     @isSetUp = true
@@ -86,9 +86,9 @@ window.model =
     if @isFieldModel
       @current_counts.all = @_countRats(@locations.all)
     else
-      @current_counts.s  = @_countRats(@locations.s)
+      @current_counts.w  = @_countRats(@locations.w)
       @current_counts.ne = @_countRats(@locations.ne)
-      @current_counts.nw = @_countRats(@locations.nw)
+      @current_counts.se = @_countRats(@locations.se)
 
   setupEnvironment: ->
     for col in [0..(@env.columns)]
@@ -98,18 +98,18 @@ window.model =
     for i in [0...startingRats]
       @addRat()
 
-    $('#chow, #chow-s, #chow-nw, #chow-ne').attr('checked', false)
+    $('#chow, #chow-w, #chow-se, #chow-ne').attr('checked', false)
 
     @current_counts =
       all: {total: 0}
-      s:   {total: 0}
-      nw:  {total: 0}
+      w:   {total: 0}
+      se:  {total: 0}
       ne:  {total: 0}
 
     resetAndDrawCharts()
 
   addRat: () ->
-    loc = if @isFieldModel then @locations.all else @locations.s
+    loc = if @isFieldModel then @locations.all else @locations.w
     rat = sandratSpecies.createAgent()
     rat.set('age', 20 + (Math.floor Math.random() * 40))
     rat.setLocation env.randomLocationWithin loc.x, loc.y, loc.width, loc.height, true
@@ -163,7 +163,7 @@ $ ->
     if $('#field-chart').length > 0
       chart1 = new Chart(model, 'field-chart',   'diabetic', graph1Location)
     if $('#field-chart-2').length > 0
-      chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'nw')
+      chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'se')
 
   $('#view-sex-check').change ->
     model.showSex = $(this).is(':checked')
@@ -181,8 +181,8 @@ $ ->
       chart1?.startPeriod(chart1PeriodId)
     else
       chart1?.endPeriod(chart1PeriodId)
-  $('#chow-nw').change ->
-    model.setChow 'nw', $(this).is(':checked')
+  $('#chow-se').change ->
+    model.setChow 'se', $(this).is(':checked')
     if $(this).is(':checked')
       chart2PeriodId = 'chow-'+Date.now()
       chart2?.startPeriod(chart2PeriodId)
@@ -195,8 +195,8 @@ $ ->
       chart1?.startPeriod(chart1PeriodId)
     else
       chart1?.endPeriod(chart1PeriodId)
-  $('#chow-s').change ->
-    model.setChow 's', $(this).is(':checked')
+  $('#chow-w').change ->
+    model.setChow 'w', $(this).is(':checked')
 
   $('#time-limit').change ->
     model.setStopDate $(this).val()*model.targetFPS()

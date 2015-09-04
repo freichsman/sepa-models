@@ -36,12 +36,12 @@
         if (!this._isInPensModel) {
           overcrowded = model.current_counts.all.total > 46;
         } else {
-          if (this._y > model.env.height / 2) {
-            overcrowded = model.current_counts.s.total > 36;
-          } else if (this._x < model.env.width / 2) {
-            overcrowded = model.current_counts.nw.total > 25;
+          if (this._x < model.env.width / 3) {
+            overcrowded = model.current_counts.w.total > 30;
+          } else if (this._y < model.env.height / 2) {
+            overcrowded = model.current_counts.ne.total > 30;
           } else {
-            overcrowded = model.current_counts.ne.total > 25;
+            overcrowded = model.current_counts.se.total > 30;
           }
         }
         if (!overcrowded && this.get('age') > 650 && this.get('sex') === 'male' && this._timeLastMated < 0 && Math.random() < 0.3) {

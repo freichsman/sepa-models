@@ -8,12 +8,13 @@ env = new Environment
   wrapEastWest: false
   wrapNorthSouth: false
   barriers: [
-    [0, 330, 1000, 30]       # Center - horizontal
-    [485, 0, 30, 340]        # Center - vertical-top
+    [285, 0, 85, 700]       # Vertical - left-center
+    [333, 312, 667, 76]     # Horizontal - divides top and bottom right-side pens
   ]
 
 EnvRules.init env
 
+# env.getView().showingBarriers = true
 
 require.register "environments/field", (exports, require, module) ->
   module.exports = env

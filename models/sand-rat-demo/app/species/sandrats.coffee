@@ -25,12 +25,12 @@ require.register "species/sandrats", (exports, require, module) ->
       if not @_isInPensModel
         overcrowded = model.current_counts.all.total > 46
       else
-        if @_y > model.env.height/2
-          overcrowded = model.current_counts.s.total > 36
-        else if @_x < model.env.width/2
-          overcrowded = model.current_counts.nw.total > 25
+        if @_x < model.env.width/3
+          overcrowded = model.current_counts.w.total > 30
+        else if @_y < model.env.height/2
+          overcrowded = model.current_counts.ne.total > 30
         else
-          overcrowded = model.current_counts.ne.total > 25
+          overcrowded = model.current_counts.se.total > 30
 
       # mate if it's not overcrowded
       if not overcrowded and @get('age') > 170 and @get('sex') is 'male' and @_timeLastMated < 0 and Math.random() < 0.3
