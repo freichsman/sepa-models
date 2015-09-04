@@ -75,3 +75,14 @@ span.allele.yellow {
 span.allele.blue {
   background-color: blue;
 }
+
+.chart-container {
+  position: relative;
+  width: 370px;
+  height: 260px;
+}
+
+#field-chart, #field-chart-2 {
+  width: 350px;
+  height: 260px;
+}
