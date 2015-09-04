@@ -80,7 +80,15 @@ require.register "species/sandrats", (exports, require, module) ->
 
     resetGeneticTraits: ()->
       super()
-      @set('genome', @organism.getAlleleString().replace(/a:/g,'').replace(/b:/g,''))
+      @set 'genome', @_genomeButtonsString()
+
+    _genomeButtonsString: ()->
+      alleles = @organism.getAlleleString().replace(/a:/g,'').replace(/b:/g,'').replace(/,/g, '')
+      alleles = alleles.replace(/d[ryb]b/g, '<span class="allele black"></span>')
+      alleles = alleles.replace(/DR/g, '<span class="allele red"></span>')
+      alleles = alleles.replace(/DY/g, '<span class="allele yellow"></span>')
+      alleles = alleles.replace(/DB/g, '<span class="allele blue"></span>')
+      return alleles
 
   geneValues = [
     'a:DR,b:drb,a:dyb,b:dyb,a:dbb,b:dbb'
@@ -101,10 +109,7 @@ require.register "species/sandrats", (exports, require, module) ->
       INFO_VIEW_SCALE: 2
       MATURITY_AGE: 80
       INFO_VIEW_PROPERTIES:
-        "Diabetes-prone:&nbsp;&nbsp;&nbsp;": 'prone to diabetes'
-        "Has diabetes:   ": 'has diabetes'
-        "Weight (g):   ": 'weight'
-        "Genome:  ": 'genome'
+        "": 'genome'
     traits: [
       new Trait {name: 'speed', default: 6 }
       new Trait {name: 'vision distance', default: 10000 }

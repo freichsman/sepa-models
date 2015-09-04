@@ -20,3 +20,36 @@
   left: 15px;
 }
 
+.bubble .content .details .agent-property-value {
+  margin-left: 70px;
+}
+
+span.allele {
+  display: inline-block;
+  float: left;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  box-shadow: 1px 1px 10px black;
+  margin: 0 5px 5px 0;
+}
+
+span.allele:nth-child(2n+1) {
+  clear: both;
+}
+
+span.allele.black {
+  background-color: black;
+}
+
+span.allele.red {
+  background-color: red;
+}
+
+span.allele.yellow {
+  background-color: yellow;
+}
+
+span.allele.blue {
+  background-color: blue;
+}

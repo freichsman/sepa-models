@@ -89,7 +89,17 @@
 
       SandRat.prototype.resetGeneticTraits = function() {
         SandRat.__super__.resetGeneticTraits.call(this);
-        return this.set('genome', this.organism.getAlleleString().replace(/a:/g, '').replace(/b:/g, ''));
+        return this.set('genome', this._genomeButtonsString());
+      };
+
+      SandRat.prototype._genomeButtonsString = function() {
+        var alleles;
+        alleles = this.organism.getAlleleString().replace(/a:/g, '').replace(/b:/g, '').replace(/,/g, '');
+        alleles = alleles.replace(/d[ryb]b/g, '<span class="allele black"></span>');
+        alleles = alleles.replace(/DR/g, '<span class="allele red"></span>');
+        alleles = alleles.replace(/DY/g, '<span class="allele yellow"></span>');
+        alleles = alleles.replace(/DB/g, '<span class="allele blue"></span>');
+        return alleles;
       };
 
       return SandRat;
@@ -108,10 +118,7 @@
         INFO_VIEW_SCALE: 2,
         MATURITY_AGE: 20,
         INFO_VIEW_PROPERTIES: {
-          "Diabetes-prone:&nbsp;&nbsp;&nbsp;": 'prone to diabetes',
-          "Has diabetes:   ": 'has diabetes',
-          "Weight (g):   ": 'weight',
-          "Genome:  ": 'genome'
+          "": 'genome'
         }
       },
       traits: [
