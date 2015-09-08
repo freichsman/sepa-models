@@ -188,8 +188,8 @@ $ ->
 
   $('.chow-toggle').click ->
     toggle = $(this)
-    toggle.toggleClass('down')
-    adding = toggle.hasClass('down')
+    toggle.toggleClass('on')
+    adding = toggle.hasClass('on')
     if toggle.hasClass('all')
       model.setChow 'all', adding
       startChartPeriod adding, 1
