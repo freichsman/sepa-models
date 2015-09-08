@@ -86,3 +86,51 @@ span.allele.blue {
   width: 350px;
   height: 260px;
 }
+
+.chow-toggle {
+  display: block;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-image: url('../images/ui/chow-plus.png');
+  z-index: 1000;
+  border-radius: 20px;
+  box-shadow: 5px 5px 10px black;
+}
+
+.chow-toggle:active {
+  box-shadow: 2px 2px 5px black;
+}
+
+.chow-toggle.down {
+  background-image: url('../images/ui/chow-minus.png');
+}
+
+.chow-toggle.all, .chow-toggle.north-east {
+  right: 20px;
+  top: 20px;
+}
+.chow-toggle.all:active, .chow-toggle.north-east:active  {
+  right: 17px;
+  top: 23px;
+}
+
+.chow-toggle.south-east {
+  right: 20px;
+  top: 390px;
+}
+.chow-toggle.south-east:active {
+  right: 17px;
+  top: 393px;
+}
+
+.chow-toggle.west {
+  right: 710px;
+  top: 20px;
+}
+.chow-toggle.west:active {
+  right: 707px;
+  top: 23px;
+}

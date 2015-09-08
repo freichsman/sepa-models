@@ -161,7 +161,6 @@
       for (i = l = 0, ref2 = startingRats; 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
         this.addRat();
       }
-      $('#chow, #chow-w, #chow-se, #chow-ne').attr('checked', false);
       this.current_counts = {
         all: {
           total: 0
@@ -234,7 +233,7 @@
   };
 
   $(function() {
-    var chart1, chart1PeriodId, chart2, chart2PeriodId, graph1Location;
+    var chart1, chart1PeriodId, chart2, chart2PeriodId, graph1Location, startChartPeriod;
     chart1 = null;
     chart2 = null;
     model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
@@ -263,35 +262,43 @@
     });
     chart1PeriodId = null;
     chart2PeriodId = null;
-    $('#chow').change(function() {
-      model.setChow('all', $(this).is(':checked'));
-      if ($(this).is(':checked')) {
-        chart1PeriodId = 'chow-' + Date.now();
-        return chart1 != null ? chart1.startPeriod(chart1PeriodId) : void 0;
+    startChartPeriod = function(adding, chart) {
+      if (chart === 1) {
+        if (adding) {
+          chart1PeriodId = 'chow-' + Date.now();
+          return chart1 != null ? chart1.startPeriod(chart1PeriodId) : void 0;
+        } else {
+          return chart1 != null ? chart1.endPeriod(chart1PeriodId) : void 0;
+        }
       } else {
-        return chart1 != null ? chart1.endPeriod(chart1PeriodId) : void 0;
+        if (adding) {
+          chart2PeriodId = 'chow-' + Date.now();
+          return chart2 != null ? chart2.startPeriod(chart2PeriodId) : void 0;
+        } else {
+          return chart2 != null ? chart2.endPeriod(chart2PeriodId) : void 0;
+        }
       }
-    });
-    $('#chow-se').change(function() {
-      model.setChow('se', $(this).is(':checked'));
-      if ($(this).is(':checked')) {
-        chart2PeriodId = 'chow-' + Date.now();
-        return chart2 != null ? chart2.startPeriod(chart2PeriodId) : void 0;
-      } else {
-        return chart2 != null ? chart2.endPeriod(chart2PeriodId) : void 0;
+    };
+    $('.chow-toggle').click(function() {
+      var adding, toggle;
+      toggle = $(this);
+      toggle.toggleClass('down');
+      adding = toggle.hasClass('down');
+      if (toggle.hasClass('all')) {
+        model.setChow('all', adding);
+        startChartPeriod(adding, 1);
       }
-    });
-    $('#chow-ne').change(function() {
-      model.setChow('ne', $(this).is(':checked'));
-      if ($(this).is(':checked')) {
-        chart1PeriodId = 'chow-' + Date.now();
-        return chart1 != null ? chart1.startPeriod(chart1PeriodId) : void 0;
-      } else {
-        return chart1 != null ? chart1.endPeriod(chart1PeriodId) : void 0;
+      if (toggle.hasClass('north-east')) {
+        model.setChow('ne', adding);
+        startChartPeriod(adding, 1);
       }
-    });
-    $('#chow-w').change(function() {
-      return model.setChow('w', $(this).is(':checked'));
+      if (toggle.hasClass('south-east')) {
+        model.setChow('se', adding);
+        startChartPeriod(adding, 2);
+      }
+      if (toggle.hasClass('west')) {
+        return model.setChow('w', adding);
+      }
     });
     $('#time-limit').change(function() {
       model.setStopDate($(this).val() * model.targetFPS());

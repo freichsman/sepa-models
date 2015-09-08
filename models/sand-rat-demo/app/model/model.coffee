@@ -98,8 +98,6 @@ window.model =
     for i in [0...startingRats]
       @addRat()
 
-    $('#chow, #chow-w, #chow-se, #chow-ne').attr('checked', false)
-
     @current_counts =
       all: {total: 0}
       w:   {total: 0}
@@ -174,29 +172,35 @@ $ ->
 
   chart1PeriodId = null
   chart2PeriodId = null
-  $('#chow').change ->
-    model.setChow 'all', $(this).is(':checked')
-    if $(this).is(':checked')
-      chart1PeriodId = 'chow-'+Date.now()
-      chart1?.startPeriod(chart1PeriodId)
+  startChartPeriod = (adding, chart)->
+    if chart is 1
+      if adding
+        chart1PeriodId = 'chow-'+Date.now()
+        chart1?.startPeriod(chart1PeriodId)
+      else
+        chart1?.endPeriod(chart1PeriodId)
     else
-      chart1?.endPeriod(chart1PeriodId)
-  $('#chow-se').change ->
-    model.setChow 'se', $(this).is(':checked')
-    if $(this).is(':checked')
-      chart2PeriodId = 'chow-'+Date.now()
-      chart2?.startPeriod(chart2PeriodId)
-    else
-      chart2?.endPeriod(chart2PeriodId)
-  $('#chow-ne').change ->
-    model.setChow 'ne', $(this).is(':checked')
-    if $(this).is(':checked')
-      chart1PeriodId = 'chow-'+Date.now()
-      chart1?.startPeriod(chart1PeriodId)
-    else
-      chart1?.endPeriod(chart1PeriodId)
-  $('#chow-w').change ->
-    model.setChow 'w', $(this).is(':checked')
+      if adding
+        chart2PeriodId = 'chow-'+Date.now()
+        chart2?.startPeriod(chart2PeriodId)
+      else
+        chart2?.endPeriod(chart2PeriodId)
+
+  $('.chow-toggle').click ->
+    toggle = $(this)
+    toggle.toggleClass('down')
+    adding = toggle.hasClass('down')
+    if toggle.hasClass('all')
+      model.setChow 'all', adding
+      startChartPeriod adding, 1
+    if toggle.hasClass('north-east')
+      model.setChow 'ne', adding
+      startChartPeriod adding, 1
+    if toggle.hasClass('south-east')
+      model.setChow 'se', adding
+      startChartPeriod adding, 2
+    if toggle.hasClass('west')
+      model.setChow 'w', adding
 
   $('#time-limit').change ->
     model.setStopDate $(this).val()*model.targetFPS()
