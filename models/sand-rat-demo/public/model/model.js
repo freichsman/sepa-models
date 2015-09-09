@@ -233,7 +233,7 @@
   };
 
   $(function() {
-    var chart1, chart1PeriodId, chart2, chart2PeriodId, configDefaults, container, geneInfo, graph1Location, startChartPeriod, updateAlleleFrequencies;
+    var chart1, chart1PeriodId, chart2, chart2PeriodId, configDefaults, container, geneInfo, graph1Location, startChartPeriod, updateAlleleFrequencies, validateConfig, validationError;
     chart1 = null;
     chart2 = null;
     model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
@@ -393,10 +393,44 @@
         return results;
       };
       updateAlleleFrequencies();
+      validateConfig = function(config) {
+        var allele, color, j, k, len, len1, level, ref, ref1, ref2, ref3, ref4;
+        ref = ['red', 'yellow', 'blue'];
+        for (j = 0, len = ref.length; j < len; j++) {
+          color = ref[j];
+          ref1 = ['none', 'level1', 'level2'];
+          for (k = 0, len1 = ref1.length; k < len1; k++) {
+            level = ref1[k];
+            if ((((ref2 = config.diabetes) != null ? (ref3 = ref2[color]) != null ? ref3[level] : void 0 : void 0) != null) && !$.isNumeric(config.diabetes[color][level])) {
+              validationError("diabetes." + color + "." + level + " should be a number");
+              return false;
+            }
+          }
+        }
+        for (allele in geneInfo) {
+          if ((((ref4 = config['allele frequencies']) != null ? ref4[allele] : void 0) != null) && !$.isNumeric(config['allele frequencies'][allele])) {
+            validationError("'allele frequencies'." + allele + " should be a number");
+            return false;
+          }
+        }
+        if ((config.startingRats != null) && !$.isNumeric(config.startingRats)) {
+          validationError("startingRats should be a number");
+          return false;
+        }
+        return true;
+      };
+      validationError = function(error) {
+        return $('.validation-feedback').addClass('error').text(error);
+      };
       return $('#author-submit').click(function() {
-        window.CONFIG = window.JSON_EDITOR.get();
-        updateAlleleFrequencies();
-        return model.env.reset();
+        var newConfig;
+        newConfig = window.JSON_EDITOR.get();
+        if (validateConfig(newConfig)) {
+          $('.validation-feedback').removeClass('error').text('OK!');
+          window.CONFIG = newConfig;
+          updateAlleleFrequencies();
+          return model.env.reset();
+        }
       });
     }
   });

@@ -268,8 +268,33 @@ $ ->
 
     updateAlleleFrequencies()
 
+    validateConfig = (config)->
+      # validate the odds of getting diabetes
+      for color in ['red','yellow','blue']
+        for level in ['none','level1','level2']
+          if config.diabetes?[color]?[level]? and not $.isNumeric(config.diabetes[color][level])
+            validationError("diabetes."+color+"."+level+" should be a number")
+            return false
+
+      for allele of geneInfo
+        if config['allele frequencies']?[allele]? and not $.isNumeric(config['allele frequencies'][allele])
+          validationError("'allele frequencies'."+allele+" should be a number")
+          return false
+
+      if config.startingRats? and not $.isNumeric(config.startingRats)
+        validationError("startingRats should be a number")
+        return false
+
+      return true
+
+    validationError = (error)->
+      $('.validation-feedback').addClass('error').text(error)
+
     $('#author-submit').click ->
-      window.CONFIG = window.JSON_EDITOR.get()
-      updateAlleleFrequencies()
-      model.env.reset()
+      newConfig = window.JSON_EDITOR.get()
+      if validateConfig(newConfig)
+        $('.validation-feedback').removeClass('error').text('OK!')
+        window.CONFIG = newConfig
+        updateAlleleFrequencies()
+        model.env.reset()
 
