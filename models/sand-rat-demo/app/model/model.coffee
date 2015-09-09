@@ -11,11 +11,10 @@ BasicAnimal = require 'models/agents/basic-animal'
 
 Chart       = require 'model/chart'
 
+biologicaSandratSpecies = require 'species/biologica/sandrats'
 sandratSpecies  = require 'species/sandrats'
 chowSpecies     = require 'species/chow'
 env             = require 'environments/field'
-
-startingRats    = 20
 
 window.model =
   run: ->
@@ -95,7 +94,7 @@ window.model =
       for row in [0..(@env.rows)]
         @env.set col, row, "chow", false
 
-    for i in [0...startingRats]
+    for i in [0...(window.CONFIG.startingRats || 20)]
       @addRat()
 
     @current_counts =
@@ -154,7 +153,8 @@ $ ->
   graph1Location = if model.isFieldModel then 'all' else 'ne'
 
   if model.isLifespanModel
-    startingRats = 10
+    window.CONFIG ?= {}
+    window.CONFIG.startingRats = 10
 
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
@@ -215,3 +215,61 @@ $ ->
   window.drawCharts = ->
     chart1?.draw()
     chart2?.draw()
+
+  configDefaults =
+    "allele frequencies":
+      DR: 1
+      drb: 1
+      DY: 1
+      dyb: 1
+      DB: 1
+      dbb: 1
+    startingRats: 20
+    diabetes:
+      red:
+        "none": 0
+        level1: 0.167
+        level2: 0.25
+      yellow:
+        "none": 0
+        level1: 0.167
+        level2: 0.25
+      blue:
+        "none": 0
+        level1: 0.167
+        level2: 0.25
+
+
+  window.CONFIG = $.extend({}, configDefaults, window.CONFIG)
+  container = document.getElementById("author-json")
+  if container
+    window.JSON_EDITOR = new JSONEditor(container)
+    window.JSON_EDITOR.set(window.CONFIG)
+
+    geneInfo =
+      'DR':
+        gene: 'red'
+      'drb':
+        gene: 'red'
+      'DY':
+        gene: 'yellow'
+      'dyb':
+        gene: 'yellow'
+      'DB':
+        gene: 'blue'
+      'dbb':
+        gene: 'blue'
+
+    updateAlleleFrequencies = ->
+      for allele,info of geneInfo
+        if window.CONFIG['allele frequencies']?[allele]?
+          idx = biologicaSandratSpecies.geneList[info.gene].alleles.indexOf(allele)
+          biologicaSandratSpecies.geneList[info.gene].weights[idx] = window.CONFIG['allele frequencies'][allele]
+
+    updateAlleleFrequencies()
+
+    $('#author-submit').click ->
+      window.CONFIG = window.JSON_EDITOR.get()
+      updateAlleleFrequencies()
+      model.env.reset()
+

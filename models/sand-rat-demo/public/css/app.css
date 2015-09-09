@@ -142,3 +142,16 @@ span.allele.blue {
   right: 710px;
   top: 20px;
 }
+.authoring {
+  width: 1000px;
+}
+
+.authoring .controls {
+  text-align: right;
+  margin-bottom: 3px;
+}
+
+#author-json {
+  width: 1000px;
+  height: 400px;
+}

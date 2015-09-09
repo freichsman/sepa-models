@@ -3,20 +3,18 @@ Rule          = require 'models/rule'
 require.register "environments/rules", (exports, require, module) ->
   worstChance = 0.2
   diabetesChance = (agent) ->
-    if agent.get('prone to diabetes') is 'level1'
-      return worstChance * (1/6)
-    else if agent.get('prone to diabetes') is 'level2'
-      return worstChance * (2/6)
-    else if agent.get('prone to diabetes') is 'level3'
-      return worstChance * (3/6)
-    else if agent.get('prone to diabetes') is 'level4'
-      return worstChance * (4/6)
-    else if agent.get('prone to diabetes') is 'level5'
-      return worstChance * (5/6)
-    else if agent.get('prone to diabetes') is 'level6'
-      return worstChance
-    else
-      return 0
+    odds = 0
+    for color in ['red', 'yellow', 'blue']
+      colorLevel = agent.get(color+' diabetes')
+      if colorLevel is 'level1'
+        odds += if window.CONFIG?.diabetes?[color]?.level1? then window.CONFIG.diabetes[color].level1 else (1/6)
+      else if colorLevel is 'level2'
+        odds += if window.CONFIG?.diabetes?[color]?.level2? then window.CONFIG.diabetes[color].level2 else (2/6)
+      else if colorLevel is 'none'
+        if window.CONFIG?.diabetes?[color]?['none']?
+          odds += window.CONFIG.diabetes[color]['none']
+
+    return worstChance * odds
 
   module.exports =
     init: (env)->
@@ -47,7 +45,7 @@ require.register "environments/rules", (exports, require, module) ->
         test: (agent)->
           return agent.species.speciesName is "sandrats" and
                   agent.get('has diabetes') isnt true and
-                  agent.get('prone to diabetes') isnt 'not prone' and
+                  agent.get('prone to diabetes') and
                   (w = agent.get('weight')) > 170 and
                   Math.random() < (((w - 170) / 30) * diabetesChance(agent))
         action: (agent) ->

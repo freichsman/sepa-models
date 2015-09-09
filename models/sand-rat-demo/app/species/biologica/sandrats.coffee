@@ -1,4 +1,29 @@
 require.register "species/biologica/sandrats", (exports, require, module) ->
+  # TODO This should probably get ported back to BioLogica.js
+  BioLogica.Genetics.prototype.getRandomAllele = (exampleOfGene) ->
+    for own gene of @species.geneList
+      _allelesOfGene = @species.geneList[gene].alleles
+      _weightsOfGene = @species.geneList[gene].weights || []
+      if exampleOfGene in _allelesOfGene
+        allelesOfGene = _allelesOfGene
+        break
+
+    if _weightsOfGene.length
+      _weightsOfGene[_weightsOfGene.length] = 0 while _weightsOfGene.length < allelesOfGene.length # Fill missing allele weights with 0
+    else
+      _weightsOfGene[_weightsOfGene.length] = 1 while _weightsOfGene.length < allelesOfGene.length # Equally weighted for all alleles
+
+    totWeights = _weightsOfGene.reduce ((prev, cur)-> prev + cur), 0
+    rand = Math.random() * totWeights
+    curMax = 0
+    for weight,i in _weightsOfGene
+      curMax += weight
+      if rand <= curMax
+        return allelesOfGene[i]
+
+    console.error('somehow did not pick one: ' + allelesOfGene[0]) if console.error?
+    return allelesOfGene[0]
+
   genes = [
     {dominant: 'DR', recessive: 'drb' },
     {dominant: 'DR', recessive: 'drb' },
@@ -7,15 +32,6 @@ require.register "species/biologica/sandrats", (exports, require, module) ->
     {dominant: 'DB', recessive: 'dbb' },
     {dominant: 'DB', recessive: 'dbb' }
   ]
-
-  combos = (num, idx=0, current=[], results=[], dominantCount=0) ->
-    if dominantCount is num and current.length is genes.length
-      results.push current
-    for i in [idx...(genes.length)]
-      combos(num, i+1, current.concat(genes[i].dominant),  results, dominantCount+1) if dominantCount < num
-      combos(num, i+1, current.concat(genes[i].recessive), results, dominantCount)
-
-    if idx is 0 then return results else return
 
   module.exports =
 
@@ -36,14 +52,17 @@ require.register "species/biologica/sandrats", (exports, require, module) ->
     geneList:
       'red':
         alleles: ['DR', 'drb']
+        weights: [0.2, 0.8]
         start: 10000000
         length: 10584
       'yellow':
         alleles: ['DY', 'dyb']
+        weights: [0.2, 0.8]
         start: 10000000
         length: 8882
       'blue':
         alleles: ['DB', 'dbb']
+        weights: [0.2, 0.8]
         start: 600000000
         length: 5563
 
@@ -58,14 +77,18 @@ require.register "species/biologica/sandrats", (exports, require, module) ->
       ''  : ''
 
     traitRules:
-      'prone to diabetes':
-        'not prone': combos(0)
-        'level1': combos(1)
-        'level2': combos(2)
-        'level3': combos(3)
-        'level4': combos(4)
-        'level5': combos(5)
-        'level6': combos(6)
+      'red diabetes':
+        'none': [['drb','drb']]
+        'level1': [['DR','drb']]
+        'level2': [['DR','DR']]
+      'yellow diabetes':
+        'none': [['dyb','dyb']]
+        'level1': [['DY','dyb']]
+        'level2': [['DY','DY']]
+      'blue diabetes':
+        'none': [['dbb','dbb']]
+        'level1': [['DB','dbb']]
+        'level2': [['DB','DB']]
 
     ###
       Images are handled via the populations.js species

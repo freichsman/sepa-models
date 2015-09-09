@@ -4,7 +4,7 @@
     hasProp = {}.hasOwnProperty;
 
   require.register("species/sandrats", function(exports, require, module) {
-    var AnimatedAgent, BasicAnimal, SandRat, Species, Trait, biologicaSpecies, geneValues, helpers, i, j;
+    var AnimatedAgent, BasicAnimal, SandRat, Species, Trait, biologicaSpecies, helpers;
     helpers = require('helpers');
     Species = require('models/species');
     BasicAnimal = require('models/agents/basic-animal');
@@ -105,10 +105,6 @@
       return SandRat;
 
     })(BasicAnimal);
-    geneValues = ['a:DR,b:drb,a:dyb,b:dyb,a:dbb,b:dbb', 'a:drb,b:drb,a:DY,b:dyb,a:DB,b:dbb', 'a:DR,b:drb,a:DY,b:dyb,a:DB,b:dbb', 'a:DR,b:drb,a:DY,b:DY,a:DB,b:dbb', 'a:DR,b:drb,a:DY,b:DY,a:DB,b:DB', 'a:DR,b:DR,a:DY,b:DY,a:DB,b:DB'];
-    for (i = j = 0; j < 6; i = ++j) {
-      geneValues.push('a:drb,b:drb,a:dyb,b:dyb,a:dbb,b:dbb');
-    }
     return module.exports = new Species({
       speciesName: "sandrats",
       agentClass: SandRat,
@@ -143,7 +139,20 @@
           max: 160
         }), new Trait({
           name: 'prone to diabetes',
-          possibleValues: geneValues,
+          "default": false
+        }), new Trait({
+          name: 'red diabetes',
+          possibleValues: [''],
+          isGenetic: true,
+          isNumeric: false
+        }), new Trait({
+          name: 'yellow diabetes',
+          possibleValues: [''],
+          isGenetic: true,
+          isNumeric: false
+        }), new Trait({
+          name: 'blue diabetes',
+          possibleValues: [''],
           isGenetic: true,
           isNumeric: false
         }), new Trait({
@@ -187,7 +196,7 @@
                 }
               },
               useIf: function(agent) {
-                return model.showPropensity && agent.get('prone to diabetes') !== 'not prone';
+                return model.showPropensity && agent.get('prone to diabetes');
               }
             }
           ]
