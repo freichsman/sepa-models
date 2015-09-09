@@ -235,10 +235,12 @@ $ ->
         level1: 0.167
         level2: 0.25
 
-
+  window.ORIGINAL_CONFIG = window.CONFIG
   window.CONFIG = $.extend({}, configDefaults, window.CONFIG)
   container = document.getElementById("author-json")
   if container
+    if config = window.localStorage.getItem('sandrats-config')
+      window.CONFIG = $.extend(window.CONFIG, JSON.parse(config))
     window.JSON_EDITOR = new JSONEditor(container)
     window.JSON_EDITOR.set(window.CONFIG)
 
@@ -286,11 +288,37 @@ $ ->
     validationError = (error)->
       $('.validation-feedback').addClass('error').text(error)
 
-    $('#author-submit').click ->
+    editing = true
+    $('#author-toggle-mode').click ->
+      if editing
+        $('#author-toggle-mode').text('View Tree')
+        window.JSON_EDITOR.setMode('text')
+        editing = false
+      else
+        $('#author-toggle-mode').text('View Text')
+        window.JSON_EDITOR.setMode('tree')
+        editing = true
+
+    $('#author-update').click ->
       newConfig = window.JSON_EDITOR.get()
       if validateConfig(newConfig)
         $('.validation-feedback').removeClass('error').text('OK!')
         window.CONFIG = newConfig
+        updateAlleleFrequencies()
+        model.env.reset()
+
+    $('#author-remember').click ->
+      newConfig = window.JSON_EDITOR.get()
+      if validateConfig(newConfig)
+        $('.validation-feedback').removeClass('error').text('OK!')
+        window.localStorage.setItem('sandrats-config', JSON.stringify(newConfig))
+
+    $('#author-reset').click ->
+      newConfig = $.extend({}, configDefaults, window.ORIGINAL_CONFIG)
+      if validateConfig(newConfig)
+        $('.validation-feedback').removeClass('error').text('OK!')
+        window.CONFIG = newConfig
+        window.JSON_EDITOR.set(newConfig)
         updateAlleleFrequencies()
         model.env.reset()
 

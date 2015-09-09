@@ -233,7 +233,7 @@
   };
 
   $(function() {
-    var chart1, chart1PeriodId, chart2, chart2PeriodId, configDefaults, container, geneInfo, graph1Location, startChartPeriod, updateAlleleFrequencies, validateConfig, validationError;
+    var chart1, chart1PeriodId, chart2, chart2PeriodId, config, configDefaults, container, editing, geneInfo, graph1Location, startChartPeriod, updateAlleleFrequencies, validateConfig, validationError;
     chart1 = null;
     chart2 = null;
     model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
@@ -347,9 +347,13 @@
         }
       }
     };
+    window.ORIGINAL_CONFIG = window.CONFIG;
     window.CONFIG = $.extend({}, configDefaults, window.CONFIG);
     container = document.getElementById("author-json");
     if (container) {
+      if (config = window.localStorage.getItem('sandrats-config')) {
+        window.CONFIG = $.extend(window.CONFIG, JSON.parse(config));
+      }
       window.JSON_EDITOR = new JSONEditor(container);
       window.JSON_EDITOR.set(window.CONFIG);
       geneInfo = {
@@ -416,12 +420,43 @@
       validationError = function(error) {
         return $('.validation-feedback').addClass('error').text(error);
       };
-      return $('#author-submit').click(function() {
+      editing = true;
+      $('#author-toggle-mode').click(function() {
+        if (editing) {
+          $('#author-toggle-mode').text('View Tree');
+          window.JSON_EDITOR.setMode('text');
+          return editing = false;
+        } else {
+          $('#author-toggle-mode').text('View Text');
+          window.JSON_EDITOR.setMode('tree');
+          return editing = true;
+        }
+      });
+      $('#author-update').click(function() {
         var newConfig;
         newConfig = window.JSON_EDITOR.get();
         if (validateConfig(newConfig)) {
           $('.validation-feedback').removeClass('error').text('OK!');
           window.CONFIG = newConfig;
+          updateAlleleFrequencies();
+          return model.env.reset();
+        }
+      });
+      $('#author-remember').click(function() {
+        var newConfig;
+        newConfig = window.JSON_EDITOR.get();
+        if (validateConfig(newConfig)) {
+          $('.validation-feedback').removeClass('error').text('OK!');
+          return window.localStorage.setItem('sandrats-config', JSON.stringify(newConfig));
+        }
+      });
+      return $('#author-reset').click(function() {
+        var newConfig;
+        newConfig = $.extend({}, configDefaults, window.ORIGINAL_CONFIG);
+        if (validateConfig(newConfig)) {
+          $('.validation-feedback').removeClass('error').text('OK!');
+          window.CONFIG = newConfig;
+          window.JSON_EDITOR.set(newConfig);
           updateAlleleFrequencies();
           return model.env.reset();
         }
