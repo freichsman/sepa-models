@@ -43,7 +43,7 @@
       };
 
       Chart.prototype.reset = function() {
-        var guide, i, j, k, ref, ref1, ref2, ref3, ref4;
+        var guide, i, j, k, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7;
         this.recalculateLength();
         for (i = j = 0, ref = this._data.length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
           this._data[i] = {
@@ -65,8 +65,19 @@
             ref3.graphs[0].columnWidth = window.CONFIG.chart.barWidth;
           }
         }
-        if ((ref4 = this.chart) != null) {
-          ref4.validateData();
+        if (((ref4 = window.CONFIG.chart) != null ? ref4.connectingLine : void 0) != null) {
+          if (window.CONFIG.chart.connectingLine) {
+            if ((ref5 = this.chart) != null) {
+              ref5.showGraph(this.chart.graphs[1]);
+            }
+          } else {
+            if ((ref6 = this.chart) != null) {
+              ref6.hideGraph(this.chart.graphs[1]);
+            }
+          }
+        }
+        if ((ref7 = this.chart) != null) {
+          ref7.validateData();
         }
       };
 
@@ -133,7 +144,7 @@
       };
 
       Chart.prototype.setupChart = function() {
-        var ref;
+        var ref, ref1;
         this.chart = AmCharts.makeChart(this.parent, {
           type: 'serial',
           theme: 'light',
@@ -160,7 +171,17 @@
               valueField: 'diabetic',
               valueAxis: 'diabetic',
               openField: 'base',
-              title: 'Diabetic Rats'
+              title: 'Diabetic Rats',
+              visibleInLegend: false
+            }, {
+              id: 'diabetic-rats-line',
+              lineColor: '#ff0000',
+              lineThickness: 2,
+              type: 'smoothedLine',
+              valueField: 'diabetic',
+              valueAxis: 'diabetic',
+              title: 'Line',
+              hidden: (((ref1 = window.CONFIG.chart) != null ? ref1.connectingLine : void 0) != null ? !window.CONFIG.chart.connectingLine : true)
             }
           ],
           valueAxes: [

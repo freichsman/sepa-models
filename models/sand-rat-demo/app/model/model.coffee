@@ -237,6 +237,7 @@ $ ->
     chart:
       bars: 0
       barWidth: 1.0
+      connectingLine: false
 
   window.ORIGINAL_CONFIG = window.CONFIG
   window.CONFIG = $.extend({}, configDefaults, window.CONFIG)
@@ -292,6 +293,9 @@ $ ->
           return false
         if config.chart.barWidth? and not $.isNumeric(config.chart.barWidth)
           validationError("chart.barWidth should be a number")
+          return false
+        if config.chart.connectingLine? and $.type(config.chart.connectingLine) isnt 'boolean'
+          validationError("chart.connectingLine should be true or false")
           return false
 
       return true

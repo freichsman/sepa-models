@@ -47,6 +47,12 @@ require.register "model/chart", (exports, require, module) ->
       if window.CONFIG.chart?.barWidth?
         @chart?.graphs[0].columnWidth = window.CONFIG.chart.barWidth
 
+      if window.CONFIG.chart?.connectingLine?
+        if  window.CONFIG.chart.connectingLine
+          @chart?.showGraph(@chart.graphs[1])
+        else
+          @chart?.hideGraph(@chart.graphs[1])
+
       @chart?.validateData()
       return
 
@@ -126,6 +132,17 @@ require.register "model/chart", (exports, require, module) ->
             valueAxis: 'diabetic'
             openField: 'base'
             title: 'Diabetic Rats'
+            visibleInLegend: false
+          }
+          {
+            id: 'diabetic-rats-line',
+            lineColor: '#ff0000',
+            lineThickness: 2,
+            type: 'smoothedLine',
+            valueField: 'diabetic',
+            valueAxis: 'diabetic',
+            title: 'Line'
+            hidden: (if window.CONFIG.chart?.connectingLine? then not window.CONFIG.chart.connectingLine else true)
           }
         ]
         valueAxes: [

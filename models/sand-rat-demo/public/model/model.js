@@ -348,7 +348,8 @@
       },
       chart: {
         bars: 0,
-        barWidth: 1.0
+        barWidth: 1.0,
+        connectingLine: false
       }
     };
     window.ORIGINAL_CONFIG = window.CONFIG;
@@ -426,6 +427,10 @@
           }
           if ((config.chart.barWidth != null) && !$.isNumeric(config.chart.barWidth)) {
             validationError("chart.barWidth should be a number");
+            return false;
+          }
+          if ((config.chart.connectingLine != null) && $.type(config.chart.connectingLine) !== 'boolean') {
+            validationError("chart.connectingLine should be true or false");
             return false;
           }
         }
