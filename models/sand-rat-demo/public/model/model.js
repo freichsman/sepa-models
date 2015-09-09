@@ -345,6 +345,10 @@
           level1: 0.167,
           level2: 0.25
         }
+      },
+      chart: {
+        bars: 0,
+        barWidth: 1.0
       }
     };
     window.ORIGINAL_CONFIG = window.CONFIG;
@@ -414,6 +418,16 @@
         if ((config.startingRats != null) && !$.isNumeric(config.startingRats)) {
           validationError("startingRats should be a number");
           return false;
+        }
+        if (config.chart != null) {
+          if ((config.chart.bars != null) && !$.isNumeric(config.chart.bars)) {
+            validationError("chart.bars should be a number");
+            return false;
+          }
+          if ((config.chart.barWidth != null) && !$.isNumeric(config.chart.barWidth)) {
+            validationError("chart.barWidth should be a number");
+            return false;
+          }
         }
         return true;
       };

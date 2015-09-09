@@ -4,7 +4,6 @@ require.register "model/chart", (exports, require, module) ->
     constructor: (@model, @parent, @type, @location)->
       @_guides = {}
       @_data = []
-      @recalculateLength()
       @reset()
       @setupChart()
 
@@ -33,6 +32,7 @@ require.register "model/chart", (exports, require, module) ->
       return
 
     reset: ->
+      @recalculateLength()
       for i in [0...(@_data.length)]
         @_data[i] = {date: 2*i, placeholder: true}
 
@@ -44,11 +44,16 @@ require.register "model/chart", (exports, require, module) ->
 
       @_idx = 0
 
+      if window.CONFIG.chart?.barWidth?
+        @chart?.graphs[0].columnWidth = window.CONFIG.chart.barWidth
+
       @chart?.validateData()
       return
 
     recalculateLength: ->
-      if @model.stopDate is 0
+      if window.CONFIG.chart?.bars? and window.CONFIG.chart.bars isnt 0
+        newLength = window.CONFIG.chart.bars
+      else if @model.stopDate is 0
         newLength = 30
       else
         newLength = Math.ceil(@model.stopDate / @model.graphInterval)+1
@@ -115,7 +120,7 @@ require.register "model/chart", (exports, require, module) ->
             fillColorsField: 'color'
             colorField: 'color'
             fillAlphas: 0.6
-            columnWidth: 1
+            columnWidth: (if window.CONFIG.chart?.barWidth? then window.CONFIG.chart.barWidth else 1)
             clustered: false
             valueField: 'diabetic'
             valueAxis: 'diabetic'

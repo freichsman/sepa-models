@@ -12,7 +12,6 @@
         this.location = location;
         this._guides = {};
         this._data = [];
-        this.recalculateLength();
         this.reset();
         this.setupChart();
         return;
@@ -44,7 +43,8 @@
       };
 
       Chart.prototype.reset = function() {
-        var guide, i, j, k, ref, ref1, ref2;
+        var guide, i, j, k, ref, ref1, ref2, ref3, ref4;
+        this.recalculateLength();
         for (i = j = 0, ref = this._data.length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
           this._data[i] = {
             date: 2 * i,
@@ -60,14 +60,21 @@
         }
         this._guides = {};
         this._idx = 0;
-        if ((ref2 = this.chart) != null) {
-          ref2.validateData();
+        if (((ref2 = window.CONFIG.chart) != null ? ref2.barWidth : void 0) != null) {
+          if ((ref3 = this.chart) != null) {
+            ref3.graphs[0].columnWidth = window.CONFIG.chart.barWidth;
+          }
+        }
+        if ((ref4 = this.chart) != null) {
+          ref4.validateData();
         }
       };
 
       Chart.prototype.recalculateLength = function() {
-        var newLength, nextDate, ref;
-        if (this.model.stopDate === 0) {
+        var newLength, nextDate, ref, ref1;
+        if ((((ref = window.CONFIG.chart) != null ? ref.bars : void 0) != null) && window.CONFIG.chart.bars !== 0) {
+          newLength = window.CONFIG.chart.bars;
+        } else if (this.model.stopDate === 0) {
           newLength = 30;
         } else {
           newLength = Math.ceil(this.model.stopDate / this.model.graphInterval) + 1;
@@ -86,8 +93,8 @@
             placeholder: true
           });
         }
-        if ((ref = this.chart) != null) {
-          ref.validateData();
+        if ((ref1 = this.chart) != null) {
+          ref1.validateData();
         }
       };
 
@@ -126,6 +133,7 @@
       };
 
       Chart.prototype.setupChart = function() {
+        var ref;
         this.chart = AmCharts.makeChart(this.parent, {
           type: 'serial',
           theme: 'light',
@@ -147,7 +155,7 @@
               fillColorsField: 'color',
               colorField: 'color',
               fillAlphas: 0.6,
-              columnWidth: 1,
+              columnWidth: (((ref = window.CONFIG.chart) != null ? ref.barWidth : void 0) != null ? window.CONFIG.chart.barWidth : 1),
               clustered: false,
               valueField: 'diabetic',
               valueAxis: 'diabetic',

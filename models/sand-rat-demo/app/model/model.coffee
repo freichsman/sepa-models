@@ -234,6 +234,9 @@ $ ->
         "none": 0
         level1: 0.167
         level2: 0.25
+    chart:
+      bars: 0
+      barWidth: 1.0
 
   window.ORIGINAL_CONFIG = window.CONFIG
   window.CONFIG = $.extend({}, configDefaults, window.CONFIG)
@@ -282,6 +285,14 @@ $ ->
       if config.startingRats? and not $.isNumeric(config.startingRats)
         validationError("startingRats should be a number")
         return false
+
+      if config.chart?
+        if config.chart.bars? and not $.isNumeric(config.chart.bars)
+          validationError("chart.bars should be a number")
+          return false
+        if config.chart.barWidth? and not $.isNumeric(config.chart.barWidth)
+          validationError("chart.barWidth should be a number")
+          return false
 
       return true
 
