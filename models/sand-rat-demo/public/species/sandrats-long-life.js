@@ -114,6 +114,7 @@
         INFO_VIEW_SCALE: 2,
         MATURITY_AGE: 80,
         INFO_VIEW_PROPERTIES: {
+          "Weight (g):": 'weight',
           "": 'genome'
         }
       },

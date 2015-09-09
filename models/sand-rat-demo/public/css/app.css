@@ -42,12 +42,22 @@
   left: 168px;  /* 18px padding + half the env width (600/2) - half the dialog width (300/2)  */
 }
 
+#environment .bubble .content {
+  height: 170px;
+}
+
 #environment .bubble .content .details {
   left: 15px;
 }
 
+.bubble .content .details .agent-property-value:nth-of-type(0n+2) {
+  margin-left: 10px;
+  padding-right: 16px;
+  margin-bottom: 3px;
+}
+
 .bubble .content .details .agent-property-value {
-  margin-left: 70px;
+  margin-left: 30px;
 }
 
 span.allele {
