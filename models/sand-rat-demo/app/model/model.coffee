@@ -94,7 +94,7 @@ window.model =
       for row in [0..(@env.rows)]
         @env.set col, row, "chow", false
 
-    for i in [0...(window.CONFIG.startingRats || 20)]
+    for i in [0...(if window.CONFIG?.startingRats? then window.CONFIG.startingRats else 20)]
       @addRat()
 
     @current_counts =

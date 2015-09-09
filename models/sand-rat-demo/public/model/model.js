@@ -152,13 +152,13 @@
       }
     },
     setupEnvironment: function() {
-      var col, i, j, k, l, ref, ref1, ref2, row;
+      var col, i, j, k, l, ref, ref1, ref2, ref3, row;
       for (col = j = 0, ref = this.env.columns; 0 <= ref ? j <= ref : j >= ref; col = 0 <= ref ? ++j : --j) {
         for (row = k = 0, ref1 = this.env.rows; 0 <= ref1 ? k <= ref1 : k >= ref1; row = 0 <= ref1 ? ++k : --k) {
           this.env.set(col, row, "chow", false);
         }
       }
-      for (i = l = 0, ref2 = window.CONFIG.startingRats || 20; 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
+      for (i = l = 0, ref2 = (((ref3 = window.CONFIG) != null ? ref3.startingRats : void 0) != null ? window.CONFIG.startingRats : 20); 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
         this.addRat();
       }
       this.current_counts = {
