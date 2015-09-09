@@ -455,10 +455,7 @@
         newConfig = $.extend({}, configDefaults, window.ORIGINAL_CONFIG);
         if (validateConfig(newConfig)) {
           $('.validation-feedback').removeClass('error').text('OK!');
-          window.CONFIG = newConfig;
-          window.JSON_EDITOR.set(newConfig);
-          updateAlleleFrequencies();
-          return model.env.reset();
+          return window.JSON_EDITOR.set(newConfig);
         }
       });
     }
