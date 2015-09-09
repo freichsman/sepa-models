@@ -9,6 +9,10 @@
   left: 68px;
 }
 
+#environment .bubble canvas {
+  left: 0;
+}
+
 #environment .toolbar {
   position: relative;
   left: -1000px;
