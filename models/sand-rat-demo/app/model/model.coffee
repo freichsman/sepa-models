@@ -152,10 +152,6 @@ $ ->
 
   graph1Location = if model.isFieldModel then 'all' else 'ne'
 
-  if model.isLifespanModel
-    window.CONFIG ?= {}
-    window.CONFIG.startingRats = 10
-
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
     if $('#field-chart').length > 0
@@ -219,12 +215,12 @@ $ ->
   configDefaults =
     "allele frequencies":
       DR: 1
-      drb: 1
+      drb: 4
       DY: 1
-      dyb: 1
+      dyb: 4
       DB: 1
-      dbb: 1
-    startingRats: 20
+      dbb: 4
+    startingRats: 27
     diabetes:
       red:
         "none": 0

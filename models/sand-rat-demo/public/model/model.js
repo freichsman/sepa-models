@@ -239,12 +239,6 @@
     model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
     model.isLifespanModel = /[^\/]*html/.exec(document.location.href) && /[^\/]*html/.exec(document.location.href)[0] === "lifespan.html";
     graph1Location = model.isFieldModel ? 'all' : 'ne';
-    if (model.isLifespanModel) {
-      if (window.CONFIG == null) {
-        window.CONFIG = {};
-      }
-      window.CONFIG.startingRats = 10;
-    }
     helpers.preload([model, env, sandratSpecies], function() {
       model.run();
       if ($('#field-chart').length > 0) {
@@ -328,13 +322,13 @@
     configDefaults = {
       "allele frequencies": {
         DR: 1,
-        drb: 1,
+        drb: 4,
         DY: 1,
-        dyb: 1,
+        dyb: 4,
         DB: 1,
-        dbb: 1
+        dbb: 4
       },
-      startingRats: 20,
+      startingRats: 27,
       diabetes: {
         red: {
           "none": 0,
