@@ -81,6 +81,7 @@ require.register "species/sandrats", (exports, require, module) ->
     resetGeneticTraits: ()->
       super()
       @set 'genome', @_genomeButtonsString()
+      @set 'prone to diabetes', @get('red diabetes') isnt 'none' or @get('yellow diabetes') isnt 'none' or @get('blue diabetes') isnt 'none'
 
     _genomeButtonsString: ()->
       alleles = @organism.getAlleleString().replace(/a:/g,'').replace(/b:/g,'').replace(/,/g, '')
