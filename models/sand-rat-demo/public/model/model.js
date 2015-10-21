@@ -54,19 +54,19 @@
         w: {
           x: 0,
           y: 0,
-          width: Math.round(this.env.width / 3),
+          width: Math.round(this.env.width / 4),
           height: this.env.height
         },
         ne: {
-          x: Math.round(this.env.width / 3),
+          x: Math.round(this.env.width / 4),
           y: 0,
-          width: Math.round(this.env.width / 3) * 2,
+          width: Math.round(this.env.width / 4) * 3,
           height: Math.round(this.env.height / 2)
         },
         se: {
-          x: Math.round(this.env.width / 3),
+          x: Math.round(this.env.width / 4),
           y: Math.round(this.env.height / 2),
-          width: Math.round(this.env.width / 3) * 2,
+          width: Math.round(this.env.width / 4) * 3,
           height: Math.round(this.env.height / 2)
         }
       };

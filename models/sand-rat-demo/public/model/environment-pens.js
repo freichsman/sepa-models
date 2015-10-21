@@ -7,12 +7,12 @@
   EnvRules = require('environments/rules');
 
   env = new Environment({
-    columns: 100,
-    rows: 70,
-    imgPath: "images/environments/field-pens.png",
+    columns: 60,
+    rows: 45,
+    imgPath: "images/environments/pens-mockup.png",
     wrapEastWest: false,
     wrapNorthSouth: false,
-    barriers: [[285, 0, 85, 700], [333, 312, 667, 76]]
+    barriers: [[140, 0, 30, 450], [170, 220, 430, 30]]
   });
 
   EnvRules.init(env);

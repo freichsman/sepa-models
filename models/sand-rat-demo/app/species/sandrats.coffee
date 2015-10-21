@@ -11,6 +11,7 @@ require.register "species/sandrats", (exports, require, module) ->
   window.orgNumber ?= 1
 
   class SandRat extends BasicAnimal
+    label: 'Sand Rat'
     moving: false
     moveCount: 0
 

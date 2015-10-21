@@ -35,9 +35,9 @@ window.model =
 
     @locations =
       all: {x: 0,                        y: 0,                         width: @env.width,                 height: @env.height }
-      w:   {x: 0,                        y: 0,                         width: Math.round(@env.width/3),   height: @env.height }
-      ne:  {x: Math.round(@env.width/3), y: 0,                         width: Math.round(@env.width/3)*2, height: Math.round(@env.height/2)}
-      se:  {x: Math.round(@env.width/3), y: Math.round(@env.height/2), width: Math.round(@env.width/3)*2, height: Math.round(@env.height/2)}
+      w:   {x: 0,                        y: 0,                         width: Math.round(@env.width/4),   height: @env.height }
+      ne:  {x: Math.round(@env.width/4), y: 0,                         width: Math.round(@env.width/4)*3, height: Math.round(@env.height/2)}
+      se:  {x: Math.round(@env.width/4), y: Math.round(@env.height/2), width: Math.round(@env.width/4)*3, height: Math.round(@env.height/2)}
 
     @setupEnvironment()
     @isSetUp = true

@@ -3,9 +3,13 @@ require.register "species/chow", (exports, require, module) ->
   Species = require 'models/species'
   Inanimate = require 'models/inanimate'
 
+  class Chow extends Inanimate
+    canShowInfo: ->
+      false
+
   module.exports = new Species
     speciesName: "chow"
-    agentClass: Inanimate
+    agentClass: Chow
     defs: {}
     traits: []
     imageRules: [

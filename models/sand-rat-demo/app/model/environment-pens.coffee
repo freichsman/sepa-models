@@ -2,14 +2,14 @@ Environment   = require 'models/environment'
 EnvRules      = require 'environments/rules'
 
 env = new Environment
-  columns:  100
-  rows:     70
-  imgPath: "images/environments/field-pens.png"
+  columns:  60
+  rows:     45
+  imgPath: "images/environments/pens-mockup.png"
   wrapEastWest: false
   wrapNorthSouth: false
   barriers: [
-    [285, 0, 85, 700]       # Vertical - left-center
-    [333, 312, 667, 76]     # Horizontal - divides top and bottom right-side pens
+    [140, 0, 30, 450]       # Vertical - left-center
+    [170, 220, 430, 30]     # Horizontal - divides top and bottom right-side pens
   ]
 
 EnvRules.init env

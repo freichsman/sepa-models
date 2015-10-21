@@ -2,11 +2,13 @@
 #environment {
   position: relative;
   overflow: visible;
+  padding: 0;
+  margin: -8px;
 }
 
 #environment canvas {
   position: relative;
-  left: 68px;
+  left: 0px;
 }
 
 #environment .bubble canvas {
@@ -14,15 +16,55 @@
 }
 
 #environment .toolbar {
-  position: relative;
-  left: -1000px;
+  position: absolute;
+  left: 0px;
+  top: 450px;
+  width: 936px;
+  height: 58px !important;
+  background-color: #CCC;
 }
 
-#environment.narrow .toolbar {
-  position: relative;
-  left: -600px;
+#environment .toolbar .button {
+  clear: none;
+  width: 41px;
+  height: 41px;
+}
+
+#environment .toolbar .button div {
+  width: 36px;
+  height: 36px;
+}
+
+#environment .toolbar .button div.info-tool {
+  width: 40px;
+  height: 40px;
+}
+
+#environment .toolbar .button div.carry-tool {
+  background-size: 31px;
+  background-position-x: 3px;
+  background-position-y: 3px;
 }
 /* END rules for putting the controls on the left */
+
+#toolbar-options {
+  position: absolute;
+  top: 444px;
+  left: 240px;
+  padding: 4px;
+  margin: 6px;
+  margin-left: 0px;
+  display: flex;
+}
+
+#toolbar-options>div {
+  padding-left: 11px;
+}
+
+#toolbar-options img {
+  position: relative;
+  top: 5px;
+}
 
 .time-limit-dialog {
   display: none;
@@ -63,10 +105,11 @@
 span.allele {
   display: inline-block;
   float: left;
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
+  border: 1px solid #BBB;
   border-radius: 9px;
-  box-shadow: 1px 1px 10px black;
+  /*box-shadow: 1px 1px 10px black;*/
   margin: 0 5px 5px 0;
 }
 
@@ -90,15 +133,9 @@ span.allele.blue {
   background-color: blue;
 }
 
-.chart-container {
-  position: relative;
-  width: 370px;
-  height: 260px;
-}
-
 #field-chart, #field-chart-2 {
-  width: 350px;
-  height: 260px;
+  width: 339px;
+  height: 217px;
 }
 
 .chow-toggle {
@@ -139,13 +176,13 @@ span.allele.blue {
 }
 
 .chow-toggle.all, .chow-toggle.north-east {
-  right: 20px;
-  top: 20px;
+  right: 12px;
+  top: 12px;
 }
 
 .chow-toggle.south-east {
-  right: 20px;
-  top: 390px;
+  right: 12px;
+  top: 241px;
 }
 
 .chow-toggle.west {
@@ -153,6 +190,8 @@ span.allele.blue {
   top: 20px;
 }
 .authoring {
+  position: absolute;
+  top: 520px;
   width: 1000px;
 }
 
