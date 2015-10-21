@@ -89,7 +89,8 @@
 
       SandRat.prototype.resetGeneticTraits = function() {
         SandRat.__super__.resetGeneticTraits.call(this);
-        return this.set('genome', this._genomeButtonsString());
+        this.set('genome', this._genomeButtonsString());
+        return this.set('prone to diabetes', this.get('red diabetes') !== 'none' || this.get('yellow diabetes') !== 'none' || this.get('blue diabetes') !== 'none');
       };
 
       SandRat.prototype._genomeButtonsString = function() {
