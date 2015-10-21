@@ -87,7 +87,7 @@ require.register "model/chart", (exports, require, module) ->
       guide.category = ''+currentDate
       guide.toCategory = ''+currentDate
       guide.expand = true
-      guide.label = 'Sugary chow added'
+      guide.label = 'Sugary food added'
       guide.position = 'left'
       guide.inside = true
       guide.labelRotation = 90
@@ -131,7 +131,7 @@ require.register "model/chart", (exports, require, module) ->
             valueField: 'diabetic'
             valueAxis: 'diabetic'
             openField: 'base'
-            title: 'Diabetic Rats'
+            title: 'Rats with Diabetes'
             visibleInLegend: false
           }
           {
@@ -148,7 +148,7 @@ require.register "model/chart", (exports, require, module) ->
         valueAxes: [
           {
             id: 'diabetic'
-            title: 'Diabetic Rats'
+            title: 'Rats with Diabetes'
             autoGridCount: false
             gridCount: 6
             showFirstLabel: false

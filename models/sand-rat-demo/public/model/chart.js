@@ -119,7 +119,7 @@
         guide.category = '' + currentDate;
         guide.toCategory = '' + currentDate;
         guide.expand = true;
-        guide.label = 'Sugary chow added';
+        guide.label = 'Sugary food added';
         guide.position = 'left';
         guide.inside = true;
         guide.labelRotation = 90;
@@ -171,7 +171,7 @@
               valueField: 'diabetic',
               valueAxis: 'diabetic',
               openField: 'base',
-              title: 'Diabetic Rats',
+              title: 'Rats with Diabetes',
               visibleInLegend: false
             }, {
               id: 'diabetic-rats-line',
@@ -187,7 +187,7 @@
           valueAxes: [
             {
               id: 'diabetic',
-              title: 'Diabetic Rats',
+              title: 'Rats with Diabetes',
               autoGridCount: false,
               gridCount: 6,
               showFirstLabel: false,
