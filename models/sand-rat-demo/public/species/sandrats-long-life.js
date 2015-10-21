@@ -21,6 +21,8 @@
         return SandRat.__super__.constructor.apply(this, arguments);
       }
 
+      SandRat.prototype.label = 'Sand Rat';
+
       SandRat.prototype.moving = false;
 
       SandRat.prototype.moveCount = 0;
