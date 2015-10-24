@@ -9,10 +9,10 @@
   env = new Environment({
     columns: 60,
     rows: 45,
-    imgPath: "images/environments/pens-mockup.png",
+    imgPath: "images/environments/pens.png",
     wrapEastWest: false,
     wrapNorthSouth: false,
-    barriers: [[140, 0, 30, 450], [170, 220, 430, 30]]
+    barriers: [[170, 0, 55, 450], [220, 200, 380, 50]]
   });
 
   EnvRules.init(env);
