@@ -214,3 +214,15 @@ span.allele.blue {
   color: #990000;
   font-weight: bold;
 }
+
+.chart-type-selector {
+  position: relative;
+}
+
+.chart-type-selector select {
+  position: absolute;
+  top: -209px;
+  left: 68px;
+  width: 210px;
+  font-size: 20px;
+}

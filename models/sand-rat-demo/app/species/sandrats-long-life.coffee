@@ -126,7 +126,7 @@ require.register "species/sandrats", (exports, require, module) ->
           {
             image:
               path: "images/agents/diabetic-stack.png"
-              scale: 0.5
+              scale: 0.4
               anchor:
                 x: 0.5
                 y: 0.7
@@ -141,7 +141,7 @@ require.register "species/sandrats", (exports, require, module) ->
           {
             image:
               path: "images/agents/prone-stack.png"
-              scale: 0.5
+              scale: 0.4
               anchor:
                 x: 0.5
                 y: 0.7
@@ -156,7 +156,7 @@ require.register "species/sandrats", (exports, require, module) ->
           {
             image:
               path: "images/agents/female-stack.png"
-              scale: 0.5
+              scale: 0.4
               anchor:
                 x: 0.5
                 y: 0.7
@@ -165,7 +165,7 @@ require.register "species/sandrats", (exports, require, module) ->
           {
             image:
               path: "images/agents/male-stack.png"
-              scale: 0.5
+              scale: 0.4
               anchor:
                 x: 0.5
                 y: 0.7
@@ -179,20 +179,20 @@ require.register "species/sandrats", (exports, require, module) ->
         rules: [
           {
             image:
-              path: "images/agents/sandrat-stack.png"
-              scale: 0.7
+              path: "images/agents/sandrat-obese.png"
+              scale: 0.9
               anchor:
-                x: 0.5
-                y: 0.6
+                x: 0.6
+                y: 0.9
             useIf: (agent)-> agent.get('weight') > 180
           }
           {
             image:
-              path: "images/agents/sandrat-stack.png"
-              scale: 0.5
+              path: "images/agents/sandrat-skinny.png"
+              scale: 0.8
               anchor:
-                x: 0.5
-                y: 0.7
+                x: 0.6
+                y: 0.9
           }
         ]
       }
@@ -202,11 +202,20 @@ require.register "species/sandrats", (exports, require, module) ->
         rules: [
           {
             image:
-              path: "images/agents/sandrat-stack.png"
-              scale: 0.5
+              path: "images/agents/sandrat-obese.png"
+              scale: 0.9
               anchor:
-                x: 0.5
-                y: 0.7
+                x: 0.6
+                y: 0.9
+            useIf: (agent)-> agent.get('weight') > 180
+          }
+          {
+            image:
+              path: "images/agents/sandrat-skinny.png"
+              scale: 0.8
+              anchor:
+                x: 0.6
+                y: 0.9
           }
         ]
       }

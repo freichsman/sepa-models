@@ -42,7 +42,7 @@ window.model =
     @setupEnvironment()
     @isSetUp = true
     @stopDate = 0
-    @secondsPerSample = 2
+    @secondsPerSample = 1
     @graphInterval = Math.ceil(@targetFPS()*@secondsPerSample) # Sample every 2 seconds
 
     Events.addEventListener Environment.EVENTS.RESET, =>
@@ -51,10 +51,10 @@ window.model =
 
     Events.addEventListener Environment.EVENTS.STEP, =>
       @countRatsInAreas()
-      drawCharts() if @env.date % @graphInterval is 1
+      updateCharts() if @env.date % @graphInterval is 1
       if @stopDate > 0 and @env.date > @stopDate
         @env.stop()
-        drawCharts()
+        updateCharts()
         @_timesUp()
 
   targetFPS: ()->
@@ -71,13 +71,25 @@ window.model =
 
     rats = (a for a in @env.agentsWithin(rectangle) when a.species is sandratSpecies)
 
-    data = {date: Math.floor(@env.date/@graphInterval)*@secondsPerSample, total: rats.length, healthy: 0, diabetic: 0}
+    data = {date: Math.floor(@env.date/@graphInterval)*@secondsPerSample, total: rats.length, healthy: 0, diabetic: 0, prone: 0, notProne: 0, thin: 0, medium: 0, obese: 0}
     for a in rats
-      data.healthy++ if not a.get('has diabetes')
-      data.diabetic++ if a.get('has diabetes')
-      # weight = Math.floor(a.get('weight') / 10) * 10
-      # data[weight] ?= 0
-      # data[weight]++
+      if a.get('has diabetes')
+        data.diabetic++
+      else
+        data.healthy++
+
+      if a.get('prone to diabetes')
+        data.prone++
+      else
+        data.notProne++
+
+      weight = Math.floor(a.get('weight') / 10) * 10
+      if weight < 160
+        data.thin++
+      else if weight < 180
+        data.medium++
+      else
+        data.obese++
 
     return data
 
@@ -142,6 +154,21 @@ window.model =
   _timesUp: ->
     $('.time-limit-dialog').fadeIn(300)
 
+chartTypes =
+    diabetes: [
+        {property: "diabetic", title: "Diabetic Rats", description: "rats with diabetes"},
+        {property: "healthy", title: "Healthy Rats", description: "healthy rats"}
+      ]
+    risk: [
+        {property: "prone", title: "Risk of diabetes", description: "at risk of diabetes"},
+        {property: "notProne", title: "No risk of diabetes", description: "with no risk of diabetes"}
+      ]
+    weight: [
+        {property: "thin", title: "Thin", description: "thin rats"},
+        {property: "medium", title: "Heavy", description: "heavy rats"},
+        {property: "obese", title: "Obese", description: "obese rats"}
+      ]
+
 
 $ ->
   chart1 = null
@@ -155,9 +182,13 @@ $ ->
   helpers.preload [model, env, sandratSpecies], ->
     model.run()
     if $('#field-chart').length > 0
-      chart1 = new Chart(model, 'field-chart',   'diabetic', graph1Location)
+      chart1 = new Chart(model, 'field-chart', graph1Location)
+      chart1.setData chartTypes.diabetes
+      chart1.reset()
     if $('#field-chart-2').length > 0
-      chart2 = new Chart(model, 'field-chart-2', 'diabetic', 'se')
+      chart2 = new Chart(model, 'field-chart-2', 'se')
+      chart2.setData chartTypes.diabetes
+      chart2.reset()
 
   $('#view-sex-check').change ->
     model.showSex = $(this).is(':checked')
@@ -203,14 +234,21 @@ $ ->
     chart1?.recalculateLength()
     chart2?.recalculateLength()
 
+  $('#chart-1-selector').change ->
+    chart1.setData chartTypes[this.value]
+    chart1.reset()
+
+  $('#chart-2-selector').change ->
+    chart2.setData chartTypes[this.value]
+    chart2.reset()
+
   window.resetAndDrawCharts = ->
     chart1?.reset()
     chart2?.reset()
-    drawCharts()
 
-  window.drawCharts = ->
-    chart1?.draw()
-    chart2?.draw()
+  window.updateCharts = ->
+    chart1?.update()
+    chart2?.update()
 
   configDefaults =
     "allele frequencies":
