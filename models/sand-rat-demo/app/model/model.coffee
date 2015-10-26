@@ -43,11 +43,12 @@ window.model =
     @isSetUp = true
     @stopDate = 0
     @secondsPerSample = 1
-    @graphInterval = Math.ceil(@targetFPS()*@secondsPerSample) # Sample every 2 seconds
+    @graphInterval = Math.ceil(@targetFPS()*@secondsPerSample)
 
     Events.addEventListener Environment.EVENTS.RESET, =>
       @setupEnvironment()
       $('.time-limit-dialog').fadeOut(300)
+      resetAndDrawCharts()
 
     Events.addEventListener Environment.EVENTS.STEP, =>
       @countRatsInAreas()
@@ -167,6 +168,9 @@ chartTypes =
         {property: "thin", title: "Thin", description: "thin rats"},
         {property: "medium", title: "Heavy", description: "heavy rats"},
         {property: "obese", title: "Obese", description: "obese rats"}
+      ]
+    diabetesTime: [
+        {property: "diabetic", timeBased: true, description: "rats with diabetes", yAxis: "Rats with diabetes"},
       ]
 
 

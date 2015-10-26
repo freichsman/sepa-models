@@ -78,7 +78,8 @@
       Events.addEventListener(Environment.EVENTS.RESET, (function(_this) {
         return function() {
           _this.setupEnvironment();
-          return $('.time-limit-dialog').fadeOut(300);
+          $('.time-limit-dialog').fadeOut(300);
+          return resetAndDrawCharts();
         };
       })(this));
       return Events.addEventListener(Environment.EVENTS.STEP, (function(_this) {
@@ -285,6 +286,14 @@
         property: "obese",
         title: "Obese",
         description: "obese rats"
+      }
+    ],
+    diabetesTime: [
+      {
+        property: "diabetic",
+        timeBased: true,
+        description: "rats with diabetes",
+        yAxis: "Rats with diabetes"
       }
     ]
   };
