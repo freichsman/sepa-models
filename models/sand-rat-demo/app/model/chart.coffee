@@ -6,20 +6,34 @@ require.register "model/chart", (exports, require, module) ->
     constructor: (@model, @parent, @location) ->
       @_guides = {}
       @_data = []
+      @_timeBased = false
+      @_timeProp = null
+      @_time = 0
 
     # [ {property: "diabetic", title: "Diabetic Rats", description: "with diabetes"}, {property: "healthy", title: "Healthy Rats"} ]
     setData: (@properties) ->
       @_data = []
-      for prop in @properties
-        @_data.push
-          category: prop.title
-          description: prop.description
-          count: 0
-          prop: prop.property
+      if @properties.length is 1 and @properties[0].timeBased
+        @_timeBased = true
+        @_timeProp = @properties[0]
+        for i in [1..30]
+          @_data.push
+            category: i
+            description: @_timeProp.description
+      else
+        @_timeBased = false
+        for prop in @properties
+          @_data.push
+            category: prop.title
+            description: prop.description
+            count: 0
+            property: prop.property
 
     # draw initial graph or replace existing
     reset: ->
+      @setData @properties
       @parent.innerHTML = ""
+      @_time = 0
       @_drawChart()
       @update()
 
@@ -27,25 +41,41 @@ require.register "model/chart", (exports, require, module) ->
       if not @model.isSetUp then return
 
       newData = @model.current_counts[@location]
-      for column in @_data
-        column.count = newData[column.prop]
+
+      if not @_timeBased
+        for column in @_data
+          column.count = newData[column.property]
+      else
+        @_time++
+        if @_time % 2 isnt 0 then return
+        timeChartTime = @_time / 2
+        datum = helpers.clone @_data[0]
+        datum.category = timeChartTime
+        datum.count = newData[@_timeProp.property]
+        datum.base  = -2
+        datum.color = 'hsl(0,100%,55%)'
+        if timeChartTime <= @_data.length
+          @_data[timeChartTime-1] = datum
+          @_data[timeChartTime-2]?.color = 'hsl(0,100%,85%)'
+        else
+          @_data.shift()
+          @_data.push datum
+          @_data[@_data.length-2]?.color = 'hsl(0,100%,85%)'
+
+        @_extendOpenPeriods()
+
       @chart.validateData()
 
     _drawChart: ->
       opts = helpers.clone @_defaultChartProps
 
-      opts.graphs.push
-        balloonText: "<b>[[value]]</b> [[description]]",
-        fillAlphas: 0.8,
-        lineAlpha: 0.2,
-        type: "column",
-        valueField: "count"
+      if @_timeBased
+        opts.valueAxes[0].title = @_timeProp.yAxis
+        opts.valueAxes[0].minimum = -2
 
       opts.dataProvider = @_data
 
-
       @chart = AmCharts.makeChart @parent, opts
-
 
 
     _defaultChartProps:
@@ -71,37 +101,50 @@ require.register "model/chart", (exports, require, module) ->
         }
       ]
       categoryField: 'category'
-      graphs: []
+      graphs: [
+        {
+          balloonText: "<b>[[value]]</b> [[description]]"
+          fillAlphas: 0.8
+          lineAlpha: 0.2
+          type: "column"
+          valueField: "count"
+          openField: "base"
+          lineColorField: 'color'
+          fillColorsField: 'color'
+          colorField: 'color'
+        }
+      ]
 
 
 
     startPeriod: (id)->
-      # currentDate = if @_idx is 0 then 0 else @_data[@_idx-1].date
-      # guide = new AmCharts.Guide
-      # # For whatever reason, passing these options in as a hash does *not* work!
-      # guide.color = '#999999'
-      # guide.fillColor = 'hsl(200, 100%, 92%)'
-      # guide.fillAlpha = 0.4
-      # guide.category = ''+currentDate
-      # guide.toCategory = ''+currentDate
-      # guide.expand = true
-      # guide.label = 'Sugary food added'
-      # guide.position = 'left'
-      # guide.inside = true
-      # guide.labelRotation = 90
-      # @_guides[id] = guide
+      if not @_timeBased then return
 
-      # @chart?.categoryAxis.addGuide guide
+      guide = new AmCharts.Guide
+      # For whatever reason, passing these options in as a hash does *not* work!
+      guide.color = '#999999'
+      guide.fillColor = 'hsl(200, 100%, 92%)'
+      guide.fillAlpha = 0.4
+      guide.category = ''+Math.ceil @_time/2
+      guide.toCategory = ''+Math.ceil @_time/2
+      guide.expand = true
+      guide.label = 'Sugary food added'
+      guide.position = 'left'
+      guide.inside = true
+      guide.labelRotation = 90
+      @_guides[id] = guide
+
+      @chart?.categoryAxis.addGuide guide
       # return
 
     endPeriod: (id)->
-      # delete @_guides[id]
+      delete @_guides[id]
       # return
 
-    _extendOpenPeriods: (date)->
-      # for own id,guide of @_guides
-      #   guide.toCategory = ''+date
-      # return
+    _extendOpenPeriods: ()->
+      for own id,guide of @_guides
+        guide.toCategory = ''+Math.ceil @_time/2
+      return
 
 
   module.exports = Chart
