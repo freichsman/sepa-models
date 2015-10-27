@@ -67,17 +67,22 @@
 }
 
 .time-limit-dialog {
+  z-index: 1000;
   display: none;
   position: absolute;
   top: 120px;
   left: 368px;  /* 18px padding + half the env width (600/2) - half the dialog width (300/2)  */
   width: 300px;
-  background-color: rgb(200,200,255);
-  box-shadow: 10px 10px 15px #222222;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 5px 5px 10px #757575;
   text-align: center;
   padding-bottom: 2em;
-  border-radius: 10px;
-  border: 2px solid rgb(100,100,155);
+  border-radius: 5px;
+  border: 4px solid rgb(39, 39, 99);
+}
+
+.time-limit-dialog .content div {
+  padding: 4px;
 }
 
 .time-limit-dialog.narrow {
