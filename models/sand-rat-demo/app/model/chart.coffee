@@ -139,11 +139,19 @@ require.register "model/chart", (exports, require, module) ->
 
     endPeriod: (id)->
       delete @_guides[id]
-      # return
 
     _extendOpenPeriods: ()->
+      if not @_timeBased then return
+
       for own id,guide of @_guides
         guide.toCategory = ''+Math.ceil @_time/2
+
+      # also trim guides on the far left
+      leftDate = @_data[0].category
+      if leftDate > 1
+        for guide in @chart?.categoryAxis?.guides
+          if guide.category < leftDate && guide.toCategory >= leftDate
+            guide.category = leftDate
       return
 
 

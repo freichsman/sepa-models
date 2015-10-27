@@ -174,12 +174,25 @@
       };
 
       Chart.prototype._extendOpenPeriods = function() {
-        var guide, id, ref;
+        var guide, id, j, leftDate, len, ref, ref1, ref2, ref3;
+        if (!this._timeBased) {
+          return;
+        }
         ref = this._guides;
         for (id in ref) {
           if (!hasProp.call(ref, id)) continue;
           guide = ref[id];
           guide.toCategory = '' + Math.ceil(this._time / 2);
+        }
+        leftDate = this._data[0].category;
+        if (leftDate > 1) {
+          ref3 = (ref1 = this.chart) != null ? (ref2 = ref1.categoryAxis) != null ? ref2.guides : void 0 : void 0;
+          for (j = 0, len = ref3.length; j < len; j++) {
+            guide = ref3[j];
+            if (guide.category < leftDate && guide.toCategory >= leftDate) {
+              guide.category = leftDate;
+            }
+          }
         }
       };
 
