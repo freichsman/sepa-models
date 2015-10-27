@@ -50,10 +50,13 @@ window.model =
       $('.time-limit-dialog').fadeOut(300)
       resetAndDrawCharts()
 
+    Events.addEventListener Environment.EVENTS.START, =>
+      $('.time-limit-dialog').fadeOut(300)
+
     Events.addEventListener Environment.EVENTS.STEP, =>
       @countRatsInAreas()
       updateCharts() if @env.date % @graphInterval is 1
-      if @stopDate > 0 and @env.date > @stopDate
+      if @stopDate > 0 and @env.date is @stopDate
         @env.stop()
         updateCharts()
         @_timesUp()
@@ -107,8 +110,7 @@ window.model =
       for row in [0..(@env.rows)]
         @env.set col, row, "chow", false
 
-    for i in [0...(if window.CONFIG?.startingRats? then window.CONFIG.startingRats else 20)]
-      @addRat()
+    @addRats()
 
     @current_counts =
       all: {total: 0}
@@ -116,11 +118,48 @@ window.model =
       se:  {total: 0}
       ne:  {total: 0}
 
+    if window.CONFIG?.timeLimit?
+      @stopDate = Math.ceil window.CONFIG.timeLimit * model.targetFPS()
     resetAndDrawCharts()
 
-  addRat: () ->
+  addRats: () ->
+    specifiedTraits = []
+    if window.CONFIG?.populationGenetics?
+      for alleles, quantity of window.CONFIG.populationGenetics
+        traits = @createTraits alleles
+        for [0...quantity]
+          specifiedTraits.push traits
+
+    if window.CONFIG?.startingRats?
+      while specifiedTraits.length < window.CONFIG.startingRats
+        specifiedTraits.push []
+
+    for traits in specifiedTraits
+      @addRat traits
+
+  createTraits: (alleles) ->
+    console.log "creating traits from #{alleles}"
+    traits = []
+    redAlleles = []
+    yellowAlleles = []
+    blueAlleles = []
+    re = /[ab]:[^,]*/g
+    while (m = re.exec alleles) isnt null
+      redAlleles.push m[0] if ~m[0].search(/dr/i)
+      yellowAlleles.push m[0] if ~m[0].search(/dy/i)
+      blueAlleles.push m[0] if ~m[0].search(/db/i)
+
+    if redAlleles.length
+      traits.push new Trait {name: "red diabetes", default: redAlleles.join(","), isGenetic: true}
+    if yellowAlleles.length
+      traits.push new Trait {name: "yellow diabetes", default: yellowAlleles.join(","), isGenetic: true}
+    if blueAlleles.length
+      traits.push new Trait {name: "blue diabetes", default: blueAlleles.join(","), isGenetic: true}
+    return traits
+
+  addRat: (traits) ->
     loc = if @isFieldModel then @locations.all else @locations.w
-    rat = sandratSpecies.createAgent()
+    rat = sandratSpecies.createAgent(traits)
     rat.set('age', 20 + (Math.floor Math.random() * 40))
     rat.setLocation env.randomLocationWithin loc.x, loc.y, loc.width, loc.height, true
     @env.addAgent rat
@@ -148,9 +187,6 @@ window.model =
       @addChow(amount, loc)
     else
       @removeChow(loc)
-
-  setStopDate: (date)->
-    @stopDate = date
 
   _timesUp: ->
     $('.time-limit-dialog').fadeIn(300)
@@ -207,9 +243,6 @@ updatePulldowns = () ->
     $('#chart-1-selector').append createSelectOption(option)
     $('#chart-2-selector').append createSelectOption(option)
 
-  if chart1?
-    console.log "setting to #{chartTypes[authoredOptions[0]]}"
-
   chart1?.setData chartTypes[authoredOptions[0]]
   chart2?.setData chartTypes[authoredOptions[0]]
   resetAndDrawCharts()
@@ -217,6 +250,41 @@ updatePulldowns = () ->
   if authoredOptions.length < 2
     $('#chart-1-selector').hide()
     $('#chart-2-selector').hide()
+
+geneInfo =
+  'DR':
+    gene: 'red'
+  'drb':
+    gene: 'red'
+  'DY':
+    gene: 'yellow'
+  'dyb':
+    gene: 'yellow'
+  'DB':
+    gene: 'blue'
+  'dbb':
+    gene: 'blue'
+
+updateAlleleFrequencies = ->
+  for allele,info of geneInfo
+    if window.CONFIG['allele frequencies']?[allele]?
+      idx = biologicaSandratSpecies.geneList[info.gene].alleles.indexOf(allele)
+      biologicaSandratSpecies.geneList[info.gene].weights[idx] = window.CONFIG['allele frequencies'][allele]
+
+updateTimeLimitPopup = ->
+  console.log "will do"
+  if window.CONFIG?.timeLimitTitle?
+    console.log "setting title to #{window.CONFIG.timeLimitTitle}"
+    $(".time-limit-dialog>.title").html(window.CONFIG.timeLimitTitle)
+  if window.CONFIG?.timeLimitMessage? && window.CONFIG.timeLimitMessage.length
+    $(".time-limit-dialog>.content").html("")
+    for message in window.CONFIG.timeLimitMessage
+      $(".time-limit-dialog>.content").append $("<div>#{message}</div>")
+
+processConfig = ->
+  updateAlleleFrequencies()
+  updatePulldowns()
+  updateTimeLimitPopup()
 
 $ ->
 
@@ -278,11 +346,8 @@ $ ->
       model.setChow 'w', adding
 
   $('#time-limit').change ->
-    model.setStopDate $(this).val()*model.targetFPS()
     chart1?.recalculateLength()
     chart2?.recalculateLength()
-
-  updatePulldowns()
 
   $('#chart-1-selector').change ->
     chart1.setData chartTypes[this.value]
@@ -293,6 +358,9 @@ $ ->
     chart2.reset()
 
   configDefaults =
+    populationGenetics:
+      "a:DR,b:DR": 2
+      "a:DR,a:DY,a:dbb,b:dbb": 2
     "allele frequencies":
       DR: 1
       drb: 4
@@ -316,37 +384,21 @@ $ ->
         level2: 0.25
     chart:
       options: ["diabetes", "weight", "risk", "diabetesTime"]
+    timeLimit: 30
+    timeLimitTitle: "Times up!"
+    timeLimitMessage: ["What happened to the rats in the pens?",
+      "Hit reset to run the model again."]
 
   window.ORIGINAL_CONFIG = window.CONFIG
   window.CONFIG = $.extend({}, configDefaults, window.CONFIG)
+  processConfig()
+
   container = document.getElementById("author-json")
   if container
     if config = window.localStorage.getItem('sandrats-config')
       window.CONFIG = $.extend(window.CONFIG, JSON.parse(config))
     window.JSON_EDITOR = new JSONEditor(container)
     window.JSON_EDITOR.set(window.CONFIG)
-
-    geneInfo =
-      'DR':
-        gene: 'red'
-      'drb':
-        gene: 'red'
-      'DY':
-        gene: 'yellow'
-      'dyb':
-        gene: 'yellow'
-      'DB':
-        gene: 'blue'
-      'dbb':
-        gene: 'blue'
-
-    updateAlleleFrequencies = ->
-      for allele,info of geneInfo
-        if window.CONFIG['allele frequencies']?[allele]?
-          idx = biologicaSandratSpecies.geneList[info.gene].alleles.indexOf(allele)
-          biologicaSandratSpecies.geneList[info.gene].weights[idx] = window.CONFIG['allele frequencies'][allele]
-
-    updateAlleleFrequencies()
 
     validateConfig = (config)->
       # validate the odds of getting diabetes
@@ -397,8 +449,7 @@ $ ->
       if validateConfig(newConfig)
         $('.validation-feedback').removeClass('error').text('OK!')
         window.CONFIG = newConfig
-        updateAlleleFrequencies()
-        updatePulldowns()
+        processConfig()
         model.env.reset()
 
     $('#author-remember').click ->
