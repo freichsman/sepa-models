@@ -175,15 +175,13 @@
       }
     },
     setupEnvironment: function() {
-      var col, i, j, k, l, ref, ref1, ref2, ref3, ref4, row;
+      var col, j, k, ref, ref1, ref2, row;
       for (col = j = 0, ref = this.env.columns; 0 <= ref ? j <= ref : j >= ref; col = 0 <= ref ? ++j : --j) {
         for (row = k = 0, ref1 = this.env.rows; 0 <= ref1 ? k <= ref1 : k >= ref1; row = 0 <= ref1 ? ++k : --k) {
           this.env.set(col, row, "chow", false);
         }
       }
-      for (i = l = 0, ref2 = (((ref3 = window.CONFIG) != null ? ref3.startingRats : void 0) != null ? window.CONFIG.startingRats : 20); 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
-        this.addRat();
-      }
+      this.addRats();
       this.current_counts = {
         all: {
           total: 0
@@ -198,15 +196,82 @@
           total: 0
         }
       };
-      if (((ref4 = window.CONFIG) != null ? ref4.timeLimit : void 0) != null) {
+      if (((ref2 = window.CONFIG) != null ? ref2.timeLimit : void 0) != null) {
         this.stopDate = Math.ceil(window.CONFIG.timeLimit * model.targetFPS());
       }
       return resetAndDrawCharts();
     },
-    addRat: function() {
+    addRats: function() {
+      var alleles, j, k, len, quantity, ref, ref1, ref2, ref3, results, specifiedTraits, traits;
+      specifiedTraits = [];
+      if (((ref = window.CONFIG) != null ? ref.populationGenetics : void 0) != null) {
+        ref1 = window.CONFIG.populationGenetics;
+        for (alleles in ref1) {
+          quantity = ref1[alleles];
+          traits = this.createTraits(alleles);
+          for (j = 0, ref2 = quantity; 0 <= ref2 ? j < ref2 : j > ref2; 0 <= ref2 ? j++ : j--) {
+            specifiedTraits.push(traits);
+          }
+        }
+      }
+      if (((ref3 = window.CONFIG) != null ? ref3.startingRats : void 0) != null) {
+        while (specifiedTraits.length < window.CONFIG.startingRats) {
+          specifiedTraits.push([]);
+        }
+      }
+      results = [];
+      for (k = 0, len = specifiedTraits.length; k < len; k++) {
+        traits = specifiedTraits[k];
+        results.push(this.addRat(traits));
+      }
+      return results;
+    },
+    createTraits: function(alleles) {
+      var blueAlleles, m, re, redAlleles, traits, yellowAlleles;
+      console.log("creating traits from " + alleles);
+      traits = [];
+      redAlleles = [];
+      yellowAlleles = [];
+      blueAlleles = [];
+      re = /[ab]:[^,]*/g;
+      while ((m = re.exec(alleles)) !== null) {
+        if (~m[0].search(/dr/i)) {
+          redAlleles.push(m[0]);
+        }
+        if (~m[0].search(/dy/i)) {
+          yellowAlleles.push(m[0]);
+        }
+        if (~m[0].search(/db/i)) {
+          blueAlleles.push(m[0]);
+        }
+      }
+      if (redAlleles.length) {
+        traits.push(new Trait({
+          name: "red diabetes",
+          "default": redAlleles.join(","),
+          isGenetic: true
+        }));
+      }
+      if (yellowAlleles.length) {
+        traits.push(new Trait({
+          name: "yellow diabetes",
+          "default": yellowAlleles.join(","),
+          isGenetic: true
+        }));
+      }
+      if (blueAlleles.length) {
+        traits.push(new Trait({
+          name: "blue diabetes",
+          "default": blueAlleles.join(","),
+          isGenetic: true
+        }));
+      }
+      return traits;
+    },
+    addRat: function(traits) {
       var loc, rat;
       loc = this.isFieldModel ? this.locations.all : this.locations.w;
-      rat = sandratSpecies.createAgent();
+      rat = sandratSpecies.createAgent(traits);
       rat.set('age', 20 + (Math.floor(Math.random() * 40)));
       rat.setLocation(env.randomLocationWithin(loc.x, loc.y, loc.width, loc.height, true));
       return this.env.addAgent(rat);
@@ -505,6 +570,10 @@
       return chart2.reset();
     });
     configDefaults = {
+      populationGenetics: {
+        "a:DR,b:DR": 2,
+        "a:DR,a:DY,a:dbb,b:dbb": 2
+      },
       "allele frequencies": {
         DR: 1,
         drb: 4,

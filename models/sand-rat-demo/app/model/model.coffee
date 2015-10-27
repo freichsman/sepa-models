@@ -110,8 +110,7 @@ window.model =
       for row in [0..(@env.rows)]
         @env.set col, row, "chow", false
 
-    for i in [0...(if window.CONFIG?.startingRats? then window.CONFIG.startingRats else 20)]
-      @addRat()
+    @addRats()
 
     @current_counts =
       all: {total: 0}
@@ -123,9 +122,44 @@ window.model =
       @stopDate = Math.ceil window.CONFIG.timeLimit * model.targetFPS()
     resetAndDrawCharts()
 
-  addRat: () ->
+  addRats: () ->
+    specifiedTraits = []
+    if window.CONFIG?.populationGenetics?
+      for alleles, quantity of window.CONFIG.populationGenetics
+        traits = @createTraits alleles
+        for [0...quantity]
+          specifiedTraits.push traits
+
+    if window.CONFIG?.startingRats?
+      while specifiedTraits.length < window.CONFIG.startingRats
+        specifiedTraits.push []
+
+    for traits in specifiedTraits
+      @addRat traits
+
+  createTraits: (alleles) ->
+    console.log "creating traits from #{alleles}"
+    traits = []
+    redAlleles = []
+    yellowAlleles = []
+    blueAlleles = []
+    re = /[ab]:[^,]*/g
+    while (m = re.exec alleles) isnt null
+      redAlleles.push m[0] if ~m[0].search(/dr/i)
+      yellowAlleles.push m[0] if ~m[0].search(/dy/i)
+      blueAlleles.push m[0] if ~m[0].search(/db/i)
+
+    if redAlleles.length
+      traits.push new Trait {name: "red diabetes", default: redAlleles.join(","), isGenetic: true}
+    if yellowAlleles.length
+      traits.push new Trait {name: "yellow diabetes", default: yellowAlleles.join(","), isGenetic: true}
+    if blueAlleles.length
+      traits.push new Trait {name: "blue diabetes", default: blueAlleles.join(","), isGenetic: true}
+    return traits
+
+  addRat: (traits) ->
     loc = if @isFieldModel then @locations.all else @locations.w
-    rat = sandratSpecies.createAgent()
+    rat = sandratSpecies.createAgent(traits)
     rat.set('age', 20 + (Math.floor Math.random() * 40))
     rat.setLocation env.randomLocationWithin loc.x, loc.y, loc.width, loc.height, true
     @env.addAgent rat
@@ -324,6 +358,9 @@ $ ->
     chart2.reset()
 
   configDefaults =
+    populationGenetics:
+      "a:DR,b:DR": 2
+      "a:DR,a:DY,a:dbb,b:dbb": 2
     "allele frequencies":
       DR: 1
       drb: 4
