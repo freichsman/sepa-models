@@ -48,6 +48,7 @@ window.model =
     Events.addEventListener Environment.EVENTS.RESET, =>
       @setupEnvironment()
       $('.time-limit-dialog').fadeOut(300)
+      $('.chow-toggle').removeClass('on')
       resetAndDrawCharts()
 
     Events.addEventListener Environment.EVENTS.START, =>

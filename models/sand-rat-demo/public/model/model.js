@@ -79,6 +79,7 @@
         return function() {
           _this.setupEnvironment();
           $('.time-limit-dialog').fadeOut(300);
+          $('.chow-toggle').removeClass('on');
           return resetAndDrawCharts();
         };
       })(this));
