@@ -155,6 +155,17 @@ window.model =
   _timesUp: ->
     $('.time-limit-dialog').fadeIn(300)
 
+chart1 = null
+chart2 = null
+
+resetAndDrawCharts = ->
+  chart1?.reset()
+  chart2?.reset()
+
+updateCharts = ->
+  chart1?.update()
+  chart2?.update()
+
 chartTypes =
     diabetes: [
         {property: "diabetic", title: "Diabetic Rats", description: "rats with diabetes"},
@@ -173,10 +184,41 @@ chartTypes =
         {property: "diabetic", timeBased: true, description: "rats with diabetes", yAxis: "Rats with diabetes"},
       ]
 
+defaultChartTypes = ["diabetes", "weight", "risk", "diabetesTime"]
+
+updatePulldowns = () ->
+  $('#chart-1-selector').html ""
+  $('#chart-2-selector').html ""
+  #<option selected="selected" value="diabetes">Sand Rats with Diabetes</option>
+  options =
+    diabetes: "Sand Rats with Diabetes"
+    weight: "Weight of Sand Rats"
+    risk: "Risk of Diabetes"
+    diabetesTime: "Diabetes over time"
+  if window.CONFIG?.chart?.options?
+    authoredOptions = window.CONFIG.chart.options
+  else
+    authoredOptions = defaultChartTypes
+
+  createSelectOption = (opt) ->
+    $("<option value='#{opt}'>#{options[opt]}</option>")
+
+  for option in authoredOptions
+    $('#chart-1-selector').append createSelectOption(option)
+    $('#chart-2-selector').append createSelectOption(option)
+
+  if chart1?
+    console.log "setting to #{chartTypes[authoredOptions[0]]}"
+
+  chart1?.setData chartTypes[authoredOptions[0]]
+  chart2?.setData chartTypes[authoredOptions[0]]
+  resetAndDrawCharts()
+
+  if authoredOptions.length < 2
+    $('#chart-1-selector').hide()
+    $('#chart-2-selector').hide()
 
 $ ->
-  chart1 = null
-  chart2 = null
 
   model.isFieldModel = !/[^\/]*html/.exec(document.location.href) or /[^\/]*html/.exec(document.location.href)[0] == "field.html"
   model.isLifespanModel = /[^\/]*html/.exec(document.location.href) and /[^\/]*html/.exec(document.location.href)[0] == "lifespan.html"
@@ -187,11 +229,13 @@ $ ->
     model.run()
     if $('#field-chart').length > 0
       chart1 = new Chart(model, 'field-chart', graph1Location)
-      chart1.setData chartTypes.diabetes
+      type = if window.CONFIG?.chart?.options? then window.CONFIG.chart.options[0] else defaultChartTypes[0]
+      chart1.setData chartTypes[type]
       chart1.reset()
     if $('#field-chart-2').length > 0
       chart2 = new Chart(model, 'field-chart-2', 'se')
-      chart2.setData chartTypes.diabetes
+      type = if window.CONFIG?.chart?.options? then window.CONFIG.chart.options[0] else defaultChartTypes[0]
+      chart2.setData chartTypes[type]
       chart2.reset()
 
   $('#view-sex-check').change ->
@@ -238,6 +282,8 @@ $ ->
     chart1?.recalculateLength()
     chart2?.recalculateLength()
 
+  updatePulldowns()
+
   $('#chart-1-selector').change ->
     chart1.setData chartTypes[this.value]
     chart1.reset()
@@ -245,14 +291,6 @@ $ ->
   $('#chart-2-selector').change ->
     chart2.setData chartTypes[this.value]
     chart2.reset()
-
-  window.resetAndDrawCharts = ->
-    chart1?.reset()
-    chart2?.reset()
-
-  window.updateCharts = ->
-    chart1?.update()
-    chart2?.update()
 
   configDefaults =
     "allele frequencies":
@@ -277,9 +315,7 @@ $ ->
         level1: 0.167
         level2: 0.25
     chart:
-      bars: 0
-      barWidth: 1.0
-      connectingLine: false
+      options: ["diabetes", "weight", "risk", "diabetesTime"]
 
   window.ORIGINAL_CONFIG = window.CONFIG
   window.CONFIG = $.extend({}, configDefaults, window.CONFIG)
@@ -362,6 +398,7 @@ $ ->
         $('.validation-feedback').removeClass('error').text('OK!')
         window.CONFIG = newConfig
         updateAlleleFrequencies()
+        updatePulldowns()
         model.env.reset()
 
     $('#author-remember').click ->
