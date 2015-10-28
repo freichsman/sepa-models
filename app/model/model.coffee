@@ -13,20 +13,28 @@ BasicAnimal = require 'models/agents/basic-animal'
 Chart       = require './chart'
 
 biologicaSandratSpecies = require '../species/biologica/sandrats'
+fastRats        = require '../species/sandrats'
+slowRats        = require '../species/sandrats-long-life'
 chowSpecies     = require '../species/chow'
+
+pensEnvironment  = require './environment-pens'
+fieldEnvironment = require './environment'
 
 environmentType = if window.CONFIG?.environment? then window.CONFIG.environment else "pens"
 env = switch environmentType
-  when "pens"  then require './environment-pens'
-  when "field" then require './environment'
-
-speciesType = if window.CONFIG?.species? then window.CONFIG.species else "fast"
-sandratSpecies = switch speciesType
-  when "fast"  then require '../species/sandrats'
-  when "longlife" then require '../species/sandrats-long-life'
+  when "pens"  then pensEnvironment
+  when "field" then fieldEnvironment
 
 window.model =
   run: ->
+    environmentType = if window.CONFIG?.environment? then window.CONFIG.environment else "pens"
+    env = switch environmentType
+      when "pens"  then pensEnvironment
+      when "field" then fieldEnvironment
+
+    for agent in env.agents by -1
+      env.removeAgent agent
+
     @interactive = new Interactive
       environment: env
       toolButtons: [
@@ -83,7 +91,7 @@ window.model =
   _countRats: (rectangle) ->
     data = {}
 
-    rats = (a for a in @env.agentsWithin(rectangle) when a.species is sandratSpecies)
+    rats = (a for a in @env.agentsWithin(rectangle) when a.species is @sandratSpecies)
 
     data = {date: Math.floor(@env.date/@graphInterval)*@secondsPerSample, total: rats.length, healthy: 0, diabetic: 0, prone: 0, notProne: 0, thin: 0, medium: 0, obese: 0}
     for a in rats
@@ -119,6 +127,9 @@ window.model =
     for col in [0..(@env.columns)]
       for row in [0..(@env.rows)]
         @env.set col, row, "chow", false
+
+    speciesType = if window.CONFIG?.species? then window.CONFIG.species else "fast"
+    @sandratSpecies = if speciesType is "fast" then fastRats else slowRats
 
     @addRats()
 
@@ -169,7 +180,7 @@ window.model =
 
   addRat: (traits) ->
     loc = if @isFieldModel then @locations.all else @locations.w
-    rat = sandratSpecies.createAgent(traits)
+    rat = @sandratSpecies.createAgent(traits)
     rat.set('age', 20 + (Math.floor Math.random() * 40))
     rat.setLocation env.randomLocationWithin loc.x, loc.y, loc.width, loc.height, true
     @env.addAgent rat
@@ -301,7 +312,7 @@ $ ->
 
   graph1Location = if model.isFieldModel then 'all' else 'ne'
 
-  helpers.preload [model, env, sandratSpecies], ->
+  helpers.preload [model, env, fastRats, slowRats], ->
     model.run()
     if $('#field-chart').length > 0
       chart1 = new Chart(model, 'field-chart', graph1Location)
@@ -458,7 +469,8 @@ $ ->
         $('.validation-feedback').removeClass('error').text('OK!')
         window.CONFIG = newConfig
         processConfig()
-        model.env.reset()
+        document.getElementById('environment').innerHTML = ""
+        model.run()
 
     $('#author-remember').click ->
       newConfig = window.JSON_EDITOR.get()
