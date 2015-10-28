@@ -420,7 +420,7 @@ module.exports = env;
 });
 
 ;require.register("model/model", function(exports, require, module) {
-var Agent, BasicAnimal, Chart, Environment, Events, Interactive, Species, ToolButton, Trait, biologicaSandratSpecies, chart1, chart2, chartTypes, chowSpecies, defaultChartTypes, env, environmentType, geneInfo, helpers, processConfig, resetAndDrawCharts, sandratSpecies, speciesType, updateAlleleFrequencies, updateCharts, updatePulldowns, updateTimeLimitPopup, _ref, _ref1;
+var Agent, BasicAnimal, Chart, Environment, Events, Interactive, Species, ToolButton, Trait, biologicaSandratSpecies, chart1, chart2, chartTypes, chowSpecies, defaultChartTypes, env, environmentType, fastRats, fieldEnvironment, geneInfo, helpers, pensEnvironment, processConfig, resetAndDrawCharts, slowRats, updateAlleleFrequencies, updateCharts, updatePulldowns, updateTimeLimitPopup, _ref;
 
 helpers = require('helpers');
 
@@ -446,33 +446,45 @@ Chart = require('./chart');
 
 biologicaSandratSpecies = require('../species/biologica/sandrats');
 
+fastRats = require('../species/sandrats');
+
+slowRats = require('../species/sandrats-long-life');
+
 chowSpecies = require('../species/chow');
+
+pensEnvironment = require('./environment-pens');
+
+fieldEnvironment = require('./environment');
 
 environmentType = ((_ref = window.CONFIG) != null ? _ref.environment : void 0) != null ? window.CONFIG.environment : "pens";
 
 env = (function() {
   switch (environmentType) {
     case "pens":
-      return require('./environment-pens');
+      return pensEnvironment;
     case "field":
-      return require('./environment');
-  }
-})();
-
-speciesType = ((_ref1 = window.CONFIG) != null ? _ref1.species : void 0) != null ? window.CONFIG.species : "fast";
-
-sandratSpecies = (function() {
-  switch (speciesType) {
-    case "fast":
-      return require('../species/sandrats');
-    case "longlife":
-      return require('../species/sandrats-long-life');
+      return fieldEnvironment;
   }
 })();
 
 window.model = {
   run: function() {
-    var _this = this;
+    var agent, _i, _ref1, _ref2,
+      _this = this;
+    environmentType = ((_ref1 = window.CONFIG) != null ? _ref1.environment : void 0) != null ? window.CONFIG.environment : "pens";
+    env = (function() {
+      switch (environmentType) {
+        case "pens":
+          return pensEnvironment;
+        case "field":
+          return fieldEnvironment;
+      }
+    })();
+    _ref2 = env.agents;
+    for (_i = _ref2.length - 1; _i >= 0; _i += -1) {
+      agent = _ref2[_i];
+      env.removeAgent(agent);
+    }
     this.interactive = new Interactive({
       environment: env,
       toolButtons: [
@@ -541,11 +553,11 @@ window.model = {
     return 1000 / (this.env != null ? this.env._runLoopDelay : Environment.DEFAULT_RUN_LOOP_DELAY);
   },
   agentsOfSpecies: function(species) {
-    var a, set, _i, _len, _ref2;
+    var a, set, _i, _len, _ref1;
     set = [];
-    _ref2 = this.env.agents;
-    for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-      a = _ref2[_i];
+    _ref1 = this.env.agents;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      a = _ref1[_i];
       if (a.species === species) {
         set.push(a);
       }
@@ -556,12 +568,12 @@ window.model = {
     var a, data, rats, weight, _i, _len;
     data = {};
     rats = (function() {
-      var _i, _len, _ref2, _results;
-      _ref2 = this.env.agentsWithin(rectangle);
+      var _i, _len, _ref1, _results;
+      _ref1 = this.env.agentsWithin(rectangle);
       _results = [];
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        a = _ref2[_i];
-        if (a.species === sandratSpecies) {
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        a = _ref1[_i];
+        if (a.species === this.sandratSpecies) {
           _results.push(a);
         }
       }
@@ -611,12 +623,14 @@ window.model = {
     }
   },
   setupEnvironment: function() {
-    var col, row, _i, _j, _ref2, _ref3, _ref4;
-    for (col = _i = 0, _ref2 = this.env.columns; 0 <= _ref2 ? _i <= _ref2 : _i >= _ref2; col = 0 <= _ref2 ? ++_i : --_i) {
-      for (row = _j = 0, _ref3 = this.env.rows; 0 <= _ref3 ? _j <= _ref3 : _j >= _ref3; row = 0 <= _ref3 ? ++_j : --_j) {
+    var col, row, speciesType, _i, _j, _ref1, _ref2, _ref3, _ref4;
+    for (col = _i = 0, _ref1 = this.env.columns; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; col = 0 <= _ref1 ? ++_i : --_i) {
+      for (row = _j = 0, _ref2 = this.env.rows; 0 <= _ref2 ? _j <= _ref2 : _j >= _ref2; row = 0 <= _ref2 ? ++_j : --_j) {
         this.env.set(col, row, "chow", false);
       }
     }
+    speciesType = ((_ref3 = window.CONFIG) != null ? _ref3.species : void 0) != null ? window.CONFIG.species : "fast";
+    this.sandratSpecies = speciesType === "fast" ? fastRats : slowRats;
     this.addRats();
     this.current_counts = {
       all: {
@@ -638,19 +652,19 @@ window.model = {
     return resetAndDrawCharts();
   },
   addRats: function() {
-    var alleles, quantity, specifiedTraits, traits, _i, _j, _len, _ref2, _ref3, _ref4, _results;
+    var alleles, quantity, specifiedTraits, traits, _i, _j, _len, _ref1, _ref2, _ref3, _results;
     specifiedTraits = [];
-    if (((_ref2 = window.CONFIG) != null ? _ref2.populationGenetics : void 0) != null) {
-      _ref3 = window.CONFIG.populationGenetics;
-      for (alleles in _ref3) {
-        quantity = _ref3[alleles];
+    if (((_ref1 = window.CONFIG) != null ? _ref1.populationGenetics : void 0) != null) {
+      _ref2 = window.CONFIG.populationGenetics;
+      for (alleles in _ref2) {
+        quantity = _ref2[alleles];
         traits = this.createTraits(alleles);
         for (_i = 0; 0 <= quantity ? _i < quantity : _i > quantity; 0 <= quantity ? _i++ : _i--) {
           specifiedTraits.push(traits);
         }
       }
     }
-    if (((_ref4 = window.CONFIG) != null ? _ref4.startingRats : void 0) != null) {
+    if (((_ref3 = window.CONFIG) != null ? _ref3.startingRats : void 0) != null) {
       while (specifiedTraits.length < window.CONFIG.startingRats) {
         specifiedTraits.push([]);
       }
@@ -707,7 +721,7 @@ window.model = {
   addRat: function(traits) {
     var loc, rat;
     loc = this.isFieldModel ? this.locations.all : this.locations.w;
-    rat = sandratSpecies.createAgent(traits);
+    rat = this.sandratSpecies.createAgent(traits);
     rat.set('age', 20 + (Math.floor(Math.random() * 40)));
     rat.setLocation(env.randomLocationWithin(loc.x, loc.y, loc.width, loc.height, true));
     return this.env.addAgent(rat);
@@ -734,13 +748,13 @@ window.model = {
     return this.env.removeDeadAgents();
   },
   setChow: function(area, chow) {
-    var amount, col, loc, row, _i, _j, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var amount, col, loc, row, _i, _j, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     loc = this.locations[area];
     if (loc == null) {
       return;
     }
-    for (col = _i = _ref2 = loc.x, _ref3 = loc.x + loc.width, _ref4 = this.env._columnWidth; _ref4 > 0 ? _i <= _ref3 : _i >= _ref3; col = _i += _ref4) {
-      for (row = _j = _ref5 = loc.y, _ref6 = loc.y + loc.height, _ref7 = this.env._rowHeight; _ref7 > 0 ? _j <= _ref6 : _j >= _ref6; row = _j += _ref7) {
+    for (col = _i = _ref1 = loc.x, _ref2 = loc.x + loc.width, _ref3 = this.env._columnWidth; _ref3 > 0 ? _i <= _ref2 : _i >= _ref2; col = _i += _ref3) {
+      for (row = _j = _ref4 = loc.y, _ref5 = loc.y + loc.height, _ref6 = this.env._rowHeight; _ref6 > 0 ? _j <= _ref5 : _j >= _ref5; row = _j += _ref6) {
         this.env.setAt(col, row, "chow", chow);
       }
     }
@@ -825,7 +839,7 @@ chartTypes = {
 defaultChartTypes = ["diabetes", "weight", "risk", "diabetesTime"];
 
 updatePulldowns = function() {
-  var authoredOptions, createSelectOption, option, options, _i, _len, _ref2, _ref3;
+  var authoredOptions, createSelectOption, option, options, _i, _len, _ref1, _ref2;
   $('#chart-1-selector').html("");
   $('#chart-2-selector').html("");
   options = {
@@ -834,7 +848,7 @@ updatePulldowns = function() {
     risk: "Risk of Diabetes",
     diabetesTime: "Diabetes over time"
   };
-  if (((_ref2 = window.CONFIG) != null ? (_ref3 = _ref2.chart) != null ? _ref3.options : void 0 : void 0) != null) {
+  if (((_ref1 = window.CONFIG) != null ? (_ref2 = _ref1.chart) != null ? _ref2.options : void 0 : void 0) != null) {
     authoredOptions = window.CONFIG.chart.options;
   } else {
     authoredOptions = defaultChartTypes;
@@ -882,11 +896,11 @@ geneInfo = {
 };
 
 updateAlleleFrequencies = function() {
-  var allele, idx, info, _ref2, _results;
+  var allele, idx, info, _ref1, _results;
   _results = [];
   for (allele in geneInfo) {
     info = geneInfo[allele];
-    if (((_ref2 = window.CONFIG['allele frequencies']) != null ? _ref2[allele] : void 0) != null) {
+    if (((_ref1 = window.CONFIG['allele frequencies']) != null ? _ref1[allele] : void 0) != null) {
       idx = biologicaSandratSpecies.geneList[info.gene].alleles.indexOf(allele);
       _results.push(biologicaSandratSpecies.geneList[info.gene].weights[idx] = window.CONFIG['allele frequencies'][allele]);
     } else {
@@ -897,18 +911,18 @@ updateAlleleFrequencies = function() {
 };
 
 updateTimeLimitPopup = function() {
-  var message, _i, _len, _ref2, _ref3, _ref4, _results;
+  var message, _i, _len, _ref1, _ref2, _ref3, _results;
   console.log("will do");
-  if (((_ref2 = window.CONFIG) != null ? _ref2.timeLimitTitle : void 0) != null) {
+  if (((_ref1 = window.CONFIG) != null ? _ref1.timeLimitTitle : void 0) != null) {
     console.log("setting title to " + window.CONFIG.timeLimitTitle);
     $(".time-limit-dialog>.title").html(window.CONFIG.timeLimitTitle);
   }
-  if ((((_ref3 = window.CONFIG) != null ? _ref3.timeLimitMessage : void 0) != null) && window.CONFIG.timeLimitMessage.length) {
+  if ((((_ref2 = window.CONFIG) != null ? _ref2.timeLimitMessage : void 0) != null) && window.CONFIG.timeLimitMessage.length) {
     $(".time-limit-dialog>.content").html("");
-    _ref4 = window.CONFIG.timeLimitMessage;
+    _ref3 = window.CONFIG.timeLimitMessage;
     _results = [];
-    for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
-      message = _ref4[_i];
+    for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+      message = _ref3[_i];
       _results.push($(".time-limit-dialog>.content").append($("<div>" + message + "</div>")));
     }
     return _results;
@@ -925,18 +939,18 @@ $(function() {
   var chart1PeriodId, chart2PeriodId, config, configDefaults, container, editing, graph1Location, startChartPeriod, validateConfig, validationError;
   model.isFieldModel = !/[^\/]*html/.exec(document.location.href) || /[^\/]*html/.exec(document.location.href)[0] === "field.html";
   graph1Location = model.isFieldModel ? 'all' : 'ne';
-  helpers.preload([model, env, sandratSpecies], function() {
-    var type, _ref2, _ref3, _ref4, _ref5;
+  helpers.preload([model, env, fastRats, slowRats], function() {
+    var type, _ref1, _ref2, _ref3, _ref4;
     model.run();
     if ($('#field-chart').length > 0) {
       chart1 = new Chart(model, 'field-chart', graph1Location);
-      type = ((_ref2 = window.CONFIG) != null ? (_ref3 = _ref2.chart) != null ? _ref3.options : void 0 : void 0) != null ? window.CONFIG.chart.options[0] : defaultChartTypes[0];
+      type = ((_ref1 = window.CONFIG) != null ? (_ref2 = _ref1.chart) != null ? _ref2.options : void 0 : void 0) != null ? window.CONFIG.chart.options[0] : defaultChartTypes[0];
       chart1.setData(chartTypes[type]);
       chart1.reset();
     }
     if ($('#field-chart-2').length > 0) {
       chart2 = new Chart(model, 'field-chart-2', 'se');
-      type = ((_ref4 = window.CONFIG) != null ? (_ref5 = _ref4.chart) != null ? _ref5.options : void 0 : void 0) != null ? window.CONFIG.chart.options[0] : defaultChartTypes[0];
+      type = ((_ref3 = window.CONFIG) != null ? (_ref4 = _ref3.chart) != null ? _ref4.options : void 0 : void 0) != null ? window.CONFIG.chart.options[0] : defaultChartTypes[0];
       chart2.setData(chartTypes[type]);
       return chart2.reset();
     }
@@ -1053,21 +1067,21 @@ $(function() {
     window.JSON_EDITOR = new JSONEditor(container);
     window.JSON_EDITOR.set(window.CONFIG);
     validateConfig = function(config) {
-      var allele, color, level, _i, _j, _len, _len1, _ref2, _ref3, _ref4, _ref5, _ref6;
-      _ref2 = ['red', 'yellow', 'blue'];
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        color = _ref2[_i];
-        _ref3 = ['none', 'level1', 'level2'];
-        for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
-          level = _ref3[_j];
-          if ((((_ref4 = config.diabetes) != null ? (_ref5 = _ref4[color]) != null ? _ref5[level] : void 0 : void 0) != null) && !$.isNumeric(config.diabetes[color][level])) {
+      var allele, color, level, _i, _j, _len, _len1, _ref1, _ref2, _ref3, _ref4, _ref5;
+      _ref1 = ['red', 'yellow', 'blue'];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        color = _ref1[_i];
+        _ref2 = ['none', 'level1', 'level2'];
+        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+          level = _ref2[_j];
+          if ((((_ref3 = config.diabetes) != null ? (_ref4 = _ref3[color]) != null ? _ref4[level] : void 0 : void 0) != null) && !$.isNumeric(config.diabetes[color][level])) {
             validationError("diabetes." + color + "." + level + " should be a number");
             return false;
           }
         }
       }
       for (allele in geneInfo) {
-        if ((((_ref6 = config['allele frequencies']) != null ? _ref6[allele] : void 0) != null) && !$.isNumeric(config['allele frequencies'][allele])) {
+        if ((((_ref5 = config['allele frequencies']) != null ? _ref5[allele] : void 0) != null) && !$.isNumeric(config['allele frequencies'][allele])) {
           validationError("'allele frequencies'." + allele + " should be a number");
           return false;
         }
@@ -1114,7 +1128,8 @@ $(function() {
         $('.validation-feedback').removeClass('error').text('OK!');
         window.CONFIG = newConfig;
         processConfig();
-        return model.env.reset();
+        document.getElementById('environment').innerHTML = "";
+        return model.run();
       }
     });
     $('#author-remember').click(function() {
