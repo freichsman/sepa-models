@@ -3,7 +3,7 @@ EnvRules      = require 'environments/rules'
 
 env = new Environment
   columns:  60
-  rows:     70
+  rows:     45
   imgPath: "images/environments/field.png"
   wrapEastWest: false
   wrapNorthSouth: false

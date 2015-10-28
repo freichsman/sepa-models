@@ -19,32 +19,34 @@
     <div id="environment" class="narrow" style="float: left">
       <a href="javascript:void(0);" class="chow-toggle all"></a>
     </div>
-    <div id="controls">
-      <div style="border: 1px solid #EEE; padding: 4px; margin: 6px; background-color: #DDD; margin-left: 20px;">
-        <input type="checkbox" id="view-sex-check" value="prone"> Show females and males <img style="position: absolute; width: 19px; left: 896px;" src="images/agents/female-stack.png"> <img style="position: absolute; width: 19px;" src="images/agents/male-stack.png"><br>
-        <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes risk <img style="position: absolute; width: 19px; left: 896px;" src="images/agents/prone-stack.png"><br>
-        <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes <img style="position: absolute; width: 19px; left: 896px;" src="images/agents/diabetic-stack.png"><br>
+
+    <div id="controls" style="display: inline-block;">
+      <div class="chart-container" style="border-bottom: 3px solid black;">
+        <div id="field-chart" style="height: 442px;"></div>
+        <div class="chart-type-selector">
+          <select id="chart-1-selector" style="top: -428px;">
+            <option selected="selected" value="diabetes">Sand Rats with Diabetes</option>
+            <option value="weight">Weight of Sand Rats</option>
+            <option value="risk">Risk of Diabetes</option>
+            <option value="diabetesTime">Diabetes over time</option>
+          </select>
+        </div>
       </div>
 
-      <div>
-        Stop after:
-        <select id="time-limit">
-          <option value="0" selected>Never</option>
-          <option value="10">10 seconds</option>
-          <option value="30">30 seconds</option>
-          <option value="60">1 minute</option>
-          <option value="300">5 minutes</option>
-          <option value="600">10 minutes</option>
-        </select>
+      <div id="toolbar-options">
+        <div>
+          <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes risk <img style="width: 19px;" src="images/agents/prone-stack.png"><br>
+          <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes <img style="width: 19px;" src="images/agents/diabetic-stack.png">
+        </div>
+        <div>
+          <input type="checkbox" id="view-sex-check" value="prone"> Show females and males <img style="width: 19px;" src="images/agents/female-stack.png"> <img style="width: 19px;" src="images/agents/male-stack.png">
+        </div>
       </div>
     </div>
-    <div id="charts" style="position: absolute; left: 686px; width: 370px; top: 130px; height: 260px;">
-      <div id="field-chart" style="position: absolute; left: 0; width: 370px; top: 0; height: 260px;"></div>
-    </div>
 
-    <div class="time-limit-dialog narrow">
-      <h3>Time's up!</h3>
-      <div>Hit reset to run the model again.</div>
+    <div class="time-limit-dialog">
+      <h3 class="title">Time's up!</h3>
+      <div class="content">Hit reset to run the model again.</div>
     </div>
 
     <script>
