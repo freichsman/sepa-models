@@ -45,9 +45,7 @@ module.exports = Chart = class Chart
         for column in @_data
           column.count = newData[column.property]
       else
-        @_time++
-        if @_time % 2 isnt 0 then return
-        timeChartTime = @_time / 2
+        timeChartTime = @_time
         datum = helpers.clone @_data[0]
         datum.category = timeChartTime
         datum.count = newData[@_timeProp.property]
@@ -62,6 +60,7 @@ module.exports = Chart = class Chart
           @_data[@_data.length-2]?.color = 'hsl(0,100%,85%)'
 
         @_extendOpenPeriods()
+        @_time++
 
       @chart.validateData()
 
@@ -124,8 +123,8 @@ module.exports = Chart = class Chart
       guide.color = '#999999'
       guide.fillColor = 'hsl(200, 100%, 92%)'
       guide.fillAlpha = 0.4
-      guide.category = ''+Math.ceil @_time/2
-      guide.toCategory = ''+Math.ceil @_time/2
+      guide.category = ''+Math.ceil @_time
+      guide.toCategory = ''+Math.ceil @_time
       guide.expand = true
       guide.label = 'Sugary food added'
       guide.position = 'left'
@@ -143,7 +142,7 @@ module.exports = Chart = class Chart
       if not @_timeBased then return
 
       for own id,guide of @_guides
-        guide.toCategory = ''+Math.ceil @_time/2
+        guide.toCategory = ''+Math.ceil @_time
 
       # also trim guides on the far left
       leftDate = @_data[0].category

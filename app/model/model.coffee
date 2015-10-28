@@ -56,28 +56,12 @@ window.model =
       ne:  {x: Math.round(@env.width/3), y: 0,                         width: Math.round(@env.width/3)*2, height: Math.round(@env.height/2)}
       se:  {x: Math.round(@env.width/3), y: Math.round(@env.height/2), width: Math.round(@env.width/3)*2, height: Math.round(@env.height/2)}
 
+    @stopDate = 0
+    @timeGraphInterval = @graphInterval * 2
     @setupEnvironment()
     @isSetUp = true
-    @stopDate = 0
     @secondsPerSample = 1
     @graphInterval = Math.ceil(@targetFPS()*@secondsPerSample)
-
-    Events.addEventListener Environment.EVENTS.RESET, =>
-      @setupEnvironment()
-      $('.time-limit-dialog').fadeOut(300)
-      $('.chow-toggle').removeClass('on')
-      resetAndDrawCharts()
-
-    Events.addEventListener Environment.EVENTS.START, =>
-      $('.time-limit-dialog').fadeOut(300)
-
-    Events.addEventListener Environment.EVENTS.STEP, =>
-      @countRatsInAreas()
-      updateCharts() if @env.date % @graphInterval is 1
-      if @stopDate > 0 and @env.date is @stopDate
-        @env.stop()
-        updateCharts()
-        @_timesUp()
 
   targetFPS: ()->
     return 1000/(if @env? then @env._runLoopDelay else Environment.DEFAULT_RUN_LOOP_DELAY)
@@ -140,7 +124,8 @@ window.model =
       ne:  {total: 0}
 
     if window.CONFIG?.timeLimit?
-      @stopDate = Math.ceil window.CONFIG.timeLimit * model.targetFPS()
+      @stopDate = Math.floor window.CONFIG.timeLimit * model.targetFPS()
+      @timeGraphInterval = Math.floor @stopDate / 29
     resetAndDrawCharts()
 
   addRats: () ->
@@ -159,7 +144,6 @@ window.model =
       @addRat traits
 
   createTraits: (alleles) ->
-    console.log "creating traits from #{alleles}"
     traits = []
     redAlleles = []
     yellowAlleles = []
@@ -212,6 +196,22 @@ window.model =
   _timesUp: ->
     $('.time-limit-dialog').fadeIn(300)
 
+Events.addEventListener Environment.EVENTS.RESET, =>
+  model.setupEnvironment()
+  $('.time-limit-dialog').fadeOut(300)
+  $('.chow-toggle').removeClass('on')
+  resetAndDrawCharts()
+
+Events.addEventListener Environment.EVENTS.START, =>
+  $('.time-limit-dialog').fadeOut(300)
+
+Events.addEventListener Environment.EVENTS.STEP, =>
+  model.countRatsInAreas()
+  updateCharts()
+  if model.stopDate > 0 and model.env.date is model.stopDate
+    model.env.stop()
+    model._timesUp()
+
 chart1 = null
 chart2 = null
 
@@ -220,8 +220,12 @@ resetAndDrawCharts = ->
   chart2?.reset()
 
 updateCharts = ->
-  chart1?.update()
-  chart2?.update()
+  updateStaticCharts = model.env.date % model.graphInterval is 1
+  updateTimeCharts = model.env.date % model.timeGraphInterval is 1
+  if (chart1?._timeBased and updateTimeCharts) or (!(chart1?._timeBased) and updateStaticCharts)
+    chart1.update()
+  if (chart2?._timeBased and updateTimeCharts) or (!(chart2?._timeBased) and updateStaticCharts)
+    chart2.update()
 
 chartTypes =
     diabetes: [
@@ -293,9 +297,7 @@ updateAlleleFrequencies = ->
       biologicaSandratSpecies.geneList[info.gene].weights[idx] = window.CONFIG['allele frequencies'][allele]
 
 updateTimeLimitPopup = ->
-  console.log "will do"
   if window.CONFIG?.timeLimitTitle?
-    console.log "setting title to #{window.CONFIG.timeLimitTitle}"
     $(".time-limit-dialog>.title").html(window.CONFIG.timeLimitTitle)
   if window.CONFIG?.timeLimitMessage? && window.CONFIG.timeLimitMessage.length
     $(".time-limit-dialog>.content").html("")
@@ -469,7 +471,7 @@ $ ->
         $('.validation-feedback').removeClass('error').text('OK!')
         window.CONFIG = newConfig
         processConfig()
-        document.getElementById('environment').innerHTML = ""
+        document.getElementById("environment").children[2].remove()
         model.run()
 
     $('#author-remember').click ->
