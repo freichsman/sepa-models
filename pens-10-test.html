@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Sand Rats Pens Model</title>
+    <link rel="stylesheet" href="css/vendor.css">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="js/vendor2.js"></script>
+    <!-- model files here-->
+    <script>
+      window.CONFIG =
+      //  **** AUTHORS: Replace from here ***
+{
+  "populationGenetics": {
+    "a:DR,b:DR": 2,
+    "a:DR,a:DY,a:dbb,b:dbb": 2
+  },
+  "allele frequencies": {
+    "DR": 1,
+    "drb": 4,
+    "DY": 1,
+    "dyb": 4,
+    "DB": 1,
+    "dbb": 4
+  },
+  "startingRats": 27,
+  "diabetes": {
+    "red": {
+      "none": 0,
+      "level1": 0.167,
+      "level2": 0.25
+    },
+    "yellow": {
+      "none": 0,
+      "level1": 0.167,
+      "level2": 0.25
+    },
+    "blue": {
+      "none": 0,
+      "level1": 0.167,
+      "level2": 0.25
+    }
+  },
+  "chart": {
+    "bars": 0,
+    "barWidth": 1,
+    "connectingLine": true
+  },
+  "timeLimit": 10,
+  "timeLimitTitle": "Times up!",
+  "timeLimitMessage": [
+    "What happened to the rats in the pens?",
+    "Hit reset to run the model again."
+  ],
+  "environment": "pens",
+  "species": "fast"
+}      //  **** AUTHORS: Replace to here ***
+    </script>
+    <script src="js/app.js"></script>
+    <script>require("model/model");</script>
+  </head>
+  <body>
+    <div id="environment" style="vertical-align: top;">
+      <!-- <a href="javascript:void(0);" class="chow-toggle west"></a> -->
+      <a href="javascript:void(0);" class="chow-toggle north-east"></a>
+      <a href="javascript:void(0);" class="chow-toggle south-east"></a>
+    </div>
+    <div id="controls" style="display: inline-block;">
+      <div class="chart-container" style="border-bottom: 3px solid black;">
+        <div id="field-chart"></div>
+        <div class="chart-type-selector">
+          <select id="chart-1-selector">
+            <option selected="selected" value="diabetes">Sand Rats with Diabetes</option>
+            <option value="weight">Weight of Sand Rats</option>
+            <option value="risk">Risk of Diabetes</option>
+            <option value="diabetesTime">Diabetes over time</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="toolbar-options">
+        <div>
+          <input type="checkbox" id="view-prone-check" value="prone"> Show diabetes risk <img style="width: 19px;" src="images/agents/prone-stack.png"><br>
+          <input type="checkbox" id="view-diabetic-check" value="prone"> Show rats with diabetes <img style="width: 19px;" src="images/agents/diabetic-stack.png">
+        </div>
+        <div>
+          <input type="checkbox" id="view-sex-check" value="prone"> Show females and males <img style="width: 19px;" src="images/agents/female-stack.png"> <img style="width: 19px;" src="images/agents/male-stack.png">
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div id="field-chart-2"></div>
+        <div class="chart-type-selector">
+          <select id="chart-2-selector">
+            <option selected="selected" value="diabetes">Sand Rats with Diabetes</option>
+            <option value="weight">Weight of Sand Rats</option>
+            <option value="risk">Risk of Diabetes</option>
+            <option value="diabetesTime">Diabetes over time</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="time-limit-dialog">
+      <h3 class="title">Time's up!</h3>
+      <div class="content">Hit reset to run the model again.</div>
+    </div>
+
+  </body>
+</html>
