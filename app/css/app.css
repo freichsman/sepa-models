@@ -1,0 +1,247 @@
+/* START rules to put the controls on the left */
+#environment {
+  position: relative;
+  overflow: visible;
+  padding: 0;
+  margin: -8px;
+}
+
+#environment canvas {
+  position: relative;
+  left: 0px;
+}
+
+#environment .bubble canvas {
+  left: 0;
+}
+
+#environment .toolbar {
+  position: absolute;
+  left: 0px;
+  top: 450px;
+  width: 936px;
+  height: 58px !important;
+  background-color: #CCC;
+}
+
+#environment .toolbar .button {
+  clear: none;
+  width: 41px;
+  height: 41px;
+}
+
+#environment .toolbar .button div {
+  width: 36px;
+  height: 36px;
+}
+
+#environment .toolbar .button div.info-tool {
+  width: 40px;
+  height: 40px;
+}
+
+#environment .toolbar .button div.carry-tool {
+  background-size: 31px;
+  background-position-x: 3px;
+  background-position-y: 3px;
+}
+/* END rules for putting the controls on the left */
+
+#toolbar-options {
+  position: absolute;
+  top: 444px;
+  left: 240px;
+  padding: 4px;
+  margin: 6px;
+  margin-left: 0px;
+  display: flex;
+}
+
+#toolbar-options>div {
+  padding-left: 11px;
+}
+
+#toolbar-options img {
+  position: relative;
+  top: 5px;
+}
+
+.time-limit-dialog {
+  z-index: 1000;
+  display: none;
+  position: absolute;
+  top: 120px;
+  left: 368px;  /* 18px padding + half the env width (600/2) - half the dialog width (300/2)  */
+  width: 300px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 5px 5px 10px #757575;
+  text-align: center;
+  padding-bottom: 2em;
+  border-radius: 5px;
+  border: 4px solid rgb(39, 39, 99);
+}
+
+.time-limit-dialog .content div {
+  padding: 4px;
+}
+
+.time-limit-dialog.narrow {
+  left: 168px;  /* 18px padding + half the env width (600/2) - half the dialog width (300/2)  */
+}
+
+#environment .bubble .content {
+  height: 170px;
+}
+
+#environment .bubble .content .details {
+  left: 15px;
+}
+
+.bubble .content .details .agent-property-value:nth-of-type(0n+2) {
+  margin-left: 10px;
+  padding-right: 16px;
+  margin-bottom: 3px;
+}
+
+.bubble .content .details .agent-property-value {
+  margin-left: 30px;
+}
+
+span.allele {
+  display: inline-block;
+  float: left;
+  width: 17px;
+  height: 17px;
+  border: 1px solid #BBB;
+  border-radius: 9px;
+  /*box-shadow: 1px 1px 10px black;*/
+  margin: 0 5px 5px 0;
+}
+
+span.allele:nth-child(2n+1) {
+  clear: both;
+}
+
+span.allele.black {
+  background-color: black;
+}
+
+span.allele.red {
+  background-color: red;
+}
+
+span.allele.yellow {
+  background-color: yellow;
+}
+
+span.allele.blue {
+  background-color: blue;
+}
+
+#field-chart, #field-chart-2 {
+  width: 339px;
+  height: 217px;
+}
+
+.chow-toggle {
+  z-index: 1000;
+  display: block;
+  position: absolute;
+  width: 62px;
+  height: 40px;
+}
+
+.chow-toggle:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: no-repeat url('../images/ui/on-off-with-title.png');
+  background-position: 0% 101%;
+  background-size: 100%;
+}
+
+.chow-toggle:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -4px;
+  left: -2px;
+  width: 66px;
+  height: 46px;
+  background: white;
+  border-radius: 4px;
+}
+
+.chow-toggle.on:after {
+  background-position: 0% 0%;
+}
+
+.chow-toggle.all, .chow-toggle.north-east {
+  right: 12px;
+  top: 12px;
+}
+
+.chow-toggle.south-east {
+  right: 12px;
+  top: 241px;
+}
+
+.chow-toggle.west {
+  right: 710px;
+  top: 20px;
+}
+.authoring {
+  position: absolute;
+  top: 520px;
+  width: 1000px;
+}
+
+.authoring .controls {
+  text-align: right;
+  margin-bottom: 3px;
+}
+
+#author-json {
+  width: 1000px;
+  height: 400px;
+}
+
+.validation-feedback {
+  color: #009900;
+  margin-right: 10px;
+}
+
+.validation-feedback.error {
+  color: #990000;
+  font-weight: bold;
+}
+
+.chart-type-selector {
+  position: relative;
+}
+
+.chart-type-selector select {
+  position: absolute;
+  top: -209px;
+  left: 68px;
+  width: 210px;
+  font-size: 20px;
+}
+
+.bubble .content .agent {
+  left: 53px;
+}
+.bubble .content .details {
+  left: 30px;
+  top: 91px;
+}
+.agent-property {
+  clear: both;
+}
+#environment .toolbar .button div.carry-tool {
+  background-image: url("data:image/gif;base64,R0lGODlhHQAgAPcAAAAAAP///wMDAgICAAQCAAMCAAIBAAMCARMMBAYDAgwJBQUDAgUEAxQLAxEKAxYOBhYMAxYOBxYNBxIMBxoRCxEMCBYRDBcSDgUCAAcDAQwGAhEJAxcOBxwSCxwTDBoSDCYbEwwJBxAMCQ4GABcQCQwIBQcEAxALBxkRDCQaEiIYES4iGaVxVJ5tUZpsTyIZEqRxVJxsUZtsUJZpTpdrTygdFi8jGjoqIDQnHSkfFzwtIjcpHyIaFBcTEBoSDaBuUpZpTiwfF6VxVKRwVJ1sUY9lS5ZpT5FmTY9lTI5lS41kS4xjSoNeRoNeRo5lTItjSoliSohhSYdgSYZfSH1ZRHxZQ3dVQYReR4RfR4FdRn1aRX1ZRHxZRHhXQXVUQXlXQnZVQXFSPm9QPW1PPGdKOTcoHy8iGmxOPGRJN2NHN19GNUEvJDsrITgpH2dLOl5ENFlBMllBMj0tIllBMlQ9L086LUg1KUUyJzcpH19GNl1ENFQ+MD8uJEIxJjUoHykfGEExJzcpICogGikdFmFGNlQ9L0c0KFpBM0o1KVY/MUIwJllBNDAkHC4iHAsDAAQCAAIBAAQDAgUDAwUCAAgCAAMBAAcEAwkCAAMBAAQBAAcBAAkAAAcAAAQAAAMAAAMAAAIAAAIAAAEAAAIBAQICAv///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAKUALAAAAAAdACAAAAj/AEsJHEiwoMFSAAAcXLgwIQBRFj4xnOgQQIlGeYoMqaNw4kCHkz4w2sOEBQwWLIa0mNCR4SgAPPRsATIEZUoYMIYMEeKl5cFQProMyXkSp0mcOk+yMbAQUpAlQ1EOrYn0JNUZDnwKlESBTYcYNocSTZqTahqtCDtwmlNUp1iqSN2y+LOgYEJCLGSY3JtTqsmpOM9I/AhA0ZA2OPzq/Htz7JAxgwUCoESkEIA3SBvjPCmVapwMBE3cgOLpzt6Ui29SjcpCUCSCmNyU4fDDRRsue2uKRcl5iAwMBUEd2hSHRZ9QWlD/3VwzJYtFWjUMauAiiSdDu62WPcqihQKtIgCY5NnYaQnSH1W+/ODtfAggtAh1wIjgh7cVFAlt2PwLBj7CQEsAcEZNTmjQEQBkGDXEFCMw0NAFaHiiREp8DDAQAYjchIQHCUz0yQoP7ASDBC1d9lcOTE1kCQAp5HREZD1AoNcQc/hnlwo5YSHKR3DgFAUmNhIEAAk1NdFRBSDU9MMLQRbkCBEwRBGKQJ5oUZMcO3ok5BUsGFFAQj0OkUiTBomiBk4nALBDSmEAIICWBYWwAk41XELDEFRoQuZBAGTBgh0ASPHEBm/CadAja7AgBgAIdJKloWXSgccBpEDKkACVZGJpQAA7");
+}
